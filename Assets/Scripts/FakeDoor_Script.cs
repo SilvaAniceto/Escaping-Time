@@ -6,12 +6,14 @@ public class FakeDoor_Script : MonoBehaviour
 {
     [SerializeField] Transform teleportTarget;
     [SerializeField] GameObject player;
+    [SerializeField] Door_Script door;
 
     void OnTriggerExit2D(Collider2D collision)
     {        
             player.transform.position = teleportTarget.transform.position;
-            Door_Script.instance.ResetDoor();
+            door.ResetDoor();
             Switch_Script.instance.ResetSwitch();
+            Door_Script.instance.anim.Play("New State");
         
     }
 }

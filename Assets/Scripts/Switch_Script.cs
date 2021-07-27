@@ -9,6 +9,7 @@ public class Switch_Script : MonoBehaviour
     [SerializeField] string code;
     public bool canClick;
     public bool isActive = false;
+    [SerializeField] Door_Script door;
 
     void Awake()
     {
@@ -21,7 +22,7 @@ public class Switch_Script : MonoBehaviour
             if (!isActive)
                 if (Input.GetButtonDown("Interact"))
                 {
-                    Door_Script.instance.password += code;
+                    door.password += code;
                     isActive = true;
                 }
     }
@@ -39,8 +40,8 @@ public class Switch_Script : MonoBehaviour
 
     public void ResetSwitch()
     {
-        GameObject[] aux = GameObject.FindGameObjectsWithTag("Switches");
-        foreach (GameObject item in aux)
+        GameObject[] auxSwitch = GameObject.FindGameObjectsWithTag("Switches");
+        foreach (GameObject item in auxSwitch)
         {
             item.GetComponent<Switch_Script>().isActive = false;
         }        
