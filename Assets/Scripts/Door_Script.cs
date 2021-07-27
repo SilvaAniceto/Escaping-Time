@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Door_Script : MonoBehaviour
 {
@@ -9,9 +10,8 @@ public class Door_Script : MonoBehaviour
     public string password = "";
     [SerializeField] GameObject fakeDoor;
 
-    public Animator anim;
-
-    [SerializeField] Switch_Script[] switches;     
+    int level;
+                
     
     void Awake()
     {
@@ -19,11 +19,7 @@ public class Door_Script : MonoBehaviour
     }
     void Start()
     {
-        anim = GetComponent<Animator>();
-        for (int i = 0; i < switches.Length; i++)
-        {
-            switches[i].GetComponent<Switch_Script>();
-        }
+        level = SceneManager.GetActiveScene().buildIndex;
     }
 
     // Update is called once per frame
@@ -43,23 +39,22 @@ public class Door_Script : MonoBehaviour
     }
 
     public void ResetDoor()
+    {       
+        password = "";
+
+        fakeDoor.GetComponent<SpriteRenderer>().enabled = true;
+        fakeDoor.GetComponent<BoxCollider2D>().isTrigger = false;
+
+        gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        gameObject.GetComponent<BoxCollider2D>().isTrigger = false;        
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        GameObject[] auxDoor = GameObject.FindGameObjectsWithTag("Doors");
-        foreach (GameObject item in auxDoor)
+        if (collision.gameObject.tag == "Player")
         {
-            password = "";
-
-            fakeDoor.GetComponent<SpriteRenderer>().enabled = true;
-            fakeDoor.GetComponent<BoxCollider2D>().isTrigger = false;
-
-            item.GetComponent<SpriteRenderer>().enabled = true;
-            item.GetComponent<BoxCollider2D>().isTrigger = false;
+            SceneManager.LoadScene("Fase_" + (level + 1).ToString());
         }
     }
 
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        anim.Play("New State 0");
-        ResetDoor();
-    }
 }

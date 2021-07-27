@@ -9,7 +9,7 @@ public class Switch_Script : MonoBehaviour
     [SerializeField] string code;
     public bool canClick;
     public bool isActive = false;
-    [SerializeField] Door_Script door;
+    
 
     void Awake()
     {
@@ -22,7 +22,7 @@ public class Switch_Script : MonoBehaviour
             if (!isActive)
                 if (Input.GetButtonDown("Interact"))
                 {
-                    door.password += code;
+                    Door_Script.instance.password += code;
                     isActive = true;
                 }
     }
