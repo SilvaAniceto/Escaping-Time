@@ -13,6 +13,7 @@ public class FakeDoor_Script : MonoBehaviour
         {
             door.ResetDoor();
             SceneManager.LoadScene("Fase_0");
+            Game_Controller.timer = 0;
         }
 
     }

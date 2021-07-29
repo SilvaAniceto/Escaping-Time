@@ -10,8 +10,7 @@ public class Door_Script : MonoBehaviour
     public string password = "";
     [SerializeField] GameObject fakeDoor;
 
-    int level;
-                
+    int level;                
     
     void Awake()
     {
@@ -29,7 +28,7 @@ public class Door_Script : MonoBehaviour
             if (password == "123")
             {
                 gameObject.GetComponent<SpriteRenderer>().enabled = false;
-                gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+                gameObject.GetComponent<BoxCollider2D>().isTrigger = true;                
             }                
             else
             {
@@ -41,6 +40,7 @@ public class Door_Script : MonoBehaviour
     public void ResetDoor()
     {       
         password = "";
+
 
         fakeDoor.GetComponent<SpriteRenderer>().enabled = true;
         fakeDoor.GetComponent<BoxCollider2D>().isTrigger = false;
@@ -54,6 +54,7 @@ public class Door_Script : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             SceneManager.LoadScene("Fase_" + (level + 1).ToString());
+            Game_Controller.timer += 60;
         }
     }
 
