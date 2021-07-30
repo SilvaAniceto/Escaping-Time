@@ -7,6 +7,13 @@ public class FakeDoor_Script : MonoBehaviour
 {    
     [SerializeField] Door_Script door;
 
+    [HideInInspector] public Animator anim;
+
+    void Start()
+    {
+        anim = GetComponent<Animator>(); 
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")

@@ -31,13 +31,12 @@ public class Door_Script : MonoBehaviour
             if (password == "123")
             {
                 anim.SetBool("Open", true);
-                //gameObject.GetComponent<SpriteRenderer>().enabled = false;
                 gameObject.GetComponent<BoxCollider2D>().isTrigger = true;                
             }                
             else
             {
-                fakeDoor.GetComponent<SpriteRenderer>().enabled = false;
                 fakeDoor.GetComponent<BoxCollider2D>().isTrigger = true;
+                fakeDoor.GetComponent<FakeDoor_Script>().anim.SetBool("Open_Fake", true);
             }
     }
 
