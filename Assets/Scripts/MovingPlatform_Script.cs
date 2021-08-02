@@ -6,7 +6,7 @@ public class MovingPlatform_Script : MonoBehaviour
 {
     [SerializeField] Transform pointA;
     [SerializeField] Transform pointB;
-    [SerializeField] Vector3 target;
+    Vector3 target;
     [SerializeField] float speed;
     // Start is called before the first frame update
     void Start()

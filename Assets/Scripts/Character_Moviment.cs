@@ -8,11 +8,8 @@ public class Character_Moviment : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] float speed;
-    [SerializeField] float maxMoveAngle = 45f;
     [HideInInspector] public float moveInput;
-    float groundAngle;
     bool isFlip = false;
-    Vector2 moveDirection;
     public Vector2 facingSide = new Vector2(1, 0);
 
     [Header("Jump")]
@@ -22,6 +19,7 @@ public class Character_Moviment : MonoBehaviour
     [HideInInspector] public bool grounded;
 
     Rigidbody2D rb;
+    [SerializeField] Vector3 offSet;
 
     void Awake()
     {
@@ -34,43 +32,22 @@ public class Character_Moviment : MonoBehaviour
 
         CheckRayCasts();
 
-        
         if (moveInput != 0)
             Move();
+        else
+            rb.velocity = new Vector2(0, rb.velocity.y);
 
         if (Input.GetButtonDown("Jump") && grounded)
-            Jump();
-
-        if (Input.GetAxisRaw("Vertical") < 0)
-        {
-            rb.AddForce(new Vector2(-facingSide.x * 2, 0), ForceMode2D.Impulse);
-            Flip();
-        }
+            Jump();       
     }
 
     void CheckRayCasts()
     {
-        RaycastHit2D hitGround = Physics2D.Raycast(transform.position, Vector2.down, groundRaySize, whatIsGround);
-
-        RaycastHit2D hitAngle = Physics2D.Raycast(transform.position, moveDirection, 0.5f, whatIsGround);
-        groundAngle = Vector2.Angle(hitAngle.normal, Vector2.up);
-        
-
-        if (hitGround.collider != null)
-        {
-            grounded = true;
-            /*if (moveInput >= 0)
-                moveDirection = new Vector2(hitGround.normal.y, -hitGround.normal.x);
-            else
-                moveDirection = new Vector2(hitGround.normal.y, hitGround.normal.x);*/
-        }
-        else
-            grounded = false;
+        grounded = Physics2D.Raycast(transform.position + offSet, Vector2.down, groundRaySize, whatIsGround) || Physics2D.Raycast(transform.position - offSet, Vector2.down, groundRaySize, whatIsGround);        
     }
     void Move()
     {
-        if (groundAngle < maxMoveAngle)
-            rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
 
         if (moveInput < 0 && !isFlip)
             Flip();
@@ -86,13 +63,14 @@ public class Character_Moviment : MonoBehaviour
 
     void Jump()
     {
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        rb.AddForce(new Vector2(rb.velocity.x ,jumpForce), ForceMode2D.Impulse);
     }
 
     
 
     void OnDrawGizmos()
     {
-        Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - groundRaySize, transform.position.z));
+        Gizmos.DrawLine(transform.position + offSet, new Vector3(transform.position.x + offSet.x, transform.position.y - groundRaySize, transform.position.z));
+        Gizmos.DrawLine(transform.position - offSet, new Vector3(transform.position.x - offSet.x, transform.position.y - groundRaySize, transform.position.z));        
     }
 }

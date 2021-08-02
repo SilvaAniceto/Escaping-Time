@@ -57,7 +57,6 @@ public class Door_Script : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             SceneManager.LoadScene("Fase_" + (level).ToString());
-            Game_Controller.timer += 60;
         }
     }
 
