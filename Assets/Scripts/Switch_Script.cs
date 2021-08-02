@@ -9,11 +9,16 @@ public class Switch_Script : MonoBehaviour
     [SerializeField] string code;
     public bool canClick;
     public bool isActive = false;
-    
 
+    Animator anim;
     void Awake()
     {
         instance = this;   
+    }
+
+    void Start()
+    {
+        anim = GetComponent<Animator>();
     }
 
     void Update()
@@ -22,6 +27,7 @@ public class Switch_Script : MonoBehaviour
             if (!isActive)
                 if (Input.GetButtonDown("Interact"))
                 {
+                    anim.SetBool("On", true);
                     Door_Script.instance.password += code;
                     isActive = true;
                 }

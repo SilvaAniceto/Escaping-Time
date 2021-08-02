@@ -27,6 +27,10 @@ public class Game_Controller : MonoBehaviour
                 TimeSpan time = TimeSpan.FromSeconds(timer);
                 clock.text = time.ToString(@"hh\:mm\:ss") + " AM";
             }
+            else if(timer < 0)
+            {
+                SceneManager.LoadScene("Game_Over");
+            }
         }        
     }
 }
