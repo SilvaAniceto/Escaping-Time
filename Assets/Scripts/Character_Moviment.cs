@@ -38,7 +38,7 @@ public class Character_Moviment : MonoBehaviour
             rb.velocity = new Vector2(0, rb.velocity.y);
 
         if (Input.GetButtonDown("Jump") && grounded)
-            Jump();       
+            Jump();
     }
 
     void CheckRayCasts()

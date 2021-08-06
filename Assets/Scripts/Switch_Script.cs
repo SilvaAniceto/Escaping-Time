@@ -6,7 +6,8 @@ public class Switch_Script : MonoBehaviour
 {
     public static Switch_Script instance;
 
-    [SerializeField] string code;
+    [SerializeField] GameObject flame;
+    [SerializeField] int code;
     public bool canClick;
     public bool isActive = false;
 
@@ -19,6 +20,7 @@ public class Switch_Script : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        flame.SetActive(false);
     }
 
     void Update()
@@ -30,6 +32,7 @@ public class Switch_Script : MonoBehaviour
                     anim.SetBool("On", true);
                     Door_Script.instance.password += code;
                     isActive = true;
+                    flame.SetActive(true);
                 }
     }
     void OnTriggerEnter2D(Collider2D collision)

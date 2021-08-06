@@ -7,8 +7,7 @@ public class Door_Script : MonoBehaviour
 {
     public static Door_Script instance;
 
-    public string password = "";
-    [SerializeField] GameObject fakeDoor;
+    public int password ;
 
     int level;
 
@@ -27,27 +26,16 @@ public class Door_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (password.Length == 3)
-            if (password == "123")
-            {
-                anim.SetBool("Open", true);
-                gameObject.GetComponent<BoxCollider2D>().isTrigger = true;                
-            }                
-            else
-            {
-                fakeDoor.GetComponent<BoxCollider2D>().isTrigger = true;
-                fakeDoor.GetComponent<FakeDoor_Script>().anim.SetBool("Open_Fake", true);
-            }
+        if (password == 6)
+        {
+            anim.SetBool("Open", true);
+            gameObject.GetComponent<BoxCollider2D>().enabled = false;                
+        }             
     }
 
     public void ResetDoor()
     {       
-        password = "";
-
-
-        fakeDoor.GetComponent<SpriteRenderer>().enabled = true;
-        fakeDoor.GetComponent<BoxCollider2D>().isTrigger = false;
-
+        password = 0;
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         gameObject.GetComponent<BoxCollider2D>().isTrigger = false;        
     }
