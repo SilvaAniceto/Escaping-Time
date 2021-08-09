@@ -12,6 +12,8 @@ public class Door_Script : MonoBehaviour
     int level;
 
     Animator anim;
+
+    private bool canPass;
     
     void Awake()
     {
@@ -21,6 +23,7 @@ public class Door_Script : MonoBehaviour
     {
         level = SceneManager.GetActiveScene().buildIndex;
         anim = GetComponent<Animator>();
+        canPass = false;
     }
 
     // Update is called once per frame
@@ -28,8 +31,9 @@ public class Door_Script : MonoBehaviour
     {
         if (password == 6)
         {
+            canPass = true;
             anim.SetBool("Open", true);
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;                
+            //gameObject.GetComponent<BoxCollider2D>().enabled = false;                
         }             
     }
 
@@ -37,15 +41,13 @@ public class Door_Script : MonoBehaviour
     {       
         password = 0;
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        gameObject.GetComponent<BoxCollider2D>().isTrigger = false;        
+        //gameObject.GetComponent<BoxCollider2D>().isTrigger = false;        
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
-        {
-            SceneManager.LoadScene("Fase_" + (level).ToString());
-        }
+            if (canPass)
+                SceneManager.LoadScene("Fase_" + (level).ToString());
     }
-
 }

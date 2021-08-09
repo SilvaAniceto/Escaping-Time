@@ -12,6 +12,8 @@ public class MovingPlatform_Script : MonoBehaviour
     void Start()
     {
         target = pointA.position;
+        pointA.gameObject.SetActive(false);
+        pointB.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
