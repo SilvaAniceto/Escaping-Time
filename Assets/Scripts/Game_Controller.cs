@@ -28,7 +28,7 @@ public class Game_Controller : MonoBehaviour
         sceneName = SceneManager.GetActiveScene().name;
         if (sceneName == "Fase_0")
         {
-            timer = 30;
+            timer = 60;
             flames = 3;
         }
     }

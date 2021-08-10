@@ -6,7 +6,7 @@ public class FallingPlatform_Script : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D collision)
     {
-       if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player")
             StartCoroutine("SetPlatform");
     }
 

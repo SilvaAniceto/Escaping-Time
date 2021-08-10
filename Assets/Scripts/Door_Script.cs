@@ -32,16 +32,14 @@ public class Door_Script : MonoBehaviour
         if (password == 6)
         {
             canPass = true;
-            anim.SetBool("Open", true);
-            //gameObject.GetComponent<BoxCollider2D>().enabled = false;                
+            anim.SetBool("Open", true);               
         }             
     }
 
     public void ResetDoor()
     {       
         password = 0;
-        gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        //gameObject.GetComponent<BoxCollider2D>().isTrigger = false;        
+        gameObject.GetComponent<SpriteRenderer>().enabled = true;        
     }
 
     void OnTriggerEnter2D(Collider2D collision)

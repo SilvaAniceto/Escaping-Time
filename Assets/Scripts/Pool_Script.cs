@@ -10,7 +10,8 @@ public class Pool_Script : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            player.transform.position = teleportTarget.transform.position;             
+            player.transform.position = teleportTarget.transform.position;
+            Game_Controller.controllerInstance.AddTime(-10);
         }
     }
 }
