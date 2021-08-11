@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Switches
   - Door
-  - Fake_Door
+  - Player_Checker
   layers:
   - Default
   - TransparentFX

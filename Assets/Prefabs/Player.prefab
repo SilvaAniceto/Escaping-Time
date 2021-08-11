@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8846208023403040539}
   m_Layer: 3
   m_Name: Checker
-  m_TagString: Untagged
+  m_TagString: Player_Checker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -227,7 +227,7 @@ MonoBehaviour:
   speed: 5.5
   moveInput: 0
   facingSide: {x: 1, y: 0}
-  jumpForce: 12.8
+  jumpForce: 13
   groundRaySize: 0.6
   whatIsGround:
     serializedVersion: 2

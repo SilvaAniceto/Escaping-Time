@@ -31,6 +31,7 @@ public class Switch_Script : MonoBehaviour
                     if (Game_Controller.controllerInstance.auxFlames > 0)
                         {
                             Game_Controller.controllerInstance.ChangeFlames(-1);
+                            Game_Controller.controllerInstance.AddTime(1);
                             anim.SetBool("On", true);
                             Door_Script.instance.password += code;
                             isActive = true;
