@@ -7,6 +7,7 @@ TagManager:
   - Switches
   - Door
   - Player_Checker
+  - Ground
   layers:
   - Default
   - TransparentFX
