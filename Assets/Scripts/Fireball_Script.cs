@@ -16,7 +16,6 @@ public class Fireball_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (rb.rotation == 0)
             fireDir = Vector2.left;
         else if (rb.rotation == 180)
@@ -26,7 +25,7 @@ public class Fireball_Script : MonoBehaviour
         else if (rb.rotation == -90)
             fireDir = Vector2.up;
 
-        rb.AddForce(fireDir * 0.2f, ForceMode2D.Impulse);
+        rb.AddForce(fireDir * 0.10f, ForceMode2D.Impulse);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
