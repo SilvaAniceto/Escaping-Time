@@ -5,27 +5,16 @@ using UnityEngine;
 public class Fireball_Script : MonoBehaviour
 {
     Rigidbody2D rb;
-    [SerializeField] Vector2 fireDir;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void FireShot(Vector2 dir)
     {
-        if (rb.rotation == 0)
-            fireDir = Vector2.left;
-        else if (rb.rotation == 180)
-            fireDir = Vector2.right;
-        else if (rb.rotation == 90)
-            fireDir = Vector2.down;
-        else if (rb.rotation == -90)
-            fireDir = Vector2.up;
-
-        rb.AddForce(fireDir * 0.10f, ForceMode2D.Impulse);
+        rb.AddForce(dir * 250f);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
