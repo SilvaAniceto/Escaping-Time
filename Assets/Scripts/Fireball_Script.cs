@@ -21,6 +21,8 @@ public class Fireball_Script : MonoBehaviour
         if (collision.tag == "Ground")
             Destroy(gameObject);
         else if (collision.gameObject.tag == "Player")
+        {
             Game_Controller.controllerInstance.AddTime(-5);
+        }
     }
 }

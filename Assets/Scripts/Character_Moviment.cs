@@ -39,6 +39,7 @@ public class Character_Moviment : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && grounded)
             Jump();
+
     }
 
     void CheckRayCasts()
@@ -62,11 +63,9 @@ public class Character_Moviment : MonoBehaviour
     }
 
     void Jump()
-    {
+    { 
         rb.AddForce(new Vector2(rb.velocity.x ,jumpForce), ForceMode2D.Impulse);
     }
-
-    
 
     void OnDrawGizmos()
     {
