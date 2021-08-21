@@ -10,7 +10,7 @@ public class Character_Moviment : MonoBehaviour
     [SerializeField] float speed;
     [HideInInspector] public float moveInput;
     bool isFlip = false;
-    public Vector2 facingSide = new Vector2(1, 0);
+    [HideInInspector] public Vector2 facingSide = new Vector2(1, 0);
 
     [Header("Jump")]
     [SerializeField] float jumpForce;
@@ -19,6 +19,7 @@ public class Character_Moviment : MonoBehaviour
     [HideInInspector] public bool grounded;
 
     Rigidbody2D rb;
+    [HideInInspector] public bool isHit;
     [SerializeField] Vector3 offSet;
 
     void Awake()
@@ -32,14 +33,16 @@ public class Character_Moviment : MonoBehaviour
 
         CheckRayCasts();
 
-        if (moveInput != 0)
-            Move();
-        else
-            rb.velocity = new Vector2(0, rb.velocity.y);
+        if (!isHit)
+        {
+            if (moveInput != 0)
+                Move();
+            else
+                rb.velocity = new Vector2(0, rb.velocity.y);
+        }
 
         if (Input.GetButtonDown("Jump") && grounded)
-            Jump();
-
+            Jump();        
     }
 
     void CheckRayCasts()
@@ -65,6 +68,13 @@ public class Character_Moviment : MonoBehaviour
     void Jump()
     { 
         rb.AddForce(new Vector2(rb.velocity.x ,jumpForce), ForceMode2D.Impulse);
+    }
+
+    public void ThrowBack()
+    {
+        rb.velocity = Vector2.zero;
+        isHit = true;
+        rb.AddForce(new Vector2(-facingSide.x * 8.5f, 7f), ForceMode2D.Impulse);
     }
 
     void OnDrawGizmos()

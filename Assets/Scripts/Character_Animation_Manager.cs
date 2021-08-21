@@ -14,6 +14,7 @@ public class Character_Animation_Manager : MonoBehaviour
     const string RUN = "Run";
     const string JUMP = "Jump";
     const string FALL = "Fall";
+    const string HIT = "Hit";
 
     void Awake()
     {
@@ -37,7 +38,7 @@ public class Character_Animation_Manager : MonoBehaviour
             else
                 ChangeAnimationState(IDLE);
         }
-        else
+        else if (!Character_Moviment.moveInstance.isHit)
         {
             if (rb.velocity.y > 0.2f)
                 ChangeAnimationState(JUMP);
@@ -45,7 +46,9 @@ public class Character_Animation_Manager : MonoBehaviour
                 ChangeAnimationState(FALL);
             else
                 return;
-        }        
+        }
+        else
+            ChangeAnimationState(HIT);
     }
 
     public void ChangeAnimationState(string newState)

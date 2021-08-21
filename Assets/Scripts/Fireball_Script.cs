@@ -14,7 +14,7 @@ public class Fireball_Script : MonoBehaviour
 
     public void FireShot(Vector2 dir)
     {
-        rb.AddForce(dir * 250f);
+        rb.AddForce(dir * 300f);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -23,6 +23,7 @@ public class Fireball_Script : MonoBehaviour
         else if (collision.gameObject.tag == "Player")
         {
             Game_Controller.controllerInstance.AddTime(-5);
+            collision.gameObject.GetComponent<Character_Moviment>().ThrowBack();
         }
     }
 }
