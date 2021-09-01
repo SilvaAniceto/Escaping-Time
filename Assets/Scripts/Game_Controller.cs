@@ -10,11 +10,15 @@ public class Game_Controller : MonoBehaviour
     public static Game_Controller controllerInstance;
     public static float timer;
     public static int flames;
+    public static int continueTimes;
     [HideInInspector] public int auxFlames;
 
     [SerializeField] Text clock;
     [SerializeField] Text flameText;
+    [SerializeField] Text continueText;
+    [SerializeField] GameObject continuePanel;
     string sceneName;
+    
 
     TimeSpan time;
 
@@ -25,9 +29,11 @@ public class Game_Controller : MonoBehaviour
 
     void Start()
     {
+        continuePanel.SetActive(false);
         sceneName = SceneManager.GetActiveScene().name;
         if (sceneName == "Fase_0")
         {
+            continueTimes = 2;
             timer = 60;
             flames = 3;
         }
@@ -37,14 +43,21 @@ public class Game_Controller : MonoBehaviour
     {
         auxFlames = flames;
         flameText.text = "x " + auxFlames.ToString();
+        continueText.text = "x " + continueTimes.ToString();
 
         timer -= Time.deltaTime;
         time = TimeSpan.FromSeconds(timer);
         clock.text = time.ToString(@"mm\:ss"); 
         
         if(timer < 0)
-            SceneManager.LoadScene("Game_Over");
-           
+            if (continueTimes > 0)
+            {
+                Time.timeScale = 0;
+                continuePanel.SetActive(true);
+            }
+            else 
+                SceneManager.LoadScene("Game_Over");
+
     }
 
     public void AddTime(int added)
@@ -55,5 +68,22 @@ public class Game_Controller : MonoBehaviour
     public void ChangeFlames(int changed)
     {
         flames += changed;
+    }
+
+    public void Continue()
+    {
+        if (continueTimes > 0)
+        {
+            timer = 30;
+            Time.timeScale = 1;
+            continueTimes -= 1;
+            continuePanel.SetActive(false);
+        }
+    }
+
+    public void GameOver()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("Game_Over");
     }
 }
