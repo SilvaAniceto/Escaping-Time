@@ -17,7 +17,7 @@ public class Character_Moviment : MonoBehaviour
     [SerializeField] float groundRaySize;
     [SerializeField] LayerMask whatIsGround;
     [HideInInspector] public bool grounded;
-
+ 
     Rigidbody2D rb;
     [HideInInspector] public bool isHit;
     [SerializeField] Vector3 offSet;
@@ -47,11 +47,11 @@ public class Character_Moviment : MonoBehaviour
 
     void CheckRayCasts()
     {
-        grounded = Physics2D.Raycast(transform.position + offSet, Vector2.down, groundRaySize, whatIsGround) || Physics2D.Raycast(transform.position - offSet, Vector2.down, groundRaySize, whatIsGround);        
+        grounded = Physics2D.Raycast(transform.position + offSet, Vector2.down, groundRaySize, whatIsGround) || Physics2D.Raycast(transform.position - offSet, Vector2.down, groundRaySize, whatIsGround);
     }
     void Move()
     {
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);        
 
         if (moveInput < 0 && !isFlip)
             Flip();
@@ -66,7 +66,7 @@ public class Character_Moviment : MonoBehaviour
     }
 
     void Jump()
-    { 
+    {
         rb.AddForce(new Vector2(rb.velocity.x ,jumpForce), ForceMode2D.Impulse);
     }
 

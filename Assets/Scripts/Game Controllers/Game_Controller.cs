@@ -84,6 +84,8 @@ public class Game_Controller : MonoBehaviour
     public void GameOver()
     {
         Time.timeScale = 1;
+        continueTimes = 2;
+        timer = 60;
         SceneManager.LoadScene("Game_Over");
     }
 }
