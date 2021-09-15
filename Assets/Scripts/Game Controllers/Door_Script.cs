@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class Door_Script : MonoBehaviour
@@ -13,7 +14,11 @@ public class Door_Script : MonoBehaviour
 
     Animator anim;
 
+    AudioSource audioSource;
+
     private bool canPass;
+
+    private bool opened;
     
     void Awake()
     {
@@ -22,6 +27,7 @@ public class Door_Script : MonoBehaviour
     void Start()
     {
         level = SceneManager.GetActiveScene().buildIndex;
+        audioSource = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
         canPass = false;
     }
@@ -32,7 +38,9 @@ public class Door_Script : MonoBehaviour
         if (password == 6)
         {
             canPass = true;
-            anim.SetBool("Open", true);               
+            anim.SetBool("Open", true);
+            if (!audioSource.isPlaying)
+                audioSource.PlayOneShot(audioSource.clip);
         }             
     }
 
