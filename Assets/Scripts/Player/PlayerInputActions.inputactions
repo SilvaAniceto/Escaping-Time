@@ -1,0 +1,44 @@
+{
+    "name": "PlayerInputActions",
+    "maps": [
+        {
+            "name": "PlayerActionMap",
+            "id": "bea66aa9-bc83-4e1d-8be7-c32c14cee078",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Button",
+                    "id": "fdd52a90-1a4f-48bd-94d5-bb19496f83ca",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f6cf6e45-595d-482b-a7d8-8fa31aaa3467",
+                    "path": "<Gamepad>/leftStick/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Gamepad",
+            "bindingGroup": "Gamepad",
+            "devices": []
+        },
+        {
+            "name": "Mouse/Keyboard",
+            "bindingGroup": "Mouse/Keyboard",
+            "devices": []
+        }
+    ]
+}

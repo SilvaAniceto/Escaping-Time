@@ -29,7 +29,7 @@ public class Character_Moviment : MonoBehaviour
     }
     void Update()
     {
-        moveInput = Input.GetAxisRaw("Horizontal");
+        //moveInput = Input.GetAxisRaw("Horizontal");
 
         CheckRayCasts();
 
@@ -41,8 +41,8 @@ public class Character_Moviment : MonoBehaviour
                 rb.velocity = new Vector2(0, rb.velocity.y);
         }
 
-        if (Input.GetButtonDown("Jump") && grounded)
-            Jump();        
+        //if (Input.GetButtonDown("Jump") && grounded)
+        //    Jump();        
     }
 
     void CheckRayCasts()
