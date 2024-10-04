@@ -21,6 +21,7 @@ public abstract class AbstractState
     public abstract void EnterState();
     public abstract void UpdateState();
     public abstract void FixedUpdateState();
+    public abstract void LateUpdateState();
     public abstract void ExitState();
     public abstract void CheckSwitchStates();
     public abstract void InitializeSubStates();

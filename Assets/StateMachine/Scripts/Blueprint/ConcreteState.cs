@@ -17,7 +17,11 @@ public class ConcreteState : AbstractState
     }
     public override void FixedUpdateState()
     {
-
+        Debug.Log("ON FIXED UPDATE");
+    }
+    public override void LateUpdateState()
+    {
+        Debug.Log("ON LATE UPDATE");
     }
     public override void ExitState()
     {   
@@ -25,10 +29,11 @@ public class ConcreteState : AbstractState
     }
     public override void CheckSwitchStates()
     {
-        SwitchState(StateFactory.State());
+        Debug.Log("ON UPDATE");
+        //SwitchState(StateFactory.State());
     }
     public override void InitializeSubStates()
     {
-        SetSubState(StateFactory.State());
+        //SetSubState(StateFactory.State());
     }
 }
