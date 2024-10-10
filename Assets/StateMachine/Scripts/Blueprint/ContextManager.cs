@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ContextManager : MonoBehaviour
@@ -10,7 +7,7 @@ public class ContextManager : MonoBehaviour
 
     public AbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
 
-    int _cycleCount = 1;
+    int _cycleCount = 0;
     int _awakeCount = 0;
     int _onEnableCount = 0;
     int _startCount = 0;
@@ -19,6 +16,10 @@ public class ContextManager : MonoBehaviour
     int _lateUpdateCount = 0;
     int _onDisableCount = 0;
     int _onDestroyCount = 0;
+    float _startFlowTime = 0.0f;
+    float _endFlowTime = 0.0f;
+
+    PlayerInputActions _inputActions;
  
     void Awake()
     {
@@ -36,6 +37,9 @@ public class ContextManager : MonoBehaviour
     {
         _currentState.EnterState();
         _startCount++;
+
+        _inputActions = new PlayerInputActions();
+        _inputActions.Enable();
     }
 
     void FixedUpdate()
@@ -78,6 +82,15 @@ public class ContextManager : MonoBehaviour
     {
         _currentState.UpdateStates();
         _updateCount++;
+
+        if (_inputActions.PlayerActionMap.Jump.WasPressedThisFrame())
+        {
+            _startFlowTime = Time.time;
+        }
+        if (_inputActions.PlayerActionMap.Jump.WasReleasedThisFrame())
+        {
+            _endFlowTime = Time.time;
+        }
     }
 
     void LateUpdate()
@@ -101,8 +114,8 @@ public class ContextManager : MonoBehaviour
         GUILayout.Label(Time.deltaTime + " DELTA TIME");
         GUILayout.Label(Time.fixedDeltaTime + " FIXED DELTA TIME");
         GUILayout.Label(Time.time + " TIME");
-        GUILayout.Label(TimeSpan.MinValue + " TIME SPAN MINIMUN");
-        GUILayout.Label(TimeSpan.MaxValue + " TIME SPAN MAXIMUN");
+        GUILayout.Label(_startFlowTime + " START FRAME TIME");
+        GUILayout.Label(_endFlowTime + " END FRAME TIME");
     }
 
     void OnDisable()

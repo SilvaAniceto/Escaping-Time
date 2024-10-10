@@ -229,7 +229,7 @@ MonoBehaviour:
   speed: 5.5
   moveInput: 0
   facingSide: {x: 1, y: 0}
-  jumpForce: 13
+  jumpForce: 800
   groundRaySize: 0.6
   whatIsGround:
     serializedVersion: 2

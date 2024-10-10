@@ -12,6 +12,7 @@ public class Switch_Script : MonoBehaviour
     public bool isActive = false;
 
     Animator anim;
+    AudioSource audioSource;
     void Awake()
     {
         instance = this;   
@@ -20,6 +21,7 @@ public class Switch_Script : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         flame.SetActive(false);
     }
 
@@ -27,9 +29,16 @@ public class Switch_Script : MonoBehaviour
     {
         if (canClick)
             if (!isActive)
-                if (Input.GetButtonDown("Interact"))
+                if (Character_Moviment.moveInstance.Interact)
                     if (Game_Controller.controllerInstance.auxFlames > 0)
                     {
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.PlayOneShot(audioSource.clip);
+                            StopCoroutine("StopAudio");
+                            StartCoroutine("StopAudio");
+                        }
+
                         Game_Controller.controllerInstance.ChangeFlames(-1);
                         anim.SetBool("On", true);
                         Door_Script.instance.password += code;
@@ -37,6 +46,14 @@ public class Switch_Script : MonoBehaviour
                         flame.SetActive(true);
                     }
     }
+
+    IEnumerator StopAudio()
+    {
+        yield return new WaitForSeconds(audioSource.clip.length);
+
+        audioSource.Stop();
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")

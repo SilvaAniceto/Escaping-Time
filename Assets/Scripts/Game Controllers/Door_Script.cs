@@ -37,11 +37,23 @@ public class Door_Script : MonoBehaviour
     {
         if (password == 6)
         {
+            password = 0;
             canPass = true;
             anim.SetBool("Open", true);
             if (!audioSource.isPlaying)
+            {
                 audioSource.PlayOneShot(audioSource.clip);
-        }             
+                StopCoroutine("StopAudio");
+                StartCoroutine("StopAudio");
+            }
+        }  
+    }
+
+    IEnumerator StopAudio()
+    {
+        yield return new WaitForSeconds(audioSource.clip.length);
+
+        audioSource.Stop();
     }
 
     public void ResetDoor()

@@ -9,6 +9,7 @@ public class Character_Moviment : MonoBehaviour
     [Header("Movement")]
     [SerializeField] float speed;
     [HideInInspector] public float moveInput;
+    bool _jumpInput;
     bool isFlip = false;
     [HideInInspector] public Vector2 facingSide = new Vector2(1, 0);
 
@@ -16,20 +17,77 @@ public class Character_Moviment : MonoBehaviour
     [SerializeField] float jumpForce;
     [SerializeField] float groundRaySize;
     [SerializeField] LayerMask whatIsGround;
-    [HideInInspector] public bool grounded;
+    public bool grounded;
  
     Rigidbody2D rb;
     [HideInInspector] public bool isHit;
     [SerializeField] Vector3 offSet;
+    private bool _allowJump = true;
+    private bool _isJumping = false;
+
+    private PlayerInputActions _inputActions;
+    private bool Grounded
+    {
+        set
+        {
+            if (grounded == value)
+            {
+                return;
+            }
+
+            grounded = value;
+
+            if (grounded)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 0);
+                rb.drag = 0;
+                _isJumping = false;
+                _allowJump = true;
+            }
+            else if (!grounded)
+            {
+                rb.drag = 1.5f;
+                if (!_isJumping)
+                {
+                    StopCoroutine("CoyoteTime");
+                    StartCoroutine("CoyoteTime");
+                }
+            }
+        }
+    }
+
+    public bool Interact { get; set; }
+
+    public bool CountingTime
+    {
+        get
+        {
+            return moveInput != 0 ? true : false;
+        }
+    }
+
+    IEnumerator CoyoteTime()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        _allowJump = false;
+    }
 
     void Awake()
     {
         moveInstance = this;
-        rb = this.GetComponent<Rigidbody2D>();        
+        rb = this.GetComponent<Rigidbody2D>();
     }
+
+    private void Start()
+    {
+        _inputActions = new PlayerInputActions();
+        _inputActions.Enable();
+    }
+
     void Update()
     {
-        //moveInput = Input.GetAxisRaw("Horizontal");
+        ReadInputs();
 
         CheckRayCasts();
 
@@ -41,13 +99,20 @@ public class Character_Moviment : MonoBehaviour
                 rb.velocity = new Vector2(0, rb.velocity.y);
         }
 
-        //if (Input.GetButtonDown("Jump") && grounded)
-        //    Jump();        
+        if (_jumpInput && _allowJump)
+            Jump();
+    }
+
+    private void ReadInputs()
+    {
+        moveInput = _inputActions.PlayerActionMap.Move.ReadValue<float>();
+        _jumpInput = _inputActions.PlayerActionMap.Jump.WasPressedThisFrame();
+        Interact = _inputActions.PlayerActionMap.Interact.WasPressedThisFrame();
     }
 
     void CheckRayCasts()
     {
-        grounded = Physics2D.Raycast(transform.position + offSet, Vector2.down, groundRaySize, whatIsGround) || Physics2D.Raycast(transform.position - offSet, Vector2.down, groundRaySize, whatIsGround);
+        Grounded = Physics2D.Raycast(transform.position + offSet, Vector2.down, groundRaySize, whatIsGround) || Physics2D.Raycast(transform.position - offSet, Vector2.down, groundRaySize, whatIsGround);
     }
     void Move()
     {
@@ -67,7 +132,9 @@ public class Character_Moviment : MonoBehaviour
 
     void Jump()
     {
-        rb.AddForce(new Vector2(rb.velocity.x ,jumpForce), ForceMode2D.Impulse);
+        _isJumping = true;
+        _allowJump = false;
+        rb.AddForce(new Vector2(rb.velocity.x ,jumpForce), ForceMode2D.Force);
     }
 
     public void ThrowBack()

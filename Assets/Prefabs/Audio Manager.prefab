@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b53efebe41771bc419ea98a2264fdbd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _clockSource: {fileID: 4513353720531595176}
 --- !u!82 &4513353720531595176
 AudioSource:
   m_ObjectHideFlags: 0

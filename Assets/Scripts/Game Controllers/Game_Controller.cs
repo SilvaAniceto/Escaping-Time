@@ -18,7 +18,8 @@ public class Game_Controller : MonoBehaviour
     [SerializeField] Text continueText;
     [SerializeField] GameObject continuePanel;
     string sceneName;
-    
+
+    [SerializeField] private AudioSource _audioSource;
 
     TimeSpan time;
 
@@ -37,6 +38,7 @@ public class Game_Controller : MonoBehaviour
             timer = 60;
             flames = 3;
         }
+        _audioSource = Audio_Manager.instance._clockSource;
     }
 
     void Update()
@@ -45,9 +47,23 @@ public class Game_Controller : MonoBehaviour
         flameText.text = "x " + auxFlames.ToString();
         continueText.text = "x " + continueTimes.ToString();
 
-        timer -= Time.deltaTime;
-        time = TimeSpan.FromSeconds(timer);
-        clock.text = time.ToString(@"mm\:ss"); 
+        if (Character_Moviment.moveInstance.CountingTime)
+        {
+            timer -= Time.deltaTime;
+            time = TimeSpan.FromSeconds(timer);
+            clock.text = time.ToString(@"mm\:ss");
+            if (!_audioSource.isPlaying)
+            {
+                _audioSource.Play();
+            }
+        }
+        else
+        {
+            if (_audioSource.isPlaying)
+            {
+                _audioSource.Stop();
+            }
+        }
         
         if(timer < 0)
             if (continueTimes > 0)
