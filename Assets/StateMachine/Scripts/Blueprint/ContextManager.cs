@@ -19,8 +19,6 @@ public class ContextManager : MonoBehaviour
     float _startFlowTime = 0.0f;
     float _endFlowTime = 0.0f;
 
-    PlayerInputActions _inputActions;
- 
     void Awake()
     {
         _stateFactory = new StateFactory(this);
@@ -37,9 +35,6 @@ public class ContextManager : MonoBehaviour
     {
         _currentState.EnterState();
         _startCount++;
-
-        _inputActions = new PlayerInputActions();
-        _inputActions.Enable();
     }
 
     void FixedUpdate()
@@ -82,15 +77,6 @@ public class ContextManager : MonoBehaviour
     {
         _currentState.UpdateStates();
         _updateCount++;
-
-        if (_inputActions.PlayerActionMap.Jump.WasPressedThisFrame())
-        {
-            _startFlowTime = Time.time;
-        }
-        if (_inputActions.PlayerActionMap.Jump.WasReleasedThisFrame())
-        {
-            _endFlowTime = Time.time;
-        }
     }
 
     void LateUpdate()
