@@ -21,19 +21,27 @@ public abstract class CharacterAbstractState
     }
 
     public abstract void EnterState();
-    public abstract void UpdateState();
     public abstract void FixedUpdateState();
+    public abstract void UpdateState();
     public abstract void LateUpdateState();
     public abstract void ExitState();
     public abstract void CheckSwitchStates();
     public abstract void InitializeSubStates();
+    public void FixedUpdateStates()
+    {
+        FixedUpdateState();
+
+        if (_currentSubState != null)
+        {
+            _currentSubState.FixedUpdateState();
+        }
+    }
     public void UpdateStates()
     {
         UpdateState();
 
         if (_currentSubState != null)
         {
-            Debug.Log("UPDATING SUB STATE");
             _currentSubState.UpdateStates();
         }
     }
@@ -56,33 +64,16 @@ public abstract class CharacterAbstractState
     {
         _currentSuperState = newSuperState;
     }
-    public void SetSubState(CharacterAbstractState newSubState)
+    protected void SetSubState(CharacterAbstractState newSubState)
     {
         _currentSubState = newSubState;
         newSubState.SetSuperState(this);
+        _currentSubState.EnterState();
     }
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-
-    }
-    public void OnCollisionStay(Collision collision)
-    {
-
-    }
-    public void OnCollisionExit2D(Collision2D collision)
-    {
-
-    }
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-
-    }
-    public void OnTriggerStay2D(Collider2D collision)
-    {
-
-    }
-    public void OnTriggerExit2D(Collider2D collision)
-    {
-
-    }
-}
+    public abstract void OnCollisionEnter2D(Collision2D collision);
+    public abstract void OnCollisionStay(Collision collision);
+    public abstract void OnCollisionExit2D(Collision2D collision);
+    public abstract void OnTriggerEnter2D(Collider2D collision);
+    public abstract void OnTriggerStay2D(Collider2D collision);
+    public abstract void OnTriggerExit2D(Collider2D collision);
+}          

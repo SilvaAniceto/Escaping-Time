@@ -10,16 +10,15 @@ public class CharacterGroundedState : CharacterAbstractState
     public override void EnterState()
     {
         InitializeSubStates();
+        PlayerContextManager.Rigidbody.gravityScale = 1;
     }
     public override void UpdateState()
     {
-        Debug.Log("GROUNDED STATE");
         CheckSwitchStates();
-
     }
     public override void FixedUpdateState()
     {
-
+        Debug.Log("GROUNDED");
     }
     public override void LateUpdateState()
     {
@@ -31,15 +30,52 @@ public class CharacterGroundedState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (Mathf.Abs(PlayerContextManager.MoveInput) == 0f)
+        if (PlayerContextManager.MoveInput != Vector3.zero)
         {
-            SwitchState(PlayerStateFactory.IdleState());
+            SetSubState(PlayerStateFactory.MoveState());
+        }
+        else
+        {
+            SetSubState(PlayerStateFactory.IdleState());
+        }
+
+        if (PlayerContextManager.JumpInput)
+        {
+            SwitchState(PlayerStateFactory.UngroundedState());
         }
     }
     public override void InitializeSubStates()
     {
-        Debug.Log("GROUNDED INITIALIZED");
-        SetSubState(PlayerStateFactory.IdleState());
-        SetSubState(PlayerStateFactory.MoveState());
+
+    }
+
+    public override void OnCollisionEnter2D(Collision2D collision)
+    {
+        
+    }
+
+    public override void OnCollisionStay(Collision collision)
+    {
+       
+    }
+
+    public override void OnCollisionExit2D(Collision2D collision)
+    {
+        
+    }
+
+    public override void OnTriggerEnter2D(Collider2D collision)
+    {
+       
+    }
+
+    public override void OnTriggerStay2D(Collider2D collision)
+    {
+        
+    }
+
+    public override void OnTriggerExit2D(Collider2D collision)
+    {
+        
     }
 }

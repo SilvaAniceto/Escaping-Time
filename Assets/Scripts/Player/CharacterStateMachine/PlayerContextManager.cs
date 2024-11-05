@@ -7,8 +7,19 @@ public class PlayerContextManager : MonoBehaviour
 
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     private PlayerInputActions PlayerInputActions { get; set; }
-    public float MoveInput { get; private set; }
+    public Vector3 MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>() * Mathf.PI * Vector3.right * Time.deltaTime; }
+    public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.IsPressed(); }
+    public Quaternion TargetRotation
+    {
+        get
+        {
+            float angle = Mathf.Atan2(0, MoveInput.x) * Mathf.Rad2Deg;
+            return Quaternion.AngleAxis(angle, Vector3.up);
+        }
+    }
+    public Rigidbody2D Rigidbody { get ; private set; }
 
+    #region INITIALIZATION
     void Awake()
     {
         _characterStateFactory = new CharacterStateFactory(this);
@@ -17,7 +28,7 @@ public class PlayerContextManager : MonoBehaviour
 
     void OnEnable()
     {
-
+        Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     void Start()
@@ -27,12 +38,16 @@ public class PlayerContextManager : MonoBehaviour
 
         _currentState.EnterState();
     }
+    #endregion
 
+    #region PHYSICS FRAME
     void FixedUpdate()
     {
-        _currentState.FixedUpdateState();
+        _currentState.FixedUpdateStates();
     }
+    #endregion
 
+    #region PHYSICS COLLISION
     void OnCollisionEnter2D(Collision2D collision)
     {
         _currentState.OnCollisionEnter2D(collision);
@@ -62,26 +77,27 @@ public class PlayerContextManager : MonoBehaviour
     {
         _currentState.OnTriggerExit2D(collision);
     }
-    void ReadPlayerActions()
-    {
-        MoveInput = PlayerInputActions.PlayerActionMap.Move.ReadValue<float>();
-    }
+    #endregion
+
+    #region DELTA TIME    
     void Update()
     {
-        ReadPlayerActions();
         _currentState.UpdateStates();
     }
-
     void LateUpdate()
     {
         _currentState.LateUpdateState();
     }
+    #endregion
 
+    #region RENDERING 
     void OnGUI()
     {
         
     }
+    #endregion
 
+    #region DECOMMISSIONING
     void OnDisable()
     {
 
@@ -91,4 +107,5 @@ public class PlayerContextManager : MonoBehaviour
     {
 
     }
+    #endregion
 }

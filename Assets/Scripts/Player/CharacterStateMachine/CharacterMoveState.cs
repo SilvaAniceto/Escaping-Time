@@ -13,13 +13,15 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        Debug.Log("MOVE STATE");
         CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {
+        PlayerContextManager.Rigidbody.MovePosition(new Vector3(PlayerContextManager.Rigidbody.position.x, 0, 0) + PlayerContextManager.MoveInput);
 
+        PlayerContextManager.transform.rotation = PlayerContextManager.TargetRotation;
     }
+    
     public override void LateUpdateState()
     {
 
@@ -30,13 +32,39 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (Mathf.Abs(PlayerContextManager.MoveInput) == 0f)
-        {
-            SwitchState(PlayerStateFactory.IdleState());
-        }
+        
     }
     public override void InitializeSubStates()
     {
         
+    }
+    public override void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
+
+    public override void OnCollisionStay(Collision collision)
+    {
+
+    }
+
+    public override void OnCollisionExit2D(Collision2D collision)
+    {
+
+    }
+
+    public override void OnTriggerEnter2D(Collider2D collision)
+    {
+
+    }
+
+    public override void OnTriggerStay2D(Collider2D collision)
+    {
+
+    }
+
+    public override void OnTriggerExit2D(Collider2D collision)
+    {
+
     }
 }
