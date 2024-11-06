@@ -28,11 +28,12 @@ public class CharacterUngroundedState : CharacterAbstractState
     }
     public override void ExitState()
     {
-
+        PlayerContextManager.PerformingJump = false;
+        PlayerContextManager.Falling = false;
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.Rigidbody.velocity.y < 0)
+        if (PlayerContextManager.Rigidbody.velocity.y < 0 && !PlayerContextManager.Falling)
         {
             SetSubState(PlayerStateFactory.FallState());
         }

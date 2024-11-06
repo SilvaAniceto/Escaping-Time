@@ -4,10 +4,12 @@ public class PlayerContextManager : MonoBehaviour
 {
     private CharacterAbstractState _currentState;
     private CharacterStateFactory _characterStateFactory;
+    private Animator _characterAnimator;
 
-    public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     private PlayerInputActions PlayerInputActions { get; set; }
-    public Rigidbody2D Rigidbody { get ; private set; }
+    public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
+    public Animator CharacterAnimator { get => _characterAnimator; }
+    public Rigidbody2D Rigidbody { get; private set; }
     public Quaternion TargetRotation
     {
         get
@@ -18,13 +20,21 @@ public class PlayerContextManager : MonoBehaviour
     }
     public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>() * 4.6f; }
     public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }
-    public float JumpSpeed { get => 290f; }
+    public float JumpSpeed { get => 6.28f; }
     public bool PerformingJump { get; set; }
+    public bool Falling { get; set; }
     public float CoyoteTime { get; set; }
+
+    public const string IDLE_ANIMATION = "Idle";
+    public const string RUN_ANIMATION = "Run";
+    public const string JUMP_ANIMATION = "Jump";
+    public const string FALL_ANIMATION = "Fall";
+    public const string HIT_ANIMATION = "Hit";
 
     #region INITIALIZATION
     void Awake()
     {
+        _characterAnimator = GetComponent<Animator>();
         _characterStateFactory = new CharacterStateFactory(this);
         _currentState = _characterStateFactory.GroundedState();
     }

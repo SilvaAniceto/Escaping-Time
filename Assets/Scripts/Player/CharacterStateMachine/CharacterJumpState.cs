@@ -14,14 +14,16 @@ public class CharacterJumpState : CharacterAbstractState
             return;
         }
 
-        PlayerContextManager.Rigidbody.gravityScale = 0.6f;
-        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, PlayerContextManager.JumpSpeed), ForceMode2D.Force);
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.JUMP_ANIMATION);
+
+        PlayerContextManager.Rigidbody.gravityScale = 1f;
+        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, PlayerContextManager.JumpSpeed), ForceMode2D.Impulse);
 
         InitializeSubStates();
     }
     public override void UpdateState()
     {
-        PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, Mathf.PI, Time.deltaTime);
+        PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, 3.14f, Time.deltaTime);
 
         CheckSwitchStates();
     }

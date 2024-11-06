@@ -9,7 +9,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        PlayerContextManager.CoyoteTime = 0.1f;
+        PlayerContextManager.CoyoteTime = 0.15f;
 
         InitializeSubStates();
     }

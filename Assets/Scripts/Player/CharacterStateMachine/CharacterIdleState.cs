@@ -9,6 +9,8 @@ public class CharacterIdleState : CharacterAbstractState
 
     public override void EnterState()
     {
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.IDLE_ANIMATION);
+
         PlayerContextManager.Rigidbody.velocity = new Vector2(0, PlayerContextManager.Rigidbody.velocity.y);
     }
     public override void UpdateState()

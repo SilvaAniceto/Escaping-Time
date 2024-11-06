@@ -9,7 +9,10 @@ public class CharacterMoveState : CharacterAbstractState
 
     public override void EnterState()
     {
-        
+        if (!PlayerContextManager.PerformingJump && !PlayerContextManager.Falling)
+        {
+            PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.RUN_ANIMATION);
+        }
     }
     public override void UpdateState()
     {

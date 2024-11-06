@@ -14,6 +14,9 @@ public class CharacterFallState : CharacterAbstractState
             PlayerContextManager.Rigidbody.gravityScale = 3.14f;
         }
 
+        PlayerContextManager.Falling = true;
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
+
         InitializeSubStates();
     }
     public override void UpdateState()
@@ -30,7 +33,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void ExitState()
     {
-
+        
     }
     public override void CheckSwitchStates()
     {
