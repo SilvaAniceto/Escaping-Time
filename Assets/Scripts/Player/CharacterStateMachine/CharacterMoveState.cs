@@ -13,13 +13,14 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void UpdateState()
     {
+        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.MoveInput, PlayerContextManager.Rigidbody.velocity.y);
+
+        PlayerContextManager.transform.rotation = PlayerContextManager.TargetRotation;
         CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {
-        PlayerContextManager.Rigidbody.MovePosition(new Vector3(PlayerContextManager.Rigidbody.position.x, 0, 0) + PlayerContextManager.MoveInput);
-
-        PlayerContextManager.transform.rotation = PlayerContextManager.TargetRotation;
+       
     }
     
     public override void LateUpdateState()

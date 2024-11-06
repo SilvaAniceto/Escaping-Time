@@ -66,6 +66,11 @@ public abstract class CharacterAbstractState
     }
     protected void SetSubState(CharacterAbstractState newSubState)
     {
+        if (_currentSubState != null)
+        {
+            _currentSubState.ExitState();
+        }
+
         _currentSubState = newSubState;
         newSubState.SetSuperState(this);
         _currentSubState.EnterState();

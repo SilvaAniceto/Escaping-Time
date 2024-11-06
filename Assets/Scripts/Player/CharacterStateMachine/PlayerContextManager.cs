@@ -7,17 +7,20 @@ public class PlayerContextManager : MonoBehaviour
 
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     private PlayerInputActions PlayerInputActions { get; set; }
-    public Vector3 MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>() * Mathf.PI * Vector3.right * Time.deltaTime; }
-    public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.IsPressed(); }
+    public Rigidbody2D Rigidbody { get ; private set; }
     public Quaternion TargetRotation
     {
         get
         {
-            float angle = Mathf.Atan2(0, MoveInput.x) * Mathf.Rad2Deg;
+            float angle = Mathf.Atan2(0, MoveInput) * Mathf.Rad2Deg;
             return Quaternion.AngleAxis(angle, Vector3.up);
         }
     }
-    public Rigidbody2D Rigidbody { get ; private set; }
+    public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>() * 4.6f; }
+    public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }
+    public float JumpSpeed { get => 290f; }
+    public bool PerformingJump { get; set; }
+    public float CoyoteTime { get; set; }
 
     #region INITIALIZATION
     void Awake()

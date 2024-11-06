@@ -9,7 +9,7 @@ public class CharacterIdleState : CharacterAbstractState
 
     public override void EnterState()
     {
-        
+        PlayerContextManager.Rigidbody.velocity = new Vector2(0, PlayerContextManager.Rigidbody.velocity.y);
     }
     public override void UpdateState()
     {
@@ -17,7 +17,7 @@ public class CharacterIdleState : CharacterAbstractState
     }
     public override void FixedUpdateState()
     {
-        Debug.Log("IDLE");
+        
     }
     public override void LateUpdateState()
     {

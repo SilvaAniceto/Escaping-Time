@@ -9,8 +9,9 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
+        PlayerContextManager.CoyoteTime = 0.1f;
+
         InitializeSubStates();
-        PlayerContextManager.Rigidbody.gravityScale = 1;
     }
     public override void UpdateState()
     {
@@ -18,7 +19,7 @@ public class CharacterGroundedState : CharacterAbstractState
     }
     public override void FixedUpdateState()
     {
-        Debug.Log("GROUNDED");
+        
     }
     public override void LateUpdateState()
     {
@@ -30,7 +31,7 @@ public class CharacterGroundedState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.MoveInput != Vector3.zero)
+        if (PlayerContextManager.MoveInput != 0)
         {
             SetSubState(PlayerStateFactory.MoveState());
         }
@@ -41,6 +42,8 @@ public class CharacterGroundedState : CharacterAbstractState
 
         if (PlayerContextManager.JumpInput)
         {
+            PlayerContextManager.PerformingJump = true;
+
             SwitchState(PlayerStateFactory.UngroundedState());
         }
     }
@@ -76,6 +79,6 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void OnTriggerExit2D(Collider2D collision)
     {
-        
+        SwitchState(PlayerStateFactory.UngroundedState());
     }
 }

@@ -9,15 +9,25 @@ public class CharacterJumpState : CharacterAbstractState
 
     public override void EnterState()
     {
+        if (!PlayerContextManager.PerformingJump)
+        {
+            return;
+        }
+
+        PlayerContextManager.Rigidbody.gravityScale = 0.6f;
+        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, PlayerContextManager.JumpSpeed), ForceMode2D.Force);
+
         InitializeSubStates();
     }
     public override void UpdateState()
     {
+        PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, Mathf.PI, Time.deltaTime);
+
         CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {
-        PlayerContextManager.Rigidbody.MovePosition((new Vector3(PlayerContextManager.Rigidbody.position.x, 2, 0)) * Time.deltaTime);
+        
     }
     public override void LateUpdateState()
     {
@@ -25,17 +35,13 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void ExitState()
     {
-
+        PlayerContextManager.PerformingJump = false;
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.MoveInput != Vector3.zero)
+        if (PlayerContextManager.MoveInput != 0)
         {
             SetSubState(PlayerStateFactory.MoveState());
-        }
-        else
-        {
-            SetSubState(PlayerStateFactory.IdleState());
         }
     }
     public override void InitializeSubStates()
@@ -59,7 +65,7 @@ public class CharacterJumpState : CharacterAbstractState
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
-
+        
     }
 
     public override void OnTriggerStay2D(Collider2D collision)
