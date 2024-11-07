@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerContextManager : MonoBehaviour
 {
+    [SerializeField] private LayerMask _wallLayer;
+
     private CharacterAbstractState _currentState;
     private CharacterStateFactory _characterStateFactory;
     private Animator _characterAnimator;
@@ -9,21 +11,12 @@ public class PlayerContextManager : MonoBehaviour
     private PlayerInputActions PlayerInputActions { get; set; }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public Animator CharacterAnimator { get => _characterAnimator; }
-    public Rigidbody2D Rigidbody { get; private set; }
-    public Quaternion TargetRotation
-    {
-        get
-        {
-            float angle = Mathf.Atan2(0, MoveInput) * Mathf.Rad2Deg;
-            return Quaternion.AngleAxis(angle, Vector3.up);
-        }
-    }
-    public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>() * 4.6f; }
+    public Rigidbody2D Rigidbody { get; private set; }    
+    public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(); }
+    public bool IsWallColliding { get => Physics2D.Raycast(transform.position, transform.right, 0.3f, _wallLayer); }
     public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }
-    public float JumpSpeed { get => 6.28f; }
     public bool PerformingJump { get; set; }
     public bool Falling { get; set; }
-    public float CoyoteTime { get; set; }
 
     public const string IDLE_ANIMATION = "Idle";
     public const string RUN_ANIMATION = "Run";
@@ -106,7 +99,7 @@ public class PlayerContextManager : MonoBehaviour
     #region RENDERING 
     void OnGUI()
     {
-        
+
     }
     #endregion
 

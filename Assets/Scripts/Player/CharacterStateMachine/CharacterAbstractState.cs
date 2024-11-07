@@ -81,4 +81,18 @@ public abstract class CharacterAbstractState
     public abstract void OnTriggerEnter2D(Collider2D collision);
     public abstract void OnTriggerStay2D(Collider2D collision);
     public abstract void OnTriggerExit2D(Collider2D collision);
+    protected virtual void ProccessJumpInput(bool actionInput)
+    {
+
+    }
+    protected virtual void ProccessMoveInput(float moveInput)
+    {
+        PlayerContextManager.transform.rotation = TargetRotation(moveInput);
+
+        Quaternion TargetRotation(float moveInput)
+        {
+            float angle = Mathf.Atan2(0, moveInput) * Mathf.Rad2Deg;
+            return Quaternion.AngleAxis(angle, Vector3.up);
+        }
+    }
 }          

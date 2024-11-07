@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CharacterJumpState : CharacterAbstractState
 {
+    private const float _jumpSpeed = 6.28f;
+
     public CharacterJumpState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
         IsRootState = false;
@@ -9,15 +11,10 @@ public class CharacterJumpState : CharacterAbstractState
 
     public override void EnterState()
     {
-        if (!PlayerContextManager.PerformingJump)
-        {
-            return;
-        }
-
         PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.JUMP_ANIMATION);
 
         PlayerContextManager.Rigidbody.gravityScale = 1f;
-        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, PlayerContextManager.JumpSpeed), ForceMode2D.Impulse);
+        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, _jumpSpeed), ForceMode2D.Impulse);
 
         InitializeSubStates();
     }
@@ -41,10 +38,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.MoveInput != 0)
-        {
-            SetSubState(PlayerStateFactory.MoveState());
-        }
+        ProccessMoveInput(PlayerContextManager.MoveInput);
     }
     public override void InitializeSubStates()
     {
@@ -78,5 +72,14 @@ public class CharacterJumpState : CharacterAbstractState
     public override void OnTriggerExit2D(Collider2D collision)
     {
 
+    }
+    protected override void ProccessMoveInput(float moveInput)
+    {
+        base.ProccessMoveInput(moveInput);
+
+        if (moveInput != 0)
+        {
+            SetSubState(PlayerStateFactory.MoveState());
+        }
     }
 }

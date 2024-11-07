@@ -11,7 +11,7 @@ public class CharacterFallState : CharacterAbstractState
     {
         if (!PlayerContextManager.PerformingJump)
         {
-            PlayerContextManager.Rigidbody.gravityScale = 3.14f;
+            PlayerContextManager.Rigidbody.gravityScale = 4.71f;
         }
 
         PlayerContextManager.Falling = true;
@@ -37,10 +37,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.MoveInput != 0)
-        {
-            SetSubState(PlayerStateFactory.MoveState());
-        }
+        ProccessMoveInput(PlayerContextManager.MoveInput);
     }
     public override void InitializeSubStates()
     {
@@ -75,5 +72,14 @@ public class CharacterFallState : CharacterAbstractState
     public override void OnTriggerExit2D(Collider2D collision)
     {
 
+    }
+    protected override void ProccessMoveInput(float moveInput)
+    {
+        base.ProccessMoveInput(moveInput);
+
+        if (moveInput != 0)
+        {
+            SetSubState(PlayerStateFactory.MoveState());
+        }
     }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CharacterUngroundedState : CharacterAbstractState
 {
+    private float _coyoteTime;
+
     public CharacterUngroundedState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
         IsRootState = true;
@@ -9,12 +11,14 @@ public class CharacterUngroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
+        _coyoteTime = 0.15f;
+
         InitializeSubStates();
     }
     public override void UpdateState()
     {
-        PlayerContextManager.CoyoteTime -= Time.deltaTime;
-        PlayerContextManager.CoyoteTime = Mathf.Clamp01(PlayerContextManager.CoyoteTime);
+        _coyoteTime -= Time.deltaTime;
+        _coyoteTime = Mathf.Clamp01(_coyoteTime);
 
         CheckSwitchStates();
     }
@@ -38,18 +42,14 @@ public class CharacterUngroundedState : CharacterAbstractState
             SetSubState(PlayerStateFactory.FallState());
         }
 
-        if (PlayerContextManager.JumpInput && PlayerContextManager.CoyoteTime > 0)
-        {
-            PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.Rigidbody.velocity.x, 0);
-
-            PlayerContextManager.PerformingJump = true;
-
-            SetSubState(PlayerStateFactory.JumpState());
-        }
+        ProccessJumpInput(PlayerContextManager.JumpInput);
     }
     public override void InitializeSubStates()
     {
-        SetSubState(PlayerStateFactory.JumpState());
+        if (PlayerContextManager.PerformingJump)
+        {
+            SetSubState(PlayerStateFactory.JumpState());            
+        }
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {
@@ -79,5 +79,17 @@ public class CharacterUngroundedState : CharacterAbstractState
     public override void OnTriggerExit2D(Collider2D collision)
     {
 
+    }
+
+    protected override void ProccessJumpInput(bool actioninput)
+    {
+        if (actioninput && _coyoteTime > 0)
+        {
+            PlayerContextManager.PerformingJump = true;
+
+            PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.Rigidbody.velocity.x, 0);
+
+            SetSubState(PlayerStateFactory.JumpState());
+        }
     }
 }

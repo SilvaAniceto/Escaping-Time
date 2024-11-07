@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CharacterMoveState : CharacterAbstractState
 {
+    private const float _moveSpeed = 4.71f;
+
     public CharacterMoveState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
         IsRootState = false;
@@ -16,9 +18,10 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.MoveInput, PlayerContextManager.Rigidbody.velocity.y);
+        float moveInput = PlayerContextManager.MoveInput;
 
-        PlayerContextManager.transform.rotation = PlayerContextManager.TargetRotation;
+        PlayerContextManager.Rigidbody.velocity = new Vector2(moveInput * _moveSpeed, PlayerContextManager.Rigidbody.velocity.y);
+
         CheckSwitchStates();
     }
     public override void FixedUpdateState()

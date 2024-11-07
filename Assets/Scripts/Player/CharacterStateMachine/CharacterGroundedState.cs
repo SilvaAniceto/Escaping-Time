@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CharacterGroundedState : CharacterAbstractState
@@ -9,44 +10,36 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        PlayerContextManager.CoyoteTime = 0.15f;
-
         InitializeSubStates();
     }
+
     public override void UpdateState()
     {
         CheckSwitchStates();
     }
+
     public override void FixedUpdateState()
     {
         
     }
+
     public override void LateUpdateState()
     {
 
     }
+
     public override void ExitState()
     {
 
     }
+
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.MoveInput != 0)
-        {
-            SetSubState(PlayerStateFactory.MoveState());
-        }
-        else
-        {
-            SetSubState(PlayerStateFactory.IdleState());
-        }
+        ProccessMoveInput(PlayerContextManager.MoveInput);
 
-        if (PlayerContextManager.JumpInput)
-        {
-            PlayerContextManager.PerformingJump = true;
-
-            SwitchState(PlayerStateFactory.UngroundedState());
-        }
+        ProccessJumpInput(PlayerContextManager.JumpInput);
     }
+
     public override void InitializeSubStates()
     {
 
@@ -69,7 +62,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
-       
+        
     }
 
     public override void OnTriggerStay2D(Collider2D collision)
@@ -80,5 +73,29 @@ public class CharacterGroundedState : CharacterAbstractState
     public override void OnTriggerExit2D(Collider2D collision)
     {
         SwitchState(PlayerStateFactory.UngroundedState());
+    }
+
+    protected override void ProccessJumpInput(bool actionInput)
+    {
+        if (actionInput)
+        {
+            PlayerContextManager.PerformingJump = true;
+
+            SwitchState(PlayerStateFactory.UngroundedState());
+        }
+    }
+
+    protected override void ProccessMoveInput(float moveInput)
+    {
+        base.ProccessMoveInput(moveInput);
+
+        if (moveInput != 0 && !PlayerContextManager.IsWallColliding)
+        {
+            SetSubState(PlayerStateFactory.MoveState());
+        }
+        else
+        {
+            SetSubState(PlayerStateFactory.IdleState());
+        }
     }
 }
