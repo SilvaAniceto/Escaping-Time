@@ -62,20 +62,23 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
+       
+    }
+
+    public override void OnTriggerStay2D(Collider2D collision)
+    {
         if (collision.TryGetComponent(out IInteractable interactable))
         {
             interactable.SetInteraction();
         }
     }
 
-    public override void OnTriggerStay2D(Collider2D collision)
-    {
-        
-    }
-
     public override void OnTriggerExit2D(Collider2D collision)
     {
-        SwitchState(PlayerStateFactory.UngroundedState());
+        if (!PlayerContextManager.PerformingJump)
+        {
+            SwitchState(PlayerStateFactory.UngroundedState());
+        }
     }
 
     protected override void ProccessJumpInput(bool actionInput)

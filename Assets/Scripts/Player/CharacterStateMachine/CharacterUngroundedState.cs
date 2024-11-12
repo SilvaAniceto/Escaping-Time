@@ -37,7 +37,7 @@ public class CharacterUngroundedState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.Rigidbody.velocity.y < 0 && !PlayerContextManager.Falling)
+        if (PlayerContextManager.Rigidbody.velocity.y <= 0 && !PlayerContextManager.Falling)
         {
             SetSubState(PlayerStateFactory.FallState());
         }
@@ -86,6 +86,7 @@ public class CharacterUngroundedState : CharacterAbstractState
         if (actioninput && _coyoteTime > 0)
         {
             PlayerContextManager.PerformingJump = true;
+            PlayerContextManager.Falling = false;
 
             PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.Rigidbody.velocity.x, 0);
 

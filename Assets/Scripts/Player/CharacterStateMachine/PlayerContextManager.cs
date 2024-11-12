@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerContextManager : MonoBehaviour
 {
     [SerializeField] private LayerMask _wallLayer;
+    [SerializeField] private BoxCollider2D _groundChecker;
 
     private CharacterAbstractState _currentState;
     private CharacterStateFactory _characterStateFactory;
@@ -12,6 +13,7 @@ public class PlayerContextManager : MonoBehaviour
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public Animator CharacterAnimator { get => _characterAnimator; }
     public Rigidbody2D Rigidbody { get; private set; } 
+    public BoxCollider2D GroundChecker { get => _groundChecker; }
     public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(); }
     public bool IsWallColliding { get => Physics2D.Raycast(transform.position, transform.right, 0.3f, _wallLayer); }
     public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }

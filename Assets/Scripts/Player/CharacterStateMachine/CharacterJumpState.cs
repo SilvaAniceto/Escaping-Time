@@ -11,6 +11,8 @@ public class CharacterJumpState : CharacterAbstractState
 
     public override void EnterState()
     {
+        PlayerContextManager.GroundChecker.enabled = false;
+
         PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.JUMP_ANIMATION);
 
         PlayerContextManager.Rigidbody.gravityScale = 1f;
@@ -34,6 +36,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void ExitState()
     {
+        PlayerContextManager.GroundChecker.enabled = true;
         PlayerContextManager.PerformingJump = false;
     }
     public override void CheckSwitchStates()
