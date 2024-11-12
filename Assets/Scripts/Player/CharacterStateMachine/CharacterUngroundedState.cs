@@ -56,7 +56,7 @@ public class CharacterUngroundedState : CharacterAbstractState
         
     }
 
-    public override void OnCollisionStay(Collision collision)
+    public override void OnCollisionStay(Collision2D collision)
     {
 
     }
@@ -78,7 +78,7 @@ public class CharacterUngroundedState : CharacterAbstractState
 
     public override void OnTriggerExit2D(Collider2D collision)
     {
-
+        
     }
 
     protected override void ProccessJumpInput(bool actioninput)

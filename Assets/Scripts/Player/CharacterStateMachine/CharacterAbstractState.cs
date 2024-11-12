@@ -76,7 +76,7 @@ public abstract class CharacterAbstractState
         _currentSubState.EnterState();
     }
     public abstract void OnCollisionEnter2D(Collision2D collision);
-    public abstract void OnCollisionStay(Collision collision);
+    public abstract void OnCollisionStay(Collision2D collision);
     public abstract void OnCollisionExit2D(Collision2D collision);
     public abstract void OnTriggerEnter2D(Collider2D collision);
     public abstract void OnTriggerStay2D(Collider2D collision);

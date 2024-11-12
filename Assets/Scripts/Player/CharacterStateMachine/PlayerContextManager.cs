@@ -11,7 +11,7 @@ public class PlayerContextManager : MonoBehaviour
     private PlayerInputActions PlayerInputActions { get; set; }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public Animator CharacterAnimator { get => _characterAnimator; }
-    public Rigidbody2D Rigidbody { get; private set; }    
+    public Rigidbody2D Rigidbody { get; private set; } 
     public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(); }
     public bool IsWallColliding { get => Physics2D.Raycast(transform.position, transform.right, 0.3f, _wallLayer); }
     public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }
@@ -59,7 +59,7 @@ public class PlayerContextManager : MonoBehaviour
         _currentState.OnCollisionEnter2D(collision);
     }
 
-    void OnCollisionStay(Collision collision)
+    void OnCollisionStay2D(Collision2D collision)
     {
         _currentState.OnCollisionStay(collision);
     }

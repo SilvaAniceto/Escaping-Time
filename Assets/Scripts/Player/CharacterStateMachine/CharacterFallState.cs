@@ -49,7 +49,7 @@ public class CharacterFallState : CharacterAbstractState
         
     }
 
-    public override void OnCollisionStay(Collision collision)
+    public override void OnCollisionStay(Collision2D collision)
     {
 
     }

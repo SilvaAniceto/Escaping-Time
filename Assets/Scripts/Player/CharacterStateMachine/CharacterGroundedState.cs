@@ -30,7 +30,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void ExitState()
     {
-
+        
     }
 
     public override void CheckSwitchStates()
@@ -50,7 +50,7 @@ public class CharacterGroundedState : CharacterAbstractState
         
     }
 
-    public override void OnCollisionStay(Collision collision)
+    public override void OnCollisionStay(Collision2D collision)
     {
        
     }
@@ -62,7 +62,10 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            interactable.SetInteraction();
+        }
     }
 
     public override void OnTriggerStay2D(Collider2D collision)
