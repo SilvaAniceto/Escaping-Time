@@ -12,12 +12,13 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void EnterState()
     {
+        PlayerContextManager.GroundChecker.enabled = true;
 
         PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.HIT_ANIMATION);
 
         PlayerContextManager.Rigidbody.velocity = Vector3.zero;
 
-        PlayerContextManager.Rigidbody.AddForce(PlayerContextManager.transform.up * 6.28f, ForceMode2D.Impulse);
+        PlayerContextManager.Rigidbody.AddForce(PlayerContextManager.transform.up * 9.42f, ForceMode2D.Impulse);
     }
     public override void UpdateState()
     {
