@@ -106,15 +106,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c92f6dad31ba34a478e5781139516ae3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  _groundCheckerLayer:
-    serializedVersion: 2
-    m_Bits: 128
   _wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  _groundChecker: {fileID: 8846208023403040539}
 --- !u!50 &2945533103165220578
 Rigidbody2D:
   serializedVersion: 4
@@ -130,7 +125,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 0.6
+  m_GravityScale: 4.71
   m_Material: {fileID: 6200000, guid: d210bef8639d1c14fa49b7d8f262b8f7, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1

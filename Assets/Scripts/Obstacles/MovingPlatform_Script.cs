@@ -31,19 +31,19 @@ public class MovingPlatform_Script : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.fixedDeltaTime);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            collision.collider.transform.SetParent(transform);
-        }
-    }
+    //void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.tag == "Player")
+    //    {
+    //        collision.collider.transform.SetParent(transform);
+    //    }
+    //}
 
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            collision.collider.transform.SetParent(null);
-        }
-    }
+    //void OnCollisionExit2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.tag == "Player")
+    //    {
+    //        collision.collider.transform.SetParent(null);
+    //    }
+    //}
 }

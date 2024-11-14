@@ -37,7 +37,11 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        ProccessMoveInput(PlayerContextManager.MoveInput);
+        if (!PlayerContextManager.Damaged)
+        {
+            ProccessMoveInput(PlayerContextManager.MoveInput);            
+        }
+
     }
     public override void InitializeSubStates()
     {

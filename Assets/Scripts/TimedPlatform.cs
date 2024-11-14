@@ -10,10 +10,13 @@ public class TimedPlatform : MonoBehaviour, IInteractable
     private BoxCollider2D _boxCollider;
     private SpriteRenderer _spriteRenderer;
 
+    public List<EInteractionType> Interactions { get; set; } = new List<EInteractionType>();
     public bool Activated { get; set; }
 
     private void Awake()
     {
+        Interactions.Add(EInteractionType.Stay);
+
         _boxCollider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
@@ -29,8 +32,8 @@ public class TimedPlatform : MonoBehaviour, IInteractable
         _spriteRenderer.size = new Vector2(_tileCount, 1);
     }
 
-    public void SetInteraction()
-    {
+    public void SetInteraction(GameObject p_gameObject, EInteractionType p_interactionType)
+    {        
         if (Activated)
         {
             return;

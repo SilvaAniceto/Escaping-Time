@@ -19,6 +19,7 @@ public class PlayerContextManager : MonoBehaviour
     public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }
     public bool PerformingJump { get; set; }
     public bool Falling { get; set; }
+    public bool Damaged { get; set; }
 
     public const string IDLE_ANIMATION = "Idle";
     public const string RUN_ANIMATION = "Run";

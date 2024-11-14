@@ -7,7 +7,8 @@ public enum ECharacterState
     Idle,
     Moving,
     Jumping,
-    Falling
+    Falling,
+    Damaged
 }
 
 public class CharacterStateFactory
@@ -24,6 +25,7 @@ public class CharacterStateFactory
         _states[ECharacterState.Moving] = new CharacterMoveState(_contextManager, this);
         _states[ECharacterState.Jumping] = new CharacterJumpState(_contextManager, this);
         _states[ECharacterState.Falling] = new CharacterFallState(_contextManager, this);
+        _states[ECharacterState.Damaged] = new CharacterDamagedState(_contextManager, this);
     }
 
     public CharacterGroundedState GroundedState()
@@ -49,5 +51,10 @@ public class CharacterStateFactory
     public CharacterFallState FallState()
     {
         return (CharacterFallState)_states[ECharacterState.Falling];
+    }
+
+    public CharacterDamagedState DamagedState()
+    {
+        return (CharacterDamagedState)_states[ECharacterState.Damaged];
     }
 }
