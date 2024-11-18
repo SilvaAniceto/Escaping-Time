@@ -9,6 +9,8 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
+        PlayerContextManager.WaitingInteraction = false;
+
         InitializeSubStates();
     }
 
@@ -45,7 +47,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
         if (PlayerContextManager.WaitingInteraction)
         {
-            SetSubState(PlayerStateFactory.InteractionState());
+            SwitchState(PlayerStateFactory.InteractionState());
         }
     }
 

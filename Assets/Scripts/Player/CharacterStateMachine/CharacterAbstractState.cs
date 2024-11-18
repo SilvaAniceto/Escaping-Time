@@ -34,7 +34,7 @@ public abstract class CharacterAbstractState
 
         if (_currentSubState != null)
         {
-            _currentSubState.FixedUpdateState();
+            _currentSubState.FixedUpdateStates();
         }
     }
     public void UpdateStates()

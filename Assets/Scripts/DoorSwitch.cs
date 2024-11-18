@@ -15,6 +15,7 @@ public class DoorSwitch : MonoBehaviour, IInteractable
     private void Awake()
     {
         Interactions.Add(EInteractionType.TriggerStay);
+        Interactions.Add(EInteractionType.TriggerExit);
 
         _collider = GetComponent<Collider2D>();
         _animator = GetComponent<Animator>();

@@ -13,7 +13,7 @@ public class CharacterInteractionState : CharacterAbstractState
 
     public override void EnterState()
     {
-
+        
     }
     public override void UpdateState()
     {
@@ -42,7 +42,14 @@ public class CharacterInteractionState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
+        if (PlayerContextManager.Damaged)
+        {
+            SwitchState(PlayerStateFactory.DamagedState());
+        }
 
+        ProccessMoveInput(PlayerContextManager.MoveInput);
+
+        ProccessJumpInput(PlayerContextManager.JumpInput);
     }
     public override void InitializeSubStates()
     {
@@ -81,6 +88,38 @@ public class CharacterInteractionState : CharacterAbstractState
 
     public override void OnTriggerExit2D(Collider2D collision)
     {
-        
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerExit))
+            {
+                Interactable = null;
+            }
+        }
+
+        SwitchState(PlayerStateFactory.GroundedState());
+    }
+
+    protected override void ProccessJumpInput(bool actionInput)
+    {
+        if (actionInput)
+        {
+            PlayerContextManager.PerformingJump = true;
+
+            SwitchState(PlayerStateFactory.UngroundedState());
+        }
+    }
+
+    protected override void ProccessMoveInput(float moveInput)
+    {
+        base.ProccessMoveInput(moveInput);
+
+        if (moveInput != 0 && !PlayerContextManager.IsWallColliding)
+        {
+            SetSubState(PlayerStateFactory.MoveState());
+        }
+        else
+        {
+            SetSubState(PlayerStateFactory.IdleState());
+        }
     }
 }

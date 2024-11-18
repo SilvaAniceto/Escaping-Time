@@ -15,8 +15,6 @@ public class CharacterMoveState : CharacterAbstractState
         {
             PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.RUN_ANIMATION);
         }
-
-        PlayerContextManager.WaitingInteraction = false;
     }
     public override void UpdateState()
     {
