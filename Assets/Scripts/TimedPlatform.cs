@@ -12,10 +12,11 @@ public class TimedPlatform : MonoBehaviour, IInteractable
 
     public List<EInteractionType> Interactions { get; set; } = new List<EInteractionType>();
     public bool Activated { get; set; }
+    public bool MovableObject { get; set; }
 
     private void Awake()
     {
-        Interactions.Add(EInteractionType.Stay);
+        Interactions.Add(EInteractionType.TriggerStay);
 
         _boxCollider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -52,5 +53,9 @@ public class TimedPlatform : MonoBehaviour, IInteractable
         _boxCollider.enabled = true;
         _spriteRenderer.color = Color.white;
         Activated = false;
+    }
+    public void ConfirmInteraction()
+    {
+
     }
 }

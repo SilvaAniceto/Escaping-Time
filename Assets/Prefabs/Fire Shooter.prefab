@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3507828263336232033}
+  - component: {fileID: 3769417677251791287}
   - component: {fileID: 3635978416045672068}
   - component: {fileID: 7476481460010515161}
-  - component: {fileID: 4363029302321533524}
-  - component: {fileID: 457927899694635601}
   m_Layer: 6
   m_Name: Fire Shooter
   m_TagString: Untagged
@@ -30,10 +29,30 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -19.360952, y: -14.691348, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 5794190224175174494}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3769417677251791287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4471425847354050776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ee6cfc1b8570e948958cffc155fbee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _damagableObject: {fileID: 1246289023381484705}
+  _damagableObjectsCount: 10
+  _damagableSpeed: 3.14
+  _damagableLayerCollision:
+    serializedVersion: 2
+    m_Bits: 64
+  _shootInterval: 1.8
 --- !u!212 &3635978416045672068
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -98,7 +117,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.03087902, y: 0}
+  m_Offset: {x: 0.03, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -109,41 +128,78 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.25074196, y: 0.375}
+  m_Size: {x: 0.25, y: 0.37}
   m_EdgeRadius: 0
---- !u!114 &4363029302321533524
-MonoBehaviour:
+--- !u!1001 &6308651671993265467
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3507828263336232033}
+    m_Modifications:
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284264, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_Name
+      value: Fireball
+      objectReference: {fileID: 0}
+    - target: {fileID: 569085272224284264, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+--- !u!4 &5794190224175174494 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+  m_PrefabInstance: {fileID: 6308651671993265467}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4471425847354050776}
+--- !u!114 &1246289023381484705 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5100150682423007642, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+  m_PrefabInstance: {fileID: 6308651671993265467}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58d5b82726ef5e54e8606af294da8f80, type: 3}
+  m_Script: {fileID: 11500000, guid: cde406dfb7ae93546a88b42490438c6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireball: {fileID: 0}
-  auxTime: 0
-  fireDir: {x: 0, y: 0}
---- !u!50 &457927899694635601
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4471425847354050776}
-  m_BodyType: 2
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0

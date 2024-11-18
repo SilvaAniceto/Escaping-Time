@@ -20,6 +20,11 @@ public class PlayerContextManager : MonoBehaviour
     public bool PerformingJump { get; set; }
     public bool Falling { get; set; }
     public bool Damaged { get; set; }
+    public Vector3 HitDirection { get; set; }
+    public bool InteractionInput { get => PlayerInputActions.PlayerActionMap.Interact.WasPressedThisFrame(); }
+    public int KeyItem { get; set; }
+    public bool WaitingInteraction { get; set; }
+
 
     public const string IDLE_ANIMATION = "Idle";
     public const string RUN_ANIMATION = "Run";
@@ -102,7 +107,7 @@ public class PlayerContextManager : MonoBehaviour
     #region RENDERING 
     void OnGUI()
     {
-
+        
     }
     #endregion
 

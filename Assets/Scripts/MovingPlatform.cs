@@ -15,11 +15,12 @@ public class MovingPlatform : MonoBehaviour, IInteractable
 
     public List<EInteractionType> Interactions { get; set; } = new List<EInteractionType>();
     public bool Activated { get; set; } = false;
+    public bool MovableObject { get; set; }
 
     void Awake()
     {
-        Interactions.Add(EInteractionType.Stay);
-        Interactions.Add(EInteractionType.Exit);
+        Interactions.Add(EInteractionType.TriggerStay);
+        Interactions.Add(EInteractionType.TriggerExit);
 
         _pointAPosition = _pointA.position;
         _pointBPosition = _pointB.position;
@@ -59,15 +60,19 @@ public class MovingPlatform : MonoBehaviour, IInteractable
     {
         Transform transform = p_gameObject.transform;
 
-        if (transform.parent != gameObject.transform && p_interactionType == EInteractionType.Stay)
+        if (transform.parent != gameObject.transform && p_interactionType == EInteractionType.TriggerStay)
         {
             Activated = true;
             transform.SetParent(gameObject.transform);
         }
-        else if (transform.parent == gameObject.transform && p_interactionType == EInteractionType.Exit)
+        else if (transform.parent == gameObject.transform && p_interactionType == EInteractionType.TriggerExit)
         {
             Activated = false;
             transform.SetParent(null);
         }
+    }
+    public void ConfirmInteraction()
+    {
+
     }
 }

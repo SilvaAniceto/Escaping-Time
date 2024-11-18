@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CharacterDamagedState : CharacterAbstractState
 {
+
     public CharacterDamagedState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
         IsRootState = true;
@@ -18,11 +19,14 @@ public class CharacterDamagedState : CharacterAbstractState
 
         PlayerContextManager.Rigidbody.velocity = Vector3.zero;
 
-        PlayerContextManager.Rigidbody.AddForce(PlayerContextManager.transform.up * 9.42f, ForceMode2D.Impulse);
+        PlayerContextManager.Rigidbody.gravityScale = 1f;
+        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, 4.71f), ForceMode2D.Impulse);
     }
     public override void UpdateState()
     {
-        PlayerContextManager.Rigidbody.velocity = new Vector2(-PlayerContextManager.transform.right.x * 6.28f, PlayerContextManager.Rigidbody.velocity.y);
+        PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, 3.14f, Time.deltaTime);
+
+        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.HitDirection.x * 3.14f, PlayerContextManager.Rigidbody.velocity.y);
 
         CheckSwitchStates();
     }

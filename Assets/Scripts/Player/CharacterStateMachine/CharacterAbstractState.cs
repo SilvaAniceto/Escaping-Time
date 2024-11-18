@@ -13,6 +13,7 @@ public abstract class CharacterAbstractState
     protected bool IsRootState { set { _isRootState = value; } }
     protected PlayerContextManager PlayerContextManager { get { return _playerContextManager; } }
     protected CharacterStateFactory PlayerStateFactory { get { return _playerStateFactory; } }
+    protected CharacterAbstractState CurrentSubState { get { return _currentSubState; } }
 
     public CharacterAbstractState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory)
     {
@@ -94,5 +95,10 @@ public abstract class CharacterAbstractState
             float angle = Mathf.Atan2(0, moveInput) * Mathf.Rad2Deg;
             return Quaternion.AngleAxis(angle, Vector3.up);
         }
+    }
+    public virtual void ProcessDamage(bool damaged, Vector3 hitDirection)
+    {
+        PlayerContextManager.Damaged = damaged;
+        PlayerContextManager.HitDirection = hitDirection;
     }
 }          

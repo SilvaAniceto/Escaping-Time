@@ -69,21 +69,33 @@ public class CharacterUngroundedState : CharacterAbstractState
 
     public override void OnCollisionStay(Collision2D collision)
     {
-
+        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.Stay))
+            {
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Stay);
+            }
+        }
     }
 
     public override void OnCollisionExit2D(Collision2D collision)
     {
-
+        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.Exit))
+            {
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Exit);
+            }
+        }
     }
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out IInteractable interactable))
         {
-            if (interactable.Interactions.Contains(EInteractionType.Enter))
+            if (interactable.Interactions.Contains(EInteractionType.TriggerEnter))
             {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Enter);
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerEnter);
             }
         }
     }
@@ -92,13 +104,13 @@ public class CharacterUngroundedState : CharacterAbstractState
     {
         if (collision.TryGetComponent(out IInteractable interactable))
         {
-            if (interactable.Interactions.Contains(EInteractionType.Stay))
+            if (interactable.Interactions.Contains(EInteractionType.TriggerStay))
             {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Stay);
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerStay);
             }
         }
 
-        if (!PlayerContextManager.Damaged)
+        if (!PlayerContextManager.Damaged && !PlayerContextManager.PerformingJump && !PlayerContextManager.Falling)
         {
             SwitchState(PlayerStateFactory.GroundedState());
         }
@@ -108,9 +120,9 @@ public class CharacterUngroundedState : CharacterAbstractState
     {
         if (collision.TryGetComponent(out IInteractable interactable))
         {
-            if (interactable.Interactions.Contains(EInteractionType.Exit))
+            if (interactable.Interactions.Contains(EInteractionType.TriggerExit))
             {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Exit);
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerExit);
             }
         }
     }

@@ -1,36 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterMoveState : CharacterAbstractState
+public class CharacterInteractionState : CharacterAbstractState
 {
-    private const float _moveSpeed = 4.71f;
+    private IInteractable Interactable;
 
-    public CharacterMoveState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
+    public CharacterInteractionState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
-        IsRootState = false;
+        IsRootState = true;
     }
 
     public override void EnterState()
     {
-        if (!PlayerContextManager.PerformingJump && !PlayerContextManager.Falling)
-        {
-            PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.RUN_ANIMATION);
-        }
 
-        PlayerContextManager.WaitingInteraction = false;
     }
     public override void UpdateState()
     {
-        float moveInput = PlayerContextManager.MoveInput;
-
-        PlayerContextManager.Rigidbody.velocity = new Vector2(moveInput * _moveSpeed, PlayerContextManager.Rigidbody.velocity.y);
+        if (PlayerContextManager.InteractionInput)
+        {
+            if (Interactable != null)
+            {
+                Interactable.ConfirmInteraction();
+            }
+        }
 
         CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {
-       
+
     }
-    
+
     public override void LateUpdateState()
     {
 
@@ -41,11 +42,11 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        
+
     }
     public override void InitializeSubStates()
     {
-        
+
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {
@@ -64,16 +65,22 @@ public class CharacterMoveState : CharacterAbstractState
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
-
+        
     }
 
     public override void OnTriggerStay2D(Collider2D collision)
     {
-
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerStay))
+            {
+                Interactable = interactable;
+            }
+        }
     }
 
     public override void OnTriggerExit2D(Collider2D collision)
     {
-
+        
     }
 }

@@ -21,6 +21,11 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void UpdateState()
     {
+        if (Mathf.Round(PlayerContextManager.Rigidbody.velocity.y * 100) / 100 >= 0)
+        {
+            PlayerContextManager.Falling = false;
+        }
+
         CheckSwitchStates();
     }
     public override void FixedUpdateState()

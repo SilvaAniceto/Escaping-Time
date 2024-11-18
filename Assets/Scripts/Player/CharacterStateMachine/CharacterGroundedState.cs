@@ -42,6 +42,11 @@ public class CharacterGroundedState : CharacterAbstractState
         ProccessMoveInput(PlayerContextManager.MoveInput);
 
         ProccessJumpInput(PlayerContextManager.JumpInput);
+
+        if (PlayerContextManager.WaitingInteraction)
+        {
+            SetSubState(PlayerStateFactory.InteractionState());
+        }
     }
 
     public override void InitializeSubStates()
@@ -62,28 +67,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void OnCollisionStay(Collision2D collision)
     {
-       
-    }
-
-    public override void OnCollisionExit2D(Collision2D collision)
-    {
-        
-    }
-
-    public override void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.Enter))
-            {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Enter);
-            }
-        }
-    }
-
-    public override void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent(out IInteractable interactable))
+        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
         {
             if (interactable.Interactions.Contains(EInteractionType.Stay))
             {
@@ -92,13 +76,48 @@ public class CharacterGroundedState : CharacterAbstractState
         }
     }
 
-    public override void OnTriggerExit2D(Collider2D collision)
+    public override void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.TryGetComponent(out IInteractable interactable))
+        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
         {
             if (interactable.Interactions.Contains(EInteractionType.Exit))
             {
                 interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Exit);
+            }
+        }
+    }
+
+    public override void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerEnter))
+            {
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerEnter);
+            }
+        }
+    }
+
+    public override void OnTriggerStay2D(Collider2D collision)
+    {
+        CurrentSubState.OnTriggerStay2D(collision);
+
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerStay))
+            {
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerStay);
+            }
+        }
+    }
+
+    public override void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerExit))
+            {
+                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerExit);
             }
         }
 
