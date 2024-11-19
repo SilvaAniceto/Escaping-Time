@@ -25,12 +25,13 @@ public class PlayerContextManager : MonoBehaviour
     public int KeyItem { get; set; }
     public bool WaitingInteraction { get; set; }
 
-
     public const string IDLE_ANIMATION = "Idle";
     public const string RUN_ANIMATION = "Run";
     public const string JUMP_ANIMATION = "Jump";
     public const string FALL_ANIMATION = "Fall";
     public const string HIT_ANIMATION = "Hit";
+
+    private float _time = 1f;
 
     #region INITIALIZATION
     void Awake()
@@ -97,6 +98,19 @@ public class PlayerContextManager : MonoBehaviour
     void Update()
     {
         _currentState.UpdateStates();
+
+        //if (MoveInput != 0)
+        //{
+        //    _time -= Time.deltaTime;
+        //    _time = Mathf.Clamp01(_time);
+        //    if (_time <= 0)
+        //    {
+        //        Debug.Break();
+        //        _time = 1;
+        //    }
+
+        //}
+
     }
     void LateUpdate()
     {
