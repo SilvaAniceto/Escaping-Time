@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerContextManager : MonoBehaviour
 {
     [SerializeField] private LayerMask _wallLayer;
+    [SerializeField] private BoxCollider2D _characterCollider;
     [SerializeField] private BoxCollider2D _groundChecker;
 
     private CharacterAbstractState _currentState;
@@ -12,7 +13,8 @@ public class PlayerContextManager : MonoBehaviour
     private PlayerInputActions PlayerInputActions { get; set; }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public Animator CharacterAnimator { get => _characterAnimator; }
-    public Rigidbody2D Rigidbody { get; private set; } 
+    public Rigidbody2D Rigidbody { get; private set; }
+    public BoxCollider2D CharacterCollider { get => _characterCollider; }
     public BoxCollider2D GroundChecker { get => _groundChecker; }
     public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(); }
     public bool IsWallColliding { get => Physics2D.Raycast(transform.position, transform.right, 0.3f, _wallLayer); }
@@ -24,14 +26,15 @@ public class PlayerContextManager : MonoBehaviour
     public bool InteractionInput { get => PlayerInputActions.PlayerActionMap.Interact.WasPressedThisFrame(); }
     public int KeyItem { get; set; }
     public bool WaitingInteraction { get; set; }
+    public bool SpawningCharacter { get; set; }
+    public Vector3 SpawningPosition { get; set; }
 
     public const string IDLE_ANIMATION = "Idle";
     public const string RUN_ANIMATION = "Run";
     public const string JUMP_ANIMATION = "Jump";
     public const string FALL_ANIMATION = "Fall";
     public const string HIT_ANIMATION = "Hit";
-
-    private float _time = 1f;
+    public const string SPAWNING_ANIMATION = "Spawning";
 
     #region INITIALIZATION
     void Awake()
@@ -98,19 +101,6 @@ public class PlayerContextManager : MonoBehaviour
     void Update()
     {
         _currentState.UpdateStates();
-
-        //if (MoveInput != 0)
-        //{
-        //    _time -= Time.deltaTime;
-        //    _time = Mathf.Clamp01(_time);
-        //    if (_time <= 0)
-        //    {
-        //        Debug.Break();
-        //        _time = 1;
-        //    }
-
-        //}
-
     }
     void LateUpdate()
     {
@@ -119,9 +109,15 @@ public class PlayerContextManager : MonoBehaviour
     #endregion
 
     #region RENDERING 
+    private void OnDrawGizmos()
+    {
+       
+    }
     void OnGUI()
     {
-        
+        GUI.Box(new Rect(0, 0, 300, 80), "");
+        GUILayout.Label("CURRENT STATE: " + CurrentState.ToString());
+        //GUILayout.Label("CURRENT SUB STATE: " + CurrentState._currentSubState.ToString());
     }
     #endregion
 

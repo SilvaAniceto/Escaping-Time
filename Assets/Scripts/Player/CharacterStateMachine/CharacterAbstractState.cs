@@ -8,7 +8,7 @@ public abstract class CharacterAbstractState
     private PlayerContextManager _playerContextManager;
     private CharacterStateFactory _playerStateFactory;
     private CharacterAbstractState _currentSuperState;
-    private CharacterAbstractState _currentSubState;
+    public CharacterAbstractState _currentSubState;
 
     protected bool IsRootState { set { _isRootState = value; } }
     protected PlayerContextManager PlayerContextManager { get { return _playerContextManager; } }
@@ -88,7 +88,7 @@ public abstract class CharacterAbstractState
     }
     protected virtual void ProccessMoveInput(float moveInput)
     {
-        PlayerContextManager.transform.rotation = TargetRotation(moveInput);
+        PlayerContextManager.transform.rotation = moveInput == 0 ? PlayerContextManager.transform.rotation : TargetRotation(moveInput);
 
         Quaternion TargetRotation(float moveInput)
         {

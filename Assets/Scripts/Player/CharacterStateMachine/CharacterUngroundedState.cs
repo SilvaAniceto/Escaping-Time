@@ -37,6 +37,11 @@ public class CharacterUngroundedState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
+        if (PlayerContextManager.SpawningCharacter)
+        {
+            SwitchState(PlayerStateFactory.SpawningState());
+        }
+
         if (PlayerContextManager.Damaged)
         {
             SwitchState(PlayerStateFactory.DamagedState());

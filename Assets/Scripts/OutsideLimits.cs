@@ -16,7 +16,7 @@ public class OutsideLimits : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        Interactions.Add(EInteractionType.TriggerEnter);
+        Interactions.Add(EInteractionType.TriggerStay);
 
         _collider = GetComponent<Collider2D>();
     }
@@ -27,8 +27,9 @@ public class OutsideLimits : MonoBehaviour, IInteractable
 
         switch (p_interactionType)
         {
-            case EInteractionType.TriggerEnter:
-                _playerContextManager.transform.position = _targetPosition.position;
+            case EInteractionType.TriggerStay:
+                _playerContextManager.SpawningCharacter = true;
+                _playerContextManager.SpawningPosition = _targetPosition.position;
                 break;
         }
     }

@@ -9,7 +9,8 @@ public enum ECharacterState
     Jumping,
     Falling,
     Damaged,
-    Interacting
+    Interacting,
+    Spawning
 }
 
 public class CharacterStateFactory
@@ -28,6 +29,7 @@ public class CharacterStateFactory
         _states[ECharacterState.Falling] = new CharacterFallState(_contextManager, this);
         _states[ECharacterState.Damaged] = new CharacterDamagedState(_contextManager, this);
         _states[ECharacterState.Interacting] = new CharacterInteractionState(_contextManager, this);
+        _states[ECharacterState.Spawning] = new CharacterSpawningState(_contextManager, this);
     }
 
     public CharacterGroundedState GroundedState()
@@ -54,14 +56,16 @@ public class CharacterStateFactory
     {
         return (CharacterFallState)_states[ECharacterState.Falling];
     }
-
     public CharacterDamagedState DamagedState()
     {
         return (CharacterDamagedState)_states[ECharacterState.Damaged];
     }
-
     public CharacterInteractionState InteractionState()
     {
         return (CharacterInteractionState)_states[ECharacterState.Interacting];
+    }
+    public CharacterSpawningState SpawningState()
+    {
+        return (CharacterSpawningState)_states[ECharacterState.Spawning];
     }
 }

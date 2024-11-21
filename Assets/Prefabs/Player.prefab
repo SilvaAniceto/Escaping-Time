@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 799025000523755849}
   - component: {fileID: 8846208023403040539}
-  m_Layer: 7
+  m_Layer: 3
   m_Name: Ground_Check
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2155913408389938999}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.55, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2945533103165220579}
@@ -109,6 +109,7 @@ MonoBehaviour:
   _wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  _characterCollider: {fileID: 8705912218464136866}
   _groundChecker: {fileID: 8846208023403040539}
 --- !u!50 &2945533103165220578
 Rigidbody2D:
@@ -147,7 +148,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.45}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 0.65625, y: 1.09375}
     newSize: {x: 0.65625, y: 1.09375}
     adaptiveTilingThreshold: 0.5
