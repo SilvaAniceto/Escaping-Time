@@ -4,28 +4,21 @@ public class CharacterFallState : CharacterAbstractState
 {
     public CharacterFallState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
-        IsRootState = false;
+        IsRootState = true;
     }
 
     public override void EnterState()
     {
-        if (!PlayerContextManager.PerformingJump)
-        {
-            PlayerContextManager.Rigidbody.gravityScale = 4.71f;
-        }
+        InitializeSubStates();
 
-        PlayerContextManager.Falling = true;
+        PlayerContextManager.GroundChecker.enabled = true;
+
         PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
 
-        InitializeSubStates();
+        PlayerContextManager.Rigidbody.gravityScale = 4.71f;
     }
     public override void UpdateState()
     {
-        if (Mathf.Round(PlayerContextManager.Rigidbody.velocity.y * 100) / 100 >= 0)
-        {
-            PlayerContextManager.Falling = false;
-        }
-
         CheckSwitchStates();
     }
     public override void FixedUpdateState()
@@ -42,15 +35,18 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (!PlayerContextManager.Damaged)
-        {
-            ProccessMoveInput(PlayerContextManager.MoveInput);            
-        }
-
+        
     }
     public override void InitializeSubStates()
     {
-        
+        if (PlayerContextManager.MoveInput != 0)
+        {
+            SetSubState(PlayerStateFactory.MoveState());
+        }
+        else if (PlayerContextManager.MoveInput == 0)
+        {
+            SetSubState(PlayerStateFactory.IdleState());
+        }
     }
 
     public override void OnCollisionEnter2D(Collision2D collision)
@@ -60,7 +56,7 @@ public class CharacterFallState : CharacterAbstractState
 
     public override void OnCollisionStay(Collision2D collision)
     {
-
+        SwitchState(PlayerStateFactory.GroundedState());
     }
 
     public override void OnCollisionExit2D(Collision2D collision)
@@ -81,14 +77,5 @@ public class CharacterFallState : CharacterAbstractState
     public override void OnTriggerExit2D(Collider2D collision)
     {
 
-    }
-    protected override void ProccessMoveInput(float moveInput)
-    {
-        base.ProccessMoveInput(moveInput);
-
-        if (moveInput != 0)
-        {
-            SetSubState(PlayerStateFactory.MoveState());
-        }
     }
 }

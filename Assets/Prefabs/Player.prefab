@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 799025000523755849}
   - component: {fileID: 8846208023403040539}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Ground_Check
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -44,7 +44,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.015}
+  m_Offset: {x: 0, y: -0.015}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}

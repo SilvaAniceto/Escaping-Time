@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class CharacterMoveState : CharacterAbstractState
 {
-    private const float _moveSpeed = 4.71f;
-
     public CharacterMoveState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
         IsRootState = false;
@@ -11,16 +9,14 @@ public class CharacterMoveState : CharacterAbstractState
 
     public override void EnterState()
     {
-        if (!PlayerContextManager.PerformingJump && !PlayerContextManager.Falling)
+        if (PlayerContextManager.CurrentState == PlayerStateFactory.GroundedState())
         {
             PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.RUN_ANIMATION);
         }
     }
     public override void UpdateState()
     {
-        float moveInput = PlayerContextManager.MoveInput;
-
-        PlayerContextManager.Rigidbody.velocity = new Vector2(moveInput * _moveSpeed, PlayerContextManager.Rigidbody.velocity.y);
+        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.MoveInput * 4.71f, PlayerContextManager.Rigidbody.velocity.y);
 
         CheckSwitchStates();
     }
@@ -39,7 +35,10 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        
+        if (PlayerContextManager.MoveInput == 0 || PlayerContextManager.IsWallColliding)
+        {
+            SwitchState(PlayerStateFactory.IdleState());
+        }
     }
     public override void InitializeSubStates()
     {

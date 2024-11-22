@@ -39,6 +39,14 @@ public abstract class CharacterAbstractState
     }
     public void UpdateStates()
     {
+        PlayerContextManager.transform.rotation = PlayerContextManager.MoveInput == 0 ? PlayerContextManager.transform.rotation : TargetRotation(PlayerContextManager.MoveInput);
+
+        Quaternion TargetRotation(float moveInput)
+        {
+            float angle = Mathf.Atan2(0, moveInput) * Mathf.Rad2Deg;
+            return Quaternion.AngleAxis(angle, Vector3.up);
+        }
+
         UpdateState();
 
         if (_currentSubState != null)
@@ -50,11 +58,10 @@ public abstract class CharacterAbstractState
     {
         ExitState();
 
-        newState.EnterState();
-
         if (_isRootState)
         {
             _playerContextManager.CurrentState = newState;
+            _playerContextManager.CurrentState.EnterState();
         }
         else if (_currentSuperState != null)
         {
@@ -82,23 +89,4 @@ public abstract class CharacterAbstractState
     public abstract void OnTriggerEnter2D(Collider2D collision);
     public abstract void OnTriggerStay2D(Collider2D collision);
     public abstract void OnTriggerExit2D(Collider2D collision);
-    protected virtual void ProccessJumpInput(bool actionInput)
-    {
-
-    }
-    protected virtual void ProccessMoveInput(float moveInput)
-    {
-        PlayerContextManager.transform.rotation = moveInput == 0 ? PlayerContextManager.transform.rotation : TargetRotation(moveInput);
-
-        Quaternion TargetRotation(float moveInput)
-        {
-            float angle = Mathf.Atan2(0, moveInput) * Mathf.Rad2Deg;
-            return Quaternion.AngleAxis(angle, Vector3.up);
-        }
-    }
-    public virtual void ProcessDamage(bool damaged, Vector3 hitDirection)
-    {
-        PlayerContextManager.Damaged = damaged;
-        PlayerContextManager.HitDirection = hitDirection;
-    }
 }          

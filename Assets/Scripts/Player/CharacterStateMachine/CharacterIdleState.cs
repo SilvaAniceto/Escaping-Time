@@ -9,7 +9,10 @@ public class CharacterIdleState : CharacterAbstractState
 
     public override void EnterState()
     {
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.IDLE_ANIMATION);
+        if (PlayerContextManager.CurrentState == PlayerStateFactory.GroundedState())
+        {
+            PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.IDLE_ANIMATION);
+        }
 
         PlayerContextManager.Rigidbody.velocity = new Vector2(0, PlayerContextManager.Rigidbody.velocity.y);
     }
@@ -30,7 +33,10 @@ public class CharacterIdleState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-
+        if (PlayerContextManager.MoveInput != 0 && !PlayerContextManager.IsWallColliding)
+        {
+            SwitchState(PlayerStateFactory.MoveState());
+        }
     }
     public override void InitializeSubStates()
     {

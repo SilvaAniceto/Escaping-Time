@@ -2,23 +2,24 @@ using UnityEngine;
 
 public class CharacterJumpState : CharacterAbstractState
 {
-    private const float _jumpSpeed = 6.28f;
-
     public CharacterJumpState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
-        IsRootState = false;
+        IsRootState = true;
     }
 
     public override void EnterState()
     {
-        PlayerContextManager.GroundChecker.enabled = false;
+        InitializeSubStates();
 
         PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.JUMP_ANIMATION);
 
-        PlayerContextManager.Rigidbody.gravityScale = 1f;
-        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, _jumpSpeed), ForceMode2D.Impulse);
+        PlayerContextManager.GroundChecker.enabled = false;
 
-        InitializeSubStates();
+        PlayerContextManager.Rigidbody.gravityScale = 1f;
+
+        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.Rigidbody.velocity.x, 0);
+
+        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, 6.28f), ForceMode2D.Impulse);
     }
     public override void UpdateState()
     {
@@ -36,19 +37,25 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        PlayerContextManager.GroundChecker.enabled = true;
-        PlayerContextManager.PerformingJump = false;
+        
     }
     public override void CheckSwitchStates()
     {
-        if (!PlayerContextManager.Damaged)
+        if (PlayerContextManager.Rigidbody.velocity.y < 0)
         {
-            ProccessMoveInput(PlayerContextManager.MoveInput);            
+            SwitchState(PlayerStateFactory.FallState());
         }
     }
     public override void InitializeSubStates()
     {
-        
+        if (PlayerContextManager.MoveInput != 0)
+        {
+            SetSubState(PlayerStateFactory.MoveState());
+        }
+        else if (PlayerContextManager.MoveInput == 0)
+        {
+            SetSubState(PlayerStateFactory.IdleState());
+        }
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {
@@ -78,14 +85,5 @@ public class CharacterJumpState : CharacterAbstractState
     public override void OnTriggerExit2D(Collider2D collision)
     {
 
-    }
-    protected override void ProccessMoveInput(float moveInput)
-    {
-        base.ProccessMoveInput(moveInput);
-
-        if (moveInput != 0)
-        {
-            SetSubState(PlayerStateFactory.MoveState());
-        }
     }
 }

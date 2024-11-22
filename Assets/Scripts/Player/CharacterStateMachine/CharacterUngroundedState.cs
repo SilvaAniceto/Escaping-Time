@@ -11,6 +11,8 @@ public class CharacterUngroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
+
         _coyoteTime = 0.15f;
 
         InitializeSubStates();
@@ -32,116 +34,57 @@ public class CharacterUngroundedState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        PlayerContextManager.PerformingJump = false;
-        PlayerContextManager.Falling = false;
+
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.SpawningCharacter)
+        if (PlayerContextManager.JumpInput && _coyoteTime > 0)
         {
-            SwitchState(PlayerStateFactory.SpawningState());
+            SwitchState(PlayerStateFactory.JumpState());
         }
-
-        if (PlayerContextManager.Damaged)
+        else if (PlayerContextManager.Rigidbody.velocity.y < 0 && _coyoteTime <= 0)
         {
-            SwitchState(PlayerStateFactory.DamagedState());
+            SwitchState(PlayerStateFactory.FallState());
         }
-
-        if (PlayerContextManager.Rigidbody.velocity.y <= 0 && !PlayerContextManager.Falling)
-        {
-            SetSubState(PlayerStateFactory.FallState());
-        }
-
-        ProccessJumpInput(PlayerContextManager.JumpInput);
     }
     public override void InitializeSubStates()
     {
-        if (PlayerContextManager.PerformingJump)
+        if (PlayerContextManager.MoveInput != 0)
         {
-            SetSubState(PlayerStateFactory.JumpState());            
+            SetSubState(PlayerStateFactory.MoveState());
+        }
+        else if (PlayerContextManager.MoveInput == 0)
+        {
+            SetSubState(PlayerStateFactory.IdleState());
         }
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.Enter))
-            {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Enter);
-            }
-        }
+        
     }
 
     public override void OnCollisionStay(Collision2D collision)
     {
-        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.Stay))
-            {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Stay);
-            }
-        }
+        SwitchState(PlayerStateFactory.GroundedState());
     }
 
     public override void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.Exit))
-            {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.Exit);
-            }
-        }
+        
     }
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.TriggerEnter))
-            {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerEnter);
-            }
-        }
+        
     }
 
     public override void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.TriggerStay))
-            {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerStay);
-            }
-        }
 
-        if (!PlayerContextManager.Damaged && !PlayerContextManager.PerformingJump && !PlayerContextManager.Falling)
-        {
-            SwitchState(PlayerStateFactory.GroundedState());
-        }
     }
 
     public override void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.TriggerExit))
-            {
-                interactable.SetInteraction(PlayerContextManager.gameObject, EInteractionType.TriggerExit);
-            }
-        }
-    }
 
-    protected override void ProccessJumpInput(bool actioninput)
-    {
-        if (actioninput && _coyoteTime > 0)
-        {
-            PlayerContextManager.PerformingJump = true;
-            PlayerContextManager.Falling = false;
-
-            PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.Rigidbody.velocity.x, 0);
-
-            SetSubState(PlayerStateFactory.JumpState());
-        }
     }
 }

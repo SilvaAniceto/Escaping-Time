@@ -38,19 +38,19 @@ public class DamagableObject : MonoBehaviour, IInteractable
         {
             switch (_damageHitDirection)
             {
-                case EDamageHitDirection.None:
-                    playercontextManager.CurrentState.ProcessDamage(true, Vector3.zero);
-                    break;
-                case EDamageHitDirection.Left:
-                    playercontextManager.CurrentState.ProcessDamage(true, Vector3.left);
-                    break;
-                case EDamageHitDirection.Right:
-                    playercontextManager.CurrentState.ProcessDamage(true, Vector3.right);
-                    break;
-                case EDamageHitDirection.Both:
-                    Vector3 direction = playercontextManager.transform.position.x > transform.position.x ? Vector3.right : Vector3.left;
-                    playercontextManager.CurrentState.ProcessDamage(true, direction);
-                    break;
+                //case EDamageHitDirection.None:
+                //    playercontextManager.CurrentState.ProcessDamage(true, Vector3.zero);
+                //    break;
+                //case EDamageHitDirection.Left:
+                //    playercontextManager.CurrentState.ProcessDamage(true, Vector3.left);
+                //    break;
+                //case EDamageHitDirection.Right:
+                //    playercontextManager.CurrentState.ProcessDamage(true, Vector3.right);
+                //    break;
+                //case EDamageHitDirection.Both:
+                //    Vector3 direction = playercontextManager.transform.position.x > transform.position.x ? Vector3.right : Vector3.left;
+                //    playercontextManager.CurrentState.ProcessDamage(true, direction);
+                //    break;
             }
 
             if (MovableObject)

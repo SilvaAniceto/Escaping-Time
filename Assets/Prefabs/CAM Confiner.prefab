@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3056023040762249322}
   - component: {fileID: 3056023040762249321}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: CAM Confiner
   m_TagString: Untagged
   m_Icon: {fileID: 0}

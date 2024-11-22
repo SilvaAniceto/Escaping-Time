@@ -69,31 +69,79 @@ public class PlayerContextManager : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         _currentState.OnCollisionEnter2D(collision);
+
+        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.Enter))
+            {
+                interactable.SetInteraction(gameObject, EInteractionType.Enter);
+            }
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)
     {
         _currentState.OnCollisionStay(collision);
+
+        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.Stay))
+            {
+                interactable.SetInteraction(gameObject, EInteractionType.Stay);
+            }
+        }
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
         _currentState.OnCollisionExit2D(collision);
+
+        if (collision.gameObject.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.Exit))
+            {
+                interactable.SetInteraction(gameObject, EInteractionType.Exit);
+            }
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         _currentState.OnTriggerEnter2D(collision);
+
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerEnter))
+            {
+                interactable.SetInteraction(gameObject, EInteractionType.TriggerEnter);
+            }
+        }
     }
 
     void OnTriggerStay2D(Collider2D collision)
     {
         _currentState.OnTriggerStay2D(collision);
+
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerStay))
+            {
+                interactable.SetInteraction(gameObject, EInteractionType.TriggerStay);
+            }
+        }
     }
 
     void OnTriggerExit2D(Collider2D collision)
     {
         _currentState.OnTriggerExit2D(collision);
+
+        if (collision.TryGetComponent(out IInteractable interactable))
+        {
+            if (interactable.Interactions.Contains(EInteractionType.TriggerExit))
+            {
+                interactable.SetInteraction(gameObject, EInteractionType.TriggerExit);
+            }
+        }
     }
     #endregion
 
@@ -115,9 +163,9 @@ public class PlayerContextManager : MonoBehaviour
     }
     void OnGUI()
     {
-        GUI.Box(new Rect(0, 0, 300, 80), "");
+        GUI.Box(new Rect(transform.position.x, transform.position.y + 3, 300, 80), "");
         GUILayout.Label("CURRENT STATE: " + CurrentState.ToString());
-        //GUILayout.Label("CURRENT SUB STATE: " + CurrentState._currentSubState.ToString());
+        GUILayout.Label("CURRENT SUB STATE: " + CurrentState._currentSubState.ToString());
     }
     #endregion
 
