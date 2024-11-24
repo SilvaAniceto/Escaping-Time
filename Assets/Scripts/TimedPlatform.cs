@@ -46,7 +46,7 @@ public class TimedPlatform : MonoBehaviour, IInteractable
     IEnumerator SetTimedPlatformBehaviour()
     {
         Activated = true;
-        yield return new WaitForSeconds(0.25f * _tileCount);
+        yield return new WaitForSeconds(0.20f * _tileCount);
         _boxCollider.enabled = false;
         _spriteRenderer.color = Color.gray;
         yield return new WaitForSeconds(0.8f);

@@ -25,14 +25,9 @@ public class DoorSwitch : MonoBehaviour, IInteractable
     {
         p_gameObject.TryGetComponent(out _playerContextManager);
 
-        switch (p_interactionType)
+        if (_playerContextManager.KeyItem != 0 && !Activated)
         {
-            case EInteractionType.TriggerStay:
-                if (_playerContextManager.KeyItem != 0 && !Activated)
-                {
-                    _playerContextManager.WaitingInteraction = true;
-                }
-                break;
+            _playerContextManager.WaitingInteraction = true;
         }
     }
     public void ConfirmInteraction()

@@ -10,7 +10,7 @@ public class CollectibleItem : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        Interactions.Add(EInteractionType.Enter);
+        Interactions.Add(EInteractionType.TriggerEnter);
     }
 
     public void SetInteraction(GameObject p_gameObject, EInteractionType p_interactionType)

@@ -4,9 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Switches
-  - Door
-  - Player_Checker
   - Ground
   layers:
   - Default
@@ -16,8 +13,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - Ground Check
   - Camera Objects
+  - Interaction Trigger
   - 
   - 
   - 

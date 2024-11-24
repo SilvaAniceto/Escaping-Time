@@ -38,6 +38,11 @@ public class CharacterGroundedState : CharacterAbstractState
         {
             SwitchState(PlayerStateFactory.JumpState());
         }
+
+        if (PlayerContextManager.WaitingInteraction)
+        {
+            SwitchState(PlayerStateFactory.InteractionState());
+        }
     }
 
     public override void InitializeSubStates()
@@ -52,33 +57,21 @@ public class CharacterGroundedState : CharacterAbstractState
         }
     }
 
-    public override void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
+    public override void OnCollisionEnter2D(Collision2D collision) { }
 
-    public override void OnCollisionStay(Collision2D collision)
-    {
-       
-    }
+    public override void OnCollisionStay(Collision2D collision) { }
 
-    public override void OnCollisionExit2D(Collision2D collision)
-    {
-        SwitchState(PlayerStateFactory.UngroundedState());
-    }
+    public override void OnCollisionExit2D(Collision2D collision) { }
 
-    public override void OnTriggerEnter2D(Collider2D collision)
-    {
-        
-    }
+    public override void OnTriggerEnter2D(Collider2D collision) { }
 
-    public override void OnTriggerStay2D(Collider2D collision)
-    {
-        
-    }
+    public override void OnTriggerStay2D(Collider2D collision) { }
 
-    public override void OnTriggerExit2D(Collider2D collision)
+    public override void OnTriggerExit2D(Collider2D collision) 
     {
-        
+        if (collision.CompareTag("Ground"))
+        {
+            SwitchState(PlayerStateFactory.UngroundedState());
+        }
     }
 }

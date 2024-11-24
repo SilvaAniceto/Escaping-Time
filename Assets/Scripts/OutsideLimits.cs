@@ -16,7 +16,7 @@ public class OutsideLimits : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        Interactions.Add(EInteractionType.TriggerStay);
+        Interactions.Add(EInteractionType.TriggerEnter);
 
         _collider = GetComponent<Collider2D>();
     }
@@ -25,13 +25,8 @@ public class OutsideLimits : MonoBehaviour, IInteractable
     {
         p_gameObject.TryGetComponent(out _playerContextManager);
 
-        switch (p_interactionType)
-        {
-            case EInteractionType.TriggerStay:
-                _playerContextManager.SpawningCharacter = true;
-                _playerContextManager.SpawningPosition = _targetPosition.position;
-                break;
-        }
+        _playerContextManager.SpawningPosition = _targetPosition.position;
+        _playerContextManager.SpawningCharacter = true;
     }
     public void ConfirmInteraction()
     {

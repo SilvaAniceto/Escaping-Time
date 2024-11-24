@@ -11,8 +11,6 @@ public class CharacterUngroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
-
         _coyoteTime = 0.15f;
 
         InitializeSubStates();
@@ -30,7 +28,7 @@ public class CharacterUngroundedState : CharacterAbstractState
     }
     public override void LateUpdateState()
     {
-
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
     }
     public override void ExitState()
     {
@@ -42,7 +40,7 @@ public class CharacterUngroundedState : CharacterAbstractState
         {
             SwitchState(PlayerStateFactory.JumpState());
         }
-        else if (PlayerContextManager.Rigidbody.velocity.y < 0 && _coyoteTime <= 0)
+        else if (PlayerContextManager.VerticalVelocity < 0.00f && _coyoteTime <= 0)
         {
             SwitchState(PlayerStateFactory.FallState());
         }
@@ -58,33 +56,18 @@ public class CharacterUngroundedState : CharacterAbstractState
             SetSubState(PlayerStateFactory.IdleState());
         }
     }
-    public override void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
+    public override void OnCollisionEnter2D(Collision2D collision) { }
 
-    public override void OnCollisionStay(Collision2D collision)
+    public override void OnCollisionStay(Collision2D collision) { }
+
+    public override void OnCollisionExit2D(Collision2D collision) { }
+
+    public override void OnTriggerEnter2D(Collider2D collision) { }
+
+    public override void OnTriggerStay2D(Collider2D collision) 
     {
         SwitchState(PlayerStateFactory.GroundedState());
     }
 
-    public override void OnCollisionExit2D(Collision2D collision)
-    {
-        
-    }
-
-    public override void OnTriggerEnter2D(Collider2D collision)
-    {
-        
-    }
-
-    public override void OnTriggerStay2D(Collider2D collision)
-    {
-
-    }
-
-    public override void OnTriggerExit2D(Collider2D collision)
-    {
-
-    }
+    public override void OnTriggerExit2D(Collider2D collision) { }
 }

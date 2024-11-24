@@ -15,18 +15,19 @@ public class CharacterDamagedState : CharacterAbstractState
     {
         PlayerContextManager.GroundChecker.enabled = true;
 
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.HIT_ANIMATION);
+        PlayerContextManager.Damaged = false;
 
         PlayerContextManager.Rigidbody.velocity = Vector3.zero;
 
         PlayerContextManager.Rigidbody.gravityScale = 1f;
+
         PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, 4.71f), ForceMode2D.Impulse);
     }
     public override void UpdateState()
     {
         PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, 3.14f, Time.deltaTime);
 
-        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.HitDirection.x * 3.14f, PlayerContextManager.Rigidbody.velocity.y);
+        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.HitDirection.x * 3.14f, PlayerContextManager.VerticalVelocity);
 
         CheckSwitchStates();
     }
@@ -37,11 +38,10 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void LateUpdateState()
     {
-
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.HIT_ANIMATION);
     }
     public override void ExitState()
     {
-        PlayerContextManager.Damaged = false;
         PlayerContextManager.Rigidbody.velocity = Vector3.zero;
     }
     public override void CheckSwitchStates()
@@ -59,7 +59,7 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void OnCollisionStay(Collision2D collision)
     {
-
+        
     }
 
     public override void OnCollisionExit2D(Collision2D collision)
@@ -74,7 +74,7 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void OnTriggerStay2D(Collider2D collision)
     {
-
+        
     }
 
     public override void OnTriggerExit2D(Collider2D collision)

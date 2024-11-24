@@ -11,8 +11,6 @@ public class CharacterJumpState : CharacterAbstractState
     {
         InitializeSubStates();
 
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.JUMP_ANIMATION);
-
         PlayerContextManager.GroundChecker.enabled = false;
 
         PlayerContextManager.Rigidbody.gravityScale = 1f;
@@ -33,7 +31,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void LateUpdateState()
     {
-
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.JUMP_ANIMATION);
     }
     public override void ExitState()
     {
@@ -41,7 +39,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.Rigidbody.velocity.y < 0)
+        if (PlayerContextManager.VerticalVelocity < 0.00f)
         {
             SwitchState(PlayerStateFactory.FallState());
         }
@@ -57,33 +55,15 @@ public class CharacterJumpState : CharacterAbstractState
             SetSubState(PlayerStateFactory.IdleState());
         }
     }
-    public override void OnCollisionEnter2D(Collision2D collision)
-    {
+    public override void OnCollisionEnter2D(Collision2D collision) { }
 
-    }
+    public override void OnCollisionStay(Collision2D collision) { }
 
-    public override void OnCollisionStay(Collision2D collision)
-    {
+    public override void OnCollisionExit2D(Collision2D collision) { }
 
-    }
+    public override void OnTriggerEnter2D(Collider2D collision) { }
 
-    public override void OnCollisionExit2D(Collision2D collision)
-    {
+    public override void OnTriggerStay2D(Collider2D collision) { }
 
-    }
-
-    public override void OnTriggerEnter2D(Collider2D collision)
-    {
-        
-    }
-
-    public override void OnTriggerStay2D(Collider2D collision)
-    {
-
-    }
-
-    public override void OnTriggerExit2D(Collider2D collision)
-    {
-
-    }
+    public override void OnTriggerExit2D(Collider2D collision) { }
 }

@@ -13,7 +13,7 @@ public class CharacterInteractionState : CharacterAbstractState
 
     public override void EnterState()
     {
-        
+        InitializeSubStates();
     }
     public override void UpdateState()
     {
@@ -38,15 +38,26 @@ public class CharacterInteractionState : CharacterAbstractState
     }
     public override void ExitState()
     {
+        PlayerContextManager.WaitingInteraction = false;
 
     }
     public override void CheckSwitchStates()
     {
-
+        if (PlayerContextManager.JumpInput)
+        {
+            SwitchState(PlayerStateFactory.JumpState());
+        }
     }
     public override void InitializeSubStates()
     {
-
+        if (PlayerContextManager.MoveInput != 0)
+        {
+            SetSubState(PlayerStateFactory.MoveState());
+        }
+        else if (PlayerContextManager.MoveInput == 0)
+        {
+            SetSubState(PlayerStateFactory.IdleState());
+        }
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {

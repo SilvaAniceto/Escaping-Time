@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CharacterSpawningState : CharacterAbstractState
 {
+    private float _spawningWaitTime;
+
     public CharacterSpawningState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
     {
         IsRootState = true;
@@ -11,8 +13,9 @@ public class CharacterSpawningState : CharacterAbstractState
 
     public override void EnterState()
     {
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.SPAWNING_ANIMATION);
+        _spawningWaitTime = 0.6f;
 
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.DISABLED_ANIMATION);
         PlayerContextManager.Rigidbody.bodyType = RigidbodyType2D.Static;
         PlayerContextManager.CharacterCollider.enabled = false;
         PlayerContextManager.GroundChecker.enabled = false;
@@ -30,7 +33,7 @@ public class CharacterSpawningState : CharacterAbstractState
 
     public override void LateUpdateState()
     {
-
+        
     }
     public override void ExitState()
     {
@@ -43,7 +46,15 @@ public class CharacterSpawningState : CharacterAbstractState
     {
         if (PlayerContextManager.transform.position == PlayerContextManager.SpawningPosition)
         {
-            SwitchState(PlayerStateFactory.GroundedState());
+            PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.SPAWNING_ANIMATION);
+
+            _spawningWaitTime -= Time.deltaTime;
+            _spawningWaitTime = Mathf.Clamp01(_spawningWaitTime);
+
+            if (_spawningWaitTime <= 0)
+            {
+                SwitchState(PlayerStateFactory.GroundedState());
+            }
         }
     }
     public override void InitializeSubStates()

@@ -13,8 +13,6 @@ public class CharacterFallState : CharacterAbstractState
 
         PlayerContextManager.GroundChecker.enabled = true;
 
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
-
         PlayerContextManager.Rigidbody.gravityScale = 4.71f;
     }
     public override void UpdateState()
@@ -27,7 +25,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void LateUpdateState()
     {
-
+        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
     }
     public override void ExitState()
     {
@@ -49,33 +47,18 @@ public class CharacterFallState : CharacterAbstractState
         }
     }
 
-    public override void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
+    public override void OnCollisionEnter2D(Collision2D collision) { }
 
-    public override void OnCollisionStay(Collision2D collision)
+    public override void OnCollisionStay(Collision2D collision) { }
+
+    public override void OnCollisionExit2D(Collision2D collision) { }
+
+    public override void OnTriggerEnter2D(Collider2D collision) { }
+
+    public override void OnTriggerStay2D(Collider2D collision)
     {
         SwitchState(PlayerStateFactory.GroundedState());
     }
 
-    public override void OnCollisionExit2D(Collision2D collision)
-    {
-
-    }
-
-    public override void OnTriggerEnter2D(Collider2D collision)
-    {
-        
-    }
-
-    public override void OnTriggerStay2D(Collider2D collision)
-    {
-
-    }
-
-    public override void OnTriggerExit2D(Collider2D collision)
-    {
-
-    }
+    public override void OnTriggerExit2D(Collider2D collision) { }
 }

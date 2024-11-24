@@ -39,7 +39,7 @@ public abstract class CharacterAbstractState
     }
     public void UpdateStates()
     {
-        PlayerContextManager.transform.rotation = PlayerContextManager.MoveInput == 0 ? PlayerContextManager.transform.rotation : TargetRotation(PlayerContextManager.MoveInput);
+        PlayerContextManager.CharacterAnimator.transform.rotation = PlayerContextManager.MoveInput == 0 ? PlayerContextManager.CharacterAnimator.transform.rotation : TargetRotation(PlayerContextManager.MoveInput);
 
         Quaternion TargetRotation(float moveInput)
         {
@@ -52,6 +52,28 @@ public abstract class CharacterAbstractState
         if (_currentSubState != null)
         {
             _currentSubState.UpdateStates();
+        }
+
+        if (_isRootState)
+        {
+            if (PlayerContextManager.Damaged)
+            {
+                SwitchState(PlayerStateFactory.DamagedState());
+            }
+
+            if (PlayerContextManager.SpawningCharacter)
+            {
+                SwitchState(PlayerStateFactory.SpawningState());
+            }
+        }
+    }
+    public void LateUpdateStates()
+    {
+        LateUpdateState();
+
+        if (_currentSubState != null)
+        {
+            _currentSubState.LateUpdateState();
         }
     }
     protected void SwitchState(CharacterAbstractState newState)
