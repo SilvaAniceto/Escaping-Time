@@ -7,6 +7,11 @@ public class Parallax : MonoBehaviour
     [SerializeField] private Transform _background3;
     [SerializeField] private Transform _background4;
     [SerializeField] private Transform _background5;
+    [SerializeField, Range(-20, 20)] private float _background1Speed;
+    [SerializeField, Range(-20, 20)] private float _background2Speed;
+    [SerializeField, Range(-20, 20)] private float _background3Speed;
+    [SerializeField, Range(-20, 20)] private float _background4Speed;
+    [SerializeField, Range(-20, 20)] private float _background5Speed;
 
     private Vector3 _lastUpdatePosition = Vector3.zero;
     private Vector3 _deltaDistance;
@@ -15,11 +20,11 @@ public class Parallax : MonoBehaviour
     {
         if (IsCameraMoving())
         {
-            _background1.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.5f, 0.5f) * -0.001f * Time.deltaTime);
-            _background2.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.5f, 0.5f) * -2.6f * Time.deltaTime);
-            _background3.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.5f, 0.5f) * -2.8f * Time.deltaTime);
-            _background4.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.5f, 0.5f) * -3.14f * Time.deltaTime);
-            _background5.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.5f, 0.5f) * -3.14f * Time.deltaTime);
+            _background1.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background1Speed * Time.deltaTime);
+            _background2.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background2Speed * Time.deltaTime);
+            _background3.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background3Speed * Time.deltaTime);
+            _background4.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background4Speed * Time.deltaTime);
+            _background5.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background5Speed * Time.deltaTime);
         }
     }
     

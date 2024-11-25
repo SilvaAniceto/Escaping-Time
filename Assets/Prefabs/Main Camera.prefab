@@ -54,6 +54,11 @@ MonoBehaviour:
   _background3: {fileID: 8532767386991585704}
   _background4: {fileID: 1319449836259644502}
   _background5: {fileID: 2496736766257259167}
+  _background1Speed: 0
+  _background2Speed: -9.42
+  _background3Speed: -10.99
+  _background4Speed: -15.7
+  _background5Speed: -15.7
 --- !u!20 &8926116634136478434
 Camera:
   m_ObjectHideFlags: 0
