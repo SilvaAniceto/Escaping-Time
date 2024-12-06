@@ -20,11 +20,11 @@ public class Parallax : MonoBehaviour
     {
         if (IsCameraMoving())
         {
-            _background1.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background1Speed * Time.deltaTime);
-            _background2.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background2Speed * Time.deltaTime);
-            _background3.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background3Speed * Time.deltaTime);
-            _background4.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background4Speed * Time.deltaTime);
-            _background5.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.1f, 0.1f) * _background5Speed * Time.deltaTime);
+            _background1.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.05f, 0.05f) * _background1Speed * Time.deltaTime);
+            _background2.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.05f, 0.05f) * _background2Speed * Time.deltaTime);
+            _background3.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.05f, 0.05f) * _background3Speed * Time.deltaTime);
+            _background4.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.05f, 0.05f) * _background4Speed * Time.deltaTime);
+            _background5.Translate(Vector3.right * Mathf.Clamp(_deltaDistance.normalized.x, -0.05f, 0.05f) * _background5Speed * Time.deltaTime);
         }
     }
     
@@ -35,9 +35,5 @@ public class Parallax : MonoBehaviour
         _lastUpdatePosition = transform.position;
 
         return Mathf.Round(_currentSpeed * 100) / 100 > 0.10f;
-    }
-    private void OnGUI()
-    {
-        GUILayout.Label(Mathf.Clamp01(_deltaDistance.magnitude * _deltaDistance.normalized.x).ToString());
     }
 }
