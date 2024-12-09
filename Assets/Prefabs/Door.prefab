@@ -121,8 +121,8 @@ BoxCollider2D:
   m_Offset: {x: 0.05, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3, y: 2.875}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 2.375, y: 2.875}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -271,11 +271,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.271
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalRotation.w
@@ -352,11 +352,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.271
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalRotation.w
@@ -429,11 +429,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.271
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3974906141374383908, guid: 6c52a6a04df10d64d83e6b25e8594c57, type: 3}
       propertyPath: m_LocalRotation.w
