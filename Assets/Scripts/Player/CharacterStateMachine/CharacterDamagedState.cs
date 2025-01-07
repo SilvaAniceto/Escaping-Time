@@ -17,17 +17,17 @@ public class CharacterDamagedState : CharacterAbstractState
 
         PlayerContextManager.Damaged = false;
 
-        PlayerContextManager.Rigidbody.velocity = Vector3.zero;
+        PlayerContextManager.Rigidbody.linearVelocity = Vector3.zero;
 
         PlayerContextManager.Rigidbody.gravityScale = 1f;
 
-        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, 4.71f), ForceMode2D.Impulse);
+        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.linearVelocity.x, 4.71f), ForceMode2D.Impulse);
     }
     public override void UpdateState()
     {
         PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, 3.14f, Time.deltaTime);
 
-        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.HitDirection.x * 3.14f, PlayerContextManager.VerticalVelocity);
+        PlayerContextManager.Rigidbody.linearVelocity = new Vector2(PlayerContextManager.HitDirection.x * 3.14f, PlayerContextManager.VerticalVelocity);
 
         CheckSwitchStates();
     }
@@ -42,7 +42,7 @@ public class CharacterDamagedState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        PlayerContextManager.Rigidbody.velocity = Vector3.zero;
+        PlayerContextManager.Rigidbody.linearVelocity = Vector3.zero;
     }
     public override void CheckSwitchStates()
     {

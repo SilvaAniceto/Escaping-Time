@@ -9,7 +9,7 @@ public class CharacterIdleState : CharacterAbstractState
 
     public override void EnterState()
     {
-        PlayerContextManager.Rigidbody.velocity = new Vector2(0, PlayerContextManager.VerticalVelocity);
+        PlayerContextManager.Rigidbody.linearVelocity = new Vector2(0, PlayerContextManager.VerticalVelocity);
     }
     public override void UpdateState()
     {

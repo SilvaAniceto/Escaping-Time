@@ -22,7 +22,7 @@ public class PlayerContextManager : MonoBehaviour
     public bool JumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }
     public bool PerformingJump { get; set; }
     public bool Falling { get; set; }
-    public float VerticalVelocity { get => Mathf.Round(Rigidbody.velocity.y * 100) / 100; }
+    public float VerticalVelocity { get => Mathf.Round(Rigidbody.linearVelocity.y * 100) / 100; }
     public bool Damaged { get; set; }
     public Vector3 HitDirection { get; set; }
     public bool InteractionInput { get => PlayerInputActions.PlayerActionMap.Interact.WasPressedThisFrame(); }

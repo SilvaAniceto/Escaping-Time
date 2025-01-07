@@ -15,9 +15,9 @@ public class CharacterJumpState : CharacterAbstractState
 
         PlayerContextManager.Rigidbody.gravityScale = 1f;
 
-        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.Rigidbody.velocity.x, 0);
+        PlayerContextManager.Rigidbody.linearVelocity = new Vector2(PlayerContextManager.Rigidbody.linearVelocity.x, 0);
 
-        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.velocity.x, 6.28f), ForceMode2D.Impulse);
+        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.linearVelocity.x, 6.28f), ForceMode2D.Impulse);
     }
     public override void UpdateState()
     {

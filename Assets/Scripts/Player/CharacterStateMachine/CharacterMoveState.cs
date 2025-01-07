@@ -13,7 +13,7 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        PlayerContextManager.Rigidbody.velocity = new Vector2(PlayerContextManager.MoveInput * 4.71f, PlayerContextManager.VerticalVelocity);
+        PlayerContextManager.Rigidbody.linearVelocity = new Vector2(PlayerContextManager.MoveInput * 5f, PlayerContextManager.VerticalVelocity);
 
         CheckSwitchStates();
     }

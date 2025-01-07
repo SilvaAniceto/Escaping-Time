@@ -13,6 +13,7 @@ public class DamagableObject : MonoBehaviour, IInteractable
     }
 
     [SerializeField] private EDamageHitDirection _damageHitDirection;
+    [SerializeField, Range (0.0f, 1.0f)] private float _hitMagnitude = 1.0f;
 
     private Collider2D _collider;
 
@@ -42,14 +43,14 @@ public class DamagableObject : MonoBehaviour, IInteractable
                     playercontextManager.HitDirection = Vector3.zero;
                     break;
                 case EDamageHitDirection.Left:
-                    playercontextManager.HitDirection = Vector3.left;
+                    playercontextManager.HitDirection = Vector3.left * _hitMagnitude;
                     break;
                 case EDamageHitDirection.Right:
-                    playercontextManager.HitDirection = Vector3.right;
+                    playercontextManager.HitDirection = Vector3.right * _hitMagnitude;
                     break;
                 case EDamageHitDirection.Both:
                     Vector3 direction = playercontextManager.transform.position.x > transform.position.x ? Vector3.right : Vector3.left;
-                    playercontextManager.HitDirection = direction;
+                    playercontextManager.HitDirection = direction * _hitMagnitude;
                     break;
             }
 
