@@ -2,48 +2,57 @@ using UnityEngine;
 
 public class CharacterMoveState : CharacterAbstractState
 {
-    public CharacterMoveState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
+    public CharacterMoveState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
     {
         IsRootState = false;
     }
 
     public override void EnterState()
     {
-       
+        CharacterContextManager.RemoveFixedJoint2D();
     }
     public override void UpdateState()
     {
-        PlayerContextManager.Rigidbody.linearVelocity = new Vector2(PlayerContextManager.MoveInput * 5f, PlayerContextManager.VerticalVelocity);
+        if (CharacterContextManager.CurrentState != CharacterStateFactory.OnWallState())
+        {
+            CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
+        }
+
+        CharacterContextManager.HorizontalSpeed = PlayerInputManager.MoveInput * Mathf.Lerp(CharacterContextManager.HorizontalStartSpeed, 7.0f, CharacterContextManager.HorizontalSpeedLerpOvertime);
 
         CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {
-        
+                
     }
     
     public override void LateUpdateState()
     {
-        if (PlayerContextManager.CurrentState == PlayerStateFactory.GroundedState() || PlayerContextManager.CurrentState == PlayerStateFactory.InteractionState())
+        if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState() || CharacterContextManager.CurrentState == CharacterStateFactory.InteractionState())
         {
-            
-            PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.RUN_ANIMATION);
+            CharacterAnimationManager.SetRunAnimation();
         }
     }
     public override void ExitState()
     {
-
+        
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.MoveInput == 0 || PlayerContextManager.IsWallColliding)
+        if (PlayerInputManager.MoveInput == 0 || IsWallColliding)
         {
-            SwitchState(PlayerStateFactory.IdleState());
+            SwitchState(CharacterStateFactory.IdleState());
         }
     }
-    public override void InitializeSubStates()
+    public override void CheckSwitchSubStates()
     {
         
+    }
+    public override Quaternion CurrentLookRotation()
+    {
+        float angle = Mathf.Atan2(0, PlayerInputManager.MoveInput) * Mathf.Rad2Deg;
+        return Quaternion.AngleAxis(angle, Vector3.up);
     }
     public override void OnCollisionEnter2D(Collision2D collision) { }
 

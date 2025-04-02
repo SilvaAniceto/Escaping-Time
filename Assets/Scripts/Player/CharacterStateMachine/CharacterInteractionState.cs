@@ -6,18 +6,18 @@ public class CharacterInteractionState : CharacterAbstractState
 {
     private IInteractable Interactable;
 
-    public CharacterInteractionState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
+    public CharacterInteractionState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        InitializeSubStates();
+        
     }
     public override void UpdateState()
     {
-        if (PlayerContextManager.InteractionInput)
+        if (PlayerInputManager.InteractionInput)
         {
             if (Interactable != null)
             {
@@ -26,6 +26,7 @@ public class CharacterInteractionState : CharacterAbstractState
         }
 
         CheckSwitchStates();
+        CheckSwitchSubStates();
     }
     public override void FixedUpdateState()
     {
@@ -38,26 +39,31 @@ public class CharacterInteractionState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        PlayerContextManager.WaitingInteraction = false;
+        Interactable = null;
 
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.JumpInput)
+        if (PlayerInputManager.HoldJumpInput)
         {
-            SwitchState(PlayerStateFactory.JumpState());
+            SwitchState(CharacterStateFactory.JumpState());
         }
     }
-    public override void InitializeSubStates()
+    public override void CheckSwitchSubStates()
     {
-        if (PlayerContextManager.MoveInput != 0)
+        if (PlayerInputManager.MoveInput != 0)
         {
-            SetSubState(PlayerStateFactory.MoveState());
+            SetSubState(CharacterStateFactory.MoveState());
         }
-        else if (PlayerContextManager.MoveInput == 0)
+        else if (PlayerInputManager.MoveInput == 0)
         {
-            SetSubState(PlayerStateFactory.IdleState());
+            SetSubState(CharacterStateFactory.IdleState());
         }
+    }
+
+    public override Quaternion CurrentLookRotation()
+    {
+        return new Quaternion();
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {
@@ -83,7 +89,7 @@ public class CharacterInteractionState : CharacterAbstractState
     {
         if (collision.TryGetComponent(out IInteractable interactable))
         {
-            if (interactable.Interactions.Contains(EInteractionType.TriggerStay))
+            if (interactable.Interactions.Contains(EInteractionType.Stay) && Interactable == null)
             {
                 Interactable = interactable;
             }
@@ -92,14 +98,6 @@ public class CharacterInteractionState : CharacterAbstractState
 
     public override void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out IInteractable interactable))
-        {
-            if (interactable.Interactions.Contains(EInteractionType.TriggerExit))
-            {
-                Interactable = null;
-            }
-        }
-
-        SwitchState(PlayerStateFactory.GroundedState());
+        SwitchState(CharacterStateFactory.GroundedState());
     }
 }

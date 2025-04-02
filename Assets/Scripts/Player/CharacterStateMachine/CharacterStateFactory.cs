@@ -3,42 +3,48 @@ using System.Collections.Generic;
 public enum ECharacterState
 {
     Grounded = 0,
-    Ungrounded,
     Idle,
     Moving,
     Jumping,
+    AirJumping,
     Falling,
     Damaged,
     Interacting,
-    Spawning
+    Spawning,
+    Dashing,
+    OnWall,
+    WallJump
 }
 
 public class CharacterStateFactory
 {
-    PlayerContextManager _contextManager;
+    CharacterContextManager _contextManager;
+    PlayerInputManager _inputManager;
+    CharacterAnimationManager _animationManager;
     Dictionary<ECharacterState, CharacterAbstractState> _states = new Dictionary<ECharacterState, CharacterAbstractState>();
 
-    public CharacterStateFactory(PlayerContextManager currentContextManager)
+    public CharacterStateFactory(CharacterContextManager currentContextManager, PlayerInputManager inputManager, CharacterAnimationManager animationManager)
     {
         _contextManager = currentContextManager;
-        _states[ECharacterState.Grounded] = new CharacterGroundedState(_contextManager, this);
-        _states[ECharacterState.Ungrounded] = new CharacterUngroundedState(_contextManager, this);
-        _states[ECharacterState.Idle] = new CharacterIdleState(_contextManager, this);
-        _states[ECharacterState.Moving] = new CharacterMoveState(_contextManager, this);
-        _states[ECharacterState.Jumping] = new CharacterJumpState(_contextManager, this);
-        _states[ECharacterState.Falling] = new CharacterFallState(_contextManager, this);
-        _states[ECharacterState.Damaged] = new CharacterDamagedState(_contextManager, this);
-        _states[ECharacterState.Interacting] = new CharacterInteractionState(_contextManager, this);
-        _states[ECharacterState.Spawning] = new CharacterSpawningState(_contextManager, this);
+        _inputManager = inputManager;
+        _animationManager = animationManager;
+        _states[ECharacterState.Grounded] = new CharacterGroundedState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Idle] = new CharacterIdleState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Moving] = new CharacterMoveState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Jumping] = new CharacterJumpState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.AirJumping] = new CharacterAirJumpState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Falling] = new CharacterFallState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Damaged] = new CharacterDamagedState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Interacting] = new CharacterInteractionState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Spawning] = new CharacterSpawningState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Dashing] = new CharacterDashState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.OnWall] = new CharacterOnWallState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.WallJump] = new CharacterWallJumpState(_contextManager, this, _inputManager, _animationManager);
     }
 
     public CharacterGroundedState GroundedState()
     {
         return (CharacterGroundedState)_states[ECharacterState.Grounded];
-    }
-    public CharacterUngroundedState UngroundedState()
-    {
-        return (CharacterUngroundedState)_states[ECharacterState.Ungrounded];
     }
     public CharacterIdleState IdleState()
     {
@@ -51,6 +57,10 @@ public class CharacterStateFactory
     public CharacterJumpState JumpState()
     {
         return (CharacterJumpState)_states[ECharacterState.Jumping];
+    }
+    public CharacterAirJumpState AirJumpState()
+    {
+        return (CharacterAirJumpState)_states[ECharacterState.AirJumping];
     }
     public CharacterFallState FallState()
     {
@@ -67,5 +77,17 @@ public class CharacterStateFactory
     public CharacterSpawningState SpawningState()
     {
         return (CharacterSpawningState)_states[ECharacterState.Spawning];
+    }
+    public CharacterDashState DashState()
+    {
+        return (CharacterDashState)_states[ECharacterState.Dashing];
+    }
+    public CharacterOnWallState OnWallState()
+    {
+        return (CharacterOnWallState)_states[ECharacterState.OnWall];
+    }
+    public CharacterWallJumpState WallJumpState()
+    {
+        return (CharacterWallJumpState)_states[ECharacterState.WallJump];
     }
 }

@@ -6,28 +6,30 @@ using UnityEngine;
 public class CharacterDamagedState : CharacterAbstractState
 {
 
-    public CharacterDamagedState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
+    public CharacterDamagedState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        PlayerContextManager.GroundChecker.enabled = true;
+        CharacterContextManager.RemoveFixedJoint2D();
 
-        PlayerContextManager.Damaged = false;
+        CharacterContextManager.TakingDamage = false;
 
-        PlayerContextManager.Rigidbody.linearVelocity = Vector3.zero;
+        CharacterContextManager.HorizontalSpeed = 0.00f;
+        CharacterContextManager.VerticalSpeed = 0.00f;
 
-        PlayerContextManager.Rigidbody.gravityScale = 1f;
+        CharacterContextManager.DamageSpeedOvertime = 0;
+        CharacterContextManager.HorizontalSpeedOvertime = 0;
+        CharacterContextManager.GravityDownwardSpeedOvertime = 0;
 
-        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.linearVelocity.x, 4.71f), ForceMode2D.Impulse);
+        CharacterContextManager.ResetDamageExitWaitTime();
     }
     public override void UpdateState()
     {
-        PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, 3.14f, Time.deltaTime);
-
-        PlayerContextManager.Rigidbody.linearVelocity = new Vector2(PlayerContextManager.HitDirection.x * 3.14f, PlayerContextManager.VerticalVelocity);
+        CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.50f, 7.00f, CharacterContextManager.DamageSpeedLerpOvertime) * CharacterContextManager.DamageHitDirection;
+        CharacterContextManager.VerticalSpeed = Mathf.Lerp(5.00f, -12.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
 
         CheckSwitchStates();
     }
@@ -38,19 +40,35 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void LateUpdateState()
     {
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.HIT_ANIMATION);
+        CharacterAnimationManager.SetHitAnimation();
     }
     public override void ExitState()
     {
-        PlayerContextManager.Rigidbody.linearVelocity = Vector3.zero;
+        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.HorizontalStartSpeed = 0.00f;
+        CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
+        CharacterContextManager.DashIsWaitingGroundedState = true;
     }
     public override void CheckSwitchStates()
     {
+        if (CharacterContextManager.VerticalSpeed <= -5.00f && Grounded)
+        {
+            CharacterContextManager.SetDamageExitWaitTime();
 
+            if (CharacterContextManager.DamageExitWaitTime <= 0.00f)
+            {
+                SwitchState(CharacterStateFactory.GroundedState());
+            }
+        }
     }
-    public override void InitializeSubStates()
+    public override void CheckSwitchSubStates()
     {
 
+    }
+
+    public override Quaternion CurrentLookRotation()
+    {
+        return new Quaternion();
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {
@@ -69,7 +87,7 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void OnTriggerEnter2D(Collider2D collision)
     {
-        SwitchState(PlayerStateFactory.GroundedState());
+        
     }
 
     public override void OnTriggerStay2D(Collider2D collision)

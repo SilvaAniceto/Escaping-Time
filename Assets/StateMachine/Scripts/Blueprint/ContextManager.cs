@@ -7,7 +7,7 @@ public class ContextManager : MonoBehaviour
 
     public AbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
 
-    public PlayerContextManager playerContextManager;
+    public CharacterContextManager playerContextManager;
 
     int _cycleCount = 0;
     int _awakeCount = 0;
@@ -80,16 +80,16 @@ public class ContextManager : MonoBehaviour
         _currentState.UpdateStates();
         _updateCount++;
 
-        if (playerContextManager.MoveInput != 0)
-        {
-            _startFlowTime += Time.deltaTime;
-            _startFlowTime = Mathf.Clamp01(_startFlowTime);
+        //if (playerContextManager.PlayerInputManager.MoveInput != 0)
+        //{
+        //    _startFlowTime += Time.deltaTime;
+        //    _startFlowTime = Mathf.Clamp01(_startFlowTime);
 
-            if (_startFlowTime >= 1)
-            {
-                Debug.Break();
-            }
-        }
+        //    if (_startFlowTime >= 1)
+        //    {
+        //        Debug.Break();
+        //    }
+        //}
     }
 
     void LateUpdate()

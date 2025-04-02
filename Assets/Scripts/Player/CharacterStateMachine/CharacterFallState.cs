@@ -2,22 +2,31 @@ using UnityEngine;
 
 public class CharacterFallState : CharacterAbstractState
 {
-    public CharacterFallState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
+    public CharacterFallState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        InitializeSubStates();
+        CharacterContextManager.RemoveFixedJoint2D();
 
-        PlayerContextManager.GroundChecker.enabled = true;
+        CharacterContextManager.CeilingChecker.enabled = false;
+        CharacterContextManager.WallChecker.enabled = false;
 
-        PlayerContextManager.Rigidbody.gravityScale = 4.71f;
+        CharacterContextManager.GravityDownwardSpeedOvertime = 0;
+
+        if (CharacterContextManager.ExitState == CharacterStateFactory.GroundedState())
+        {
+            CharacterContextManager.ResetCoyoteTime();
+        }
     }
     public override void UpdateState()
     {
+        CharacterContextManager.VerticalSpeed = Mathf.Lerp(CharacterContextManager.FallStartSpeed, -24.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
+
         CheckSwitchStates();
+        CheckSwitchSubStates();
     }
     public override void FixedUpdateState()
     {
@@ -25,28 +34,54 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void LateUpdateState()
     {
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.FALL_ANIMATION);
+        CharacterAnimationManager.SetFallAnimation();
     }
     public override void ExitState()
     {
-        
+        CharacterContextManager.VerticalSpeed = 0.00f;
     }
     public override void CheckSwitchStates()
     {
-        
-    }
-    public override void InitializeSubStates()
-    {
-        if (PlayerContextManager.MoveInput != 0)
+        if (Grounded)
         {
-            SetSubState(PlayerStateFactory.MoveState());
+            SwitchState(CharacterStateFactory.GroundedState());
         }
-        else if (PlayerContextManager.MoveInput == 0)
-        {
-            SetSubState(PlayerStateFactory.IdleState());
-        }
-    }
 
+        if (IsWallColliding && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput == CharacterForwardDirection)
+        {
+            SwitchState(CharacterStateFactory.OnWallState());
+        }
+
+        if (PlayerInputManager.StartJumpInput && CharacterContextManager.CoyoteTime > 0.00f)
+        {
+            SwitchState(CharacterStateFactory.JumpState());
+        }
+        else if (PlayerInputManager.StartJumpInput && CharacterContextManager.AirJumpIsAllowed)
+        {
+            SwitchState(CharacterStateFactory.AirJumpState());
+        }
+
+        if (PlayerInputManager.DashInput && CharacterContextManager.DashIsAllowed)
+        {
+            SwitchState(CharacterStateFactory.DashState());
+        }
+    }
+    public override void CheckSwitchSubStates()
+    {
+        if (PlayerInputManager.MoveInput != 0)
+        {
+            SetSubState(CharacterStateFactory.MoveState());
+        }
+        else if (PlayerInputManager.MoveInput == 0)
+        {
+            SetSubState(CharacterStateFactory.IdleState());
+        }
+    }
+    public override Quaternion CurrentLookRotation()
+    {
+        float angle = Mathf.Atan2(0, CharacterForwardDirection) * Mathf.Rad2Deg;
+        return Quaternion.AngleAxis(angle, Vector3.up);
+    }
     public override void OnCollisionEnter2D(Collision2D collision) { }
 
     public override void OnCollisionStay(Collision2D collision) { }
@@ -55,10 +90,7 @@ public class CharacterFallState : CharacterAbstractState
 
     public override void OnTriggerEnter2D(Collider2D collision) { }
 
-    public override void OnTriggerStay2D(Collider2D collision)
-    {
-        SwitchState(PlayerStateFactory.GroundedState());
-    }
+    public override void OnTriggerStay2D(Collider2D collision) { }
 
     public override void OnTriggerExit2D(Collider2D collision) { }
 }

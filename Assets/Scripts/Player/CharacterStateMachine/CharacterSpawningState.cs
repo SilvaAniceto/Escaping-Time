@@ -6,7 +6,7 @@ public class CharacterSpawningState : CharacterAbstractState
 {
     private float _spawningWaitTime;
 
-    public CharacterSpawningState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
+    public CharacterSpawningState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
     {
         IsRootState = true;
     }
@@ -15,14 +15,12 @@ public class CharacterSpawningState : CharacterAbstractState
     {
         _spawningWaitTime = 0.6f;
 
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.DISABLED_ANIMATION);
-        PlayerContextManager.Rigidbody.bodyType = RigidbodyType2D.Static;
-        PlayerContextManager.CharacterCollider.enabled = false;
-        PlayerContextManager.GroundChecker.enabled = false;
+        CharacterAnimationManager.SetDisabledAnimation();
+        CharacterContextManager.CharacterCollider.enabled = false;
     }
     public override void UpdateState()
     {
-        PlayerContextManager.transform.position = Vector3.MoveTowards(PlayerContextManager.transform.position, PlayerContextManager.SpawningPosition, 10f * Time.deltaTime);
+        CharacterContextManager.transform.position = Vector3.MoveTowards(CharacterContextManager.transform.position, CharacterContextManager.SpawningPosition, 10f * Time.deltaTime);
 
         CheckSwitchStates();
     }
@@ -37,29 +35,34 @@ public class CharacterSpawningState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        PlayerContextManager.SpawningCharacter = false;
-        PlayerContextManager.CharacterCollider.enabled = true;
-        PlayerContextManager.GroundChecker.enabled = true;
-        PlayerContextManager.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        CharacterContextManager.SpawningCharacter = false;
+        CharacterContextManager.CharacterCollider.enabled = true;
+        
+        CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.transform.position == PlayerContextManager.SpawningPosition)
+        if (CharacterContextManager.transform.position == CharacterContextManager.SpawningPosition)
         {
-            PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.SPAWNING_ANIMATION);
+            CharacterAnimationManager.SetSpawningAnimation();
 
             _spawningWaitTime -= Time.deltaTime;
             _spawningWaitTime = Mathf.Clamp01(_spawningWaitTime);
 
             if (_spawningWaitTime <= 0)
             {
-                SwitchState(PlayerStateFactory.GroundedState());
+                SwitchState(CharacterStateFactory.GroundedState());
             }
         }
     }
-    public override void InitializeSubStates()
+    public override void CheckSwitchSubStates()
     {
 
+    }
+
+    public override Quaternion CurrentLookRotation()
+    {
+        return new Quaternion();
     }
     public override void OnCollisionEnter2D(Collision2D collision)
     {

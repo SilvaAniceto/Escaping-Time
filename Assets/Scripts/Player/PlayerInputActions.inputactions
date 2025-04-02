@@ -18,7 +18,7 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "703c6331-2b54-47d1-9828-0a1a48b88314",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Hold",
                     "initialStateCheck": false
@@ -27,10 +27,28 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "8d710b7d-8f9d-437f-bfb9-59b0bf657a2e",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Hold",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "00953a30-d462-4dfe-b87a-6e5e270fec6c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CameraTilt",
+                    "type": "Value",
+                    "id": "716be4ee-5775-4fc7-b70f-86bc8631920c",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -53,17 +71,6 @@
                     "processors": "Scale",
                     "groups": "Mouse/Keyboard",
                     "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "097b74a2-d28e-4298-b2bc-d90186ff5ad1",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Mouse/Keyboard",
-                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -124,10 +131,32 @@
                 },
                 {
                     "name": "",
+                    "id": "d7d91fbd-0bd2-4135-b660-492180e62895",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse/Keyboard",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "edb1e8c7-9ddd-4d50-83e2-1a6b81a46695",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f6cf6e45-595d-482b-a7d8-8fa31aaa3467",
                     "path": "<Gamepad>/leftStick/x",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "AxisDeadzone(min=0.4)",
                     "groups": "Gamepad",
                     "action": "Move",
                     "isComposite": false,
@@ -152,6 +181,17 @@
                     "processors": "Scale",
                     "groups": "Gamepad",
                     "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f7650770-d157-4901-9079-2e3a94f82d3e",
+                    "path": "<Gamepad>/rightStick/y",
+                    "interactions": "",
+                    "processors": "AxisDeadzone(min=0.4)",
+                    "groups": ";Gamepad",
+                    "action": "CameraTilt",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

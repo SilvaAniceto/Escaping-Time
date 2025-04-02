@@ -1,25 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class CharacterAbstractState
 {
+    public CharacterAbstractState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager)
+    {
+        _characterContextManager = currentContextManager;
+        _characterStateFactory = stateFactory;
+        _playerInputManager = inputManager;
+        _characterAnimationManager = animationManager;
+    }
+
     private bool _isRootState = false;
-    private PlayerContextManager _playerContextManager;
-    private CharacterStateFactory _playerStateFactory;
+    private PlayerInputManager _playerInputManager;
+    private CharacterContextManager _characterContextManager;
+    private CharacterAnimationManager _characterAnimationManager;
+    private CharacterStateFactory _characterStateFactory;
     private CharacterAbstractState _currentSuperState;
-    public CharacterAbstractState _currentSubState;
+    private CharacterAbstractState _currentSubState;
 
     protected bool IsRootState { set { _isRootState = value; } }
-    protected PlayerContextManager PlayerContextManager { get { return _playerContextManager; } }
-    protected CharacterStateFactory PlayerStateFactory { get { return _playerStateFactory; } }
-    protected CharacterAbstractState CurrentSubState { get { return _currentSubState; } }
-
-    public CharacterAbstractState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory)
-    {
-        _playerContextManager = currentContextManager;
-        _playerStateFactory = stateFactory;
-    }
+    protected PlayerInputManager PlayerInputManager { get { return _playerInputManager; } }
+    protected CharacterContextManager CharacterContextManager { get { return _characterContextManager; } }
+    protected CharacterAnimationManager CharacterAnimationManager { get { return _characterAnimationManager; } }
+    public CharacterStateFactory CharacterStateFactory { get { return _characterStateFactory; } }
+    protected CharacterAbstractState CurrentSuperState { get { return _currentSuperState; } }
+    public CharacterAbstractState CurrentSubState { get { return _currentSubState; } }
+    protected bool IsWallColliding { get => Physics2D.OverlapBox(CharacterContextManager.WallCheckerPoint.position, new Vector2(0.06f, 0.15f), 0.00f, CharacterContextManager.WallLayerTarget); }
+    protected bool Grounded { get => Physics2D.OverlapBox(CharacterContextManager.transform.position, new Vector2(0.40f, 0.04f), 0.00f, CharacterContextManager.GroundLayerTarget); }
+    public int CharacterForwardDirection { get => (int)Vector3.SignedAngle(Vector3.right, CharacterAnimationManager.CharacterAnimator.transform.right, Vector3.up) < 0 ? -1 : 1; }
+    protected float DashSpeed { get; set; }
 
     public abstract void EnterState();
     public abstract void FixedUpdateState();
@@ -27,9 +36,13 @@ public abstract class CharacterAbstractState
     public abstract void LateUpdateState();
     public abstract void ExitState();
     public abstract void CheckSwitchStates();
-    public abstract void InitializeSubStates();
+    public abstract void CheckSwitchSubStates();
+    public abstract Quaternion CurrentLookRotation();
+
     public void FixedUpdateStates()
     {
+        CharacterContextManager.Rigidbody.MovePosition(CharacterContextManager.Rigidbody.position + (new Vector2(CharacterContextManager.HorizontalSpeed, CharacterContextManager.VerticalSpeed) * Time.fixedDeltaTime));
+
         FixedUpdateState();
 
         if (_currentSubState != null)
@@ -39,31 +52,27 @@ public abstract class CharacterAbstractState
     }
     public void UpdateStates()
     {
-        PlayerContextManager.CharacterAnimator.transform.rotation = PlayerContextManager.MoveInput == 0 ? PlayerContextManager.CharacterAnimator.transform.rotation : TargetRotation(PlayerContextManager.MoveInput);
-
-        Quaternion TargetRotation(float moveInput)
-        {
-            float angle = Mathf.Atan2(0, moveInput) * Mathf.Rad2Deg;
-            return Quaternion.AngleAxis(angle, Vector3.up);
-        }
+        _characterContextManager.SetCoyoteTime();
+        _characterContextManager.SetDashCoolDownTime();
+        _characterContextManager.CameraVerticalOffset(PlayerInputManager.CameraTiltInput);
 
         UpdateState();
 
         if (_currentSubState != null)
         {
-            _currentSubState.UpdateStates();
+             _currentSubState.UpdateStates();
         }
 
         if (_isRootState)
         {
-            if (PlayerContextManager.Damaged)
+            if (_characterContextManager.TakingDamage)
             {
-                SwitchState(PlayerStateFactory.DamagedState());
+                SwitchState(_characterStateFactory.DamagedState());
             }
 
-            if (PlayerContextManager.SpawningCharacter)
+            if (_characterContextManager.SpawningCharacter)
             {
-                SwitchState(PlayerStateFactory.SpawningState());
+                SwitchState(_characterStateFactory.SpawningState());
             }
         }
     }
@@ -78,12 +87,17 @@ public abstract class CharacterAbstractState
     }
     protected void SwitchState(CharacterAbstractState newState)
     {
+        if (_isRootState)
+        {
+            _characterContextManager.ExitState = _characterContextManager.CurrentState;
+        }
+
         ExitState();
 
         if (_isRootState)
         {
-            _playerContextManager.CurrentState = newState;
-            _playerContextManager.CurrentState.EnterState();
+            _characterContextManager.CurrentState = newState;
+            _characterContextManager.CurrentState.EnterState();
         }
         else if (_currentSuperState != null)
         {
@@ -105,6 +119,7 @@ public abstract class CharacterAbstractState
         newSubState.SetSuperState(this);
         _currentSubState.EnterState();
     }
+    
     public abstract void OnCollisionEnter2D(Collision2D collision);
     public abstract void OnCollisionStay(Collision2D collision);
     public abstract void OnCollisionExit2D(Collision2D collision);

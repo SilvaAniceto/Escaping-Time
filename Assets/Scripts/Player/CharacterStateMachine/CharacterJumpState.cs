@@ -2,28 +2,25 @@ using UnityEngine;
 
 public class CharacterJumpState : CharacterAbstractState
 {
-    public CharacterJumpState(PlayerContextManager currentContextManager, CharacterStateFactory stateFactory) : base(currentContextManager, stateFactory)
+    public CharacterJumpState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        InitializeSubStates();
+        CharacterContextManager.RemoveFixedJoint2D();
 
-        PlayerContextManager.GroundChecker.enabled = false;
+        CharacterContextManager.CeilingChecker.enabled = true;
 
-        PlayerContextManager.Rigidbody.gravityScale = 1f;
-
-        PlayerContextManager.Rigidbody.linearVelocity = new Vector2(PlayerContextManager.Rigidbody.linearVelocity.x, 0);
-
-        PlayerContextManager.Rigidbody.AddForce(new Vector2(PlayerContextManager.Rigidbody.linearVelocity.x, 6.28f), ForceMode2D.Impulse);
+        CharacterContextManager.GravityUpwardSpeedOvertime = 0;
     }
     public override void UpdateState()
     {
-        PlayerContextManager.Rigidbody.gravityScale = Mathf.Lerp(PlayerContextManager.Rigidbody.gravityScale, 3.14f, Time.deltaTime);
+        CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GravityUpwardSpeedLerpOvertime);
 
         CheckSwitchStates();
+        CheckSwitchSubStates();
     }
     public override void FixedUpdateState()
     {
@@ -31,37 +28,55 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void LateUpdateState()
     {
-        PlayerContextManager.CharacterAnimator.Play(PlayerContextManager.JUMP_ANIMATION);
+        CharacterAnimationManager.SetJumpAnimation();
     }
     public override void ExitState()
     {
-        
+        CharacterContextManager.FallStartSpeed = 0.00f;
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerContextManager.VerticalVelocity < 0.00f)
+        if (CharacterContextManager.VerticalSpeed <= 0.00f || !PlayerInputManager.HoldJumpInput)
         {
-            SwitchState(PlayerStateFactory.FallState());
+            SwitchState(CharacterStateFactory.FallState());
+        }
+
+        if (PlayerInputManager.DashInput && CharacterContextManager.DashIsAllowed)
+        {
+            SwitchState(CharacterStateFactory.DashState());
         }
     }
-    public override void InitializeSubStates()
+    public override void CheckSwitchSubStates()
     {
-        if (PlayerContextManager.MoveInput != 0)
+        if (PlayerInputManager.MoveInput != 0 && !IsWallColliding)
         {
-            SetSubState(PlayerStateFactory.MoveState());
+            SetSubState(CharacterStateFactory.MoveState());
         }
-        else if (PlayerContextManager.MoveInput == 0)
+        else if (PlayerInputManager.MoveInput == 0)
         {
-            SetSubState(PlayerStateFactory.IdleState());
+            SetSubState(CharacterStateFactory.IdleState());
         }
     }
-    public override void OnCollisionEnter2D(Collision2D collision) { }
+    public override Quaternion CurrentLookRotation()
+    {
+        return new Quaternion();
+    }
+    public override void OnCollisionEnter2D(Collision2D collision)
+    {
+        
+    }
 
     public override void OnCollisionStay(Collision2D collision) { }
 
     public override void OnCollisionExit2D(Collision2D collision) { }
 
-    public override void OnTriggerEnter2D(Collider2D collision) { }
+    public override void OnTriggerEnter2D(Collider2D collision) 
+    {
+        if (collision.CompareTag("Ceiling"))
+        {
+            SwitchState(CharacterStateFactory.FallState());
+        }
+    }
 
     public override void OnTriggerStay2D(Collider2D collision) { }
 
