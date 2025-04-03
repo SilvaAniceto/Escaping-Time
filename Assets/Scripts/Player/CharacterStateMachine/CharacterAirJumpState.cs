@@ -18,9 +18,6 @@ public class CharacterAirJumpState : CharacterAbstractState
     public override void UpdateState()
     {
         CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GravityUpwardSpeedLerpOvertime);
-
-        CheckSwitchStates();
-        CheckSwitchSubStates();
     }
     public override void FixedUpdateState()
     {
@@ -48,13 +45,27 @@ public class CharacterAirJumpState : CharacterAbstractState
     }
     public override void CheckSwitchSubStates()
     {
-        if (PlayerInputManager.MoveInput != 0)
+        if (CurrentSubState == null)
         {
-            SetSubState(CharacterStateFactory.MoveState());
+            if (PlayerInputManager.MoveInput != 0)
+            {
+                SetSubState(CharacterStateFactory.MoveState());
+            }
+            else if (PlayerInputManager.MoveInput == 0)
+            {
+                SetSubState(CharacterStateFactory.IdleState());
+            }
         }
-        else if (PlayerInputManager.MoveInput == 0)
+        else
         {
-            SetSubState(CharacterStateFactory.IdleState());
+            if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState())
+            {
+                SetSubState(CharacterStateFactory.MoveState());
+            }
+            else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
+            {
+                SetSubState(CharacterStateFactory.IdleState());
+            }
         }
     }
     public override Quaternion CurrentLookRotation()

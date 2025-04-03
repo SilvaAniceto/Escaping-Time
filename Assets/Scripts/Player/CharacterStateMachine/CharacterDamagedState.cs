@@ -30,8 +30,6 @@ public class CharacterDamagedState : CharacterAbstractState
     {
         CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.50f, 7.00f, CharacterContextManager.DamageSpeedLerpOvertime) * CharacterContextManager.DamageHitDirection;
         CharacterContextManager.VerticalSpeed = Mathf.Lerp(5.00f, -12.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
-
-        CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {

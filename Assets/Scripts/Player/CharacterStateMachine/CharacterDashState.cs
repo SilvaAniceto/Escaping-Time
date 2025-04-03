@@ -25,8 +25,6 @@ public class CharacterDashState : CharacterAbstractState
 
         CharacterContextManager.HorizontalSpeed = DashSpeed * CharacterForwardDirection;
         CharacterContextManager.VerticalSpeed = 0.00f;
-
-        CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {
@@ -38,7 +36,7 @@ public class CharacterDashState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.HorizontalSpeed = 7.00f;
+        CharacterContextManager.HorizontalSpeed = 0.00f;
     }
     public override void CheckSwitchStates()
     {

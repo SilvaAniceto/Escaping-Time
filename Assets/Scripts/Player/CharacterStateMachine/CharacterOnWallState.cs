@@ -22,9 +22,6 @@ public class CharacterOnWallState : CharacterAbstractState
     {
         CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, -3.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
-
-        CheckSwitchStates();
-        CheckSwitchSubStates();
     }
 
     public override void FixedUpdateState()
@@ -34,7 +31,6 @@ public class CharacterOnWallState : CharacterAbstractState
 
     public override void LateUpdateState()
     {
-        
         CharacterAnimationManager.SetOnWallAnimation();
     }
 
@@ -85,9 +81,9 @@ public class CharacterOnWallState : CharacterAbstractState
 
     public override void OnTriggerExit2D(Collider2D collision) 
     {
-        if (collision.CompareTag("Ceiling") || collision.CompareTag("Interactable"))
-        {
+        //if (collision.CompareTag("Ceiling") || collision.CompareTag("Interactable"))
+        //{
+        //}
             SwitchState(CharacterStateFactory.FallState());
-        }
     }
 }

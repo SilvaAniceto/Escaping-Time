@@ -23,7 +23,7 @@ public abstract class CharacterAbstractState
     protected CharacterContextManager CharacterContextManager { get { return _characterContextManager; } }
     protected CharacterAnimationManager CharacterAnimationManager { get { return _characterAnimationManager; } }
     public CharacterStateFactory CharacterStateFactory { get { return _characterStateFactory; } }
-    protected CharacterAbstractState CurrentSuperState { get { return _currentSuperState; } }
+    public CharacterAbstractState CurrentSuperState { get { return _currentSuperState; } }
     public CharacterAbstractState CurrentSubState { get { return _currentSubState; } }
     protected bool IsWallColliding { get => Physics2D.OverlapBox(CharacterContextManager.WallCheckerPoint.position, new Vector2(0.06f, 0.15f), 0.00f, CharacterContextManager.WallLayerTarget); }
     protected bool Grounded { get => Physics2D.OverlapBox(CharacterContextManager.transform.position, new Vector2(0.40f, 0.04f), 0.00f, CharacterContextManager.GroundLayerTarget); }
@@ -54,9 +54,11 @@ public abstract class CharacterAbstractState
     {
         _characterContextManager.SetCoyoteTime();
         _characterContextManager.SetDashCoolDownTime();
-        _characterContextManager.CameraVerticalOffset(PlayerInputManager.CameraTiltInput);
 
         UpdateState();
+
+        CheckSwitchStates();
+        CheckSwitchSubStates();
 
         if (_currentSubState != null)
         {

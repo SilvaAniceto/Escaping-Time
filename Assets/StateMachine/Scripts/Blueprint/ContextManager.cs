@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 public class ContextManager : MonoBehaviour
 {
@@ -6,8 +8,6 @@ public class ContextManager : MonoBehaviour
     private StateFactory _stateFactory;
 
     public AbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
-
-    public CharacterContextManager playerContextManager;
 
     int _cycleCount = 0;
     int _awakeCount = 0;
@@ -21,8 +21,22 @@ public class ContextManager : MonoBehaviour
     float _startFlowTime = 0.0f;
     float _endFlowTime = 0.0f;
 
+    EventSystem _eventSystem;
+    InputSystemUIInputModule InputModule { get => (InputSystemUIInputModule)EventSystem.current.currentInputModule; }
+
     void Awake()
     {
+        if (FindAnyObjectByType(typeof(EventSystem)))
+        {
+            _eventSystem = (EventSystem)FindFirstObjectByType(typeof(EventSystem));
+        }
+        else
+        {
+            GameObject eventSystem = new GameObject("EventSystem");
+            _eventSystem = eventSystem.AddComponent<EventSystem>();
+            _eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
+        }
+
         _stateFactory = new StateFactory(this);
         _currentState = _stateFactory.State();
         _awakeCount++;
@@ -80,16 +94,16 @@ public class ContextManager : MonoBehaviour
         _currentState.UpdateStates();
         _updateCount++;
 
-        //if (playerContextManager.PlayerInputManager.MoveInput != 0)
-        //{
-        //    _startFlowTime += Time.deltaTime;
-        //    _startFlowTime = Mathf.Clamp01(_startFlowTime);
+        if (InputModule.cancel.action.WasPressedThisFrame())
+        {
+            _startFlowTime += Time.deltaTime;
+            _startFlowTime = Mathf.Clamp01(_startFlowTime);
 
-        //    if (_startFlowTime >= 1)
-        //    {
-        //        Debug.Break();
-        //    }
-        //}
+            if (_startFlowTime >= 1)
+            {
+                Debug.Break();
+            }
+        }
     }
 
     void LateUpdate()

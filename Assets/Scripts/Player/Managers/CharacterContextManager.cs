@@ -20,9 +20,7 @@ public class CharacterContextManager : MonoBehaviour
     [SerializeField] private AnimationCurve _fallCurve;
     [SerializeField] private AnimationCurve _dashCurve;
     [SerializeField] private AnimationCurve _damageCurve;
-    [SerializeField] private CinemachinePositionComposer _cameraPositionComposer;
-
-    private float _cameraVerticalOffset;
+    
     private CharacterAbstractState _exitState;
     private CharacterAbstractState _currentState;
 
@@ -190,23 +188,6 @@ public class CharacterContextManager : MonoBehaviour
     {
         DamageExitWaitTime = 0.12f;
     }
-    public void CameraVerticalOffset(float input)
-    {
-        _cameraVerticalOffset += Time.deltaTime * input;
-
-        if (input == 0)
-        {
-            _cameraVerticalOffset = Mathf.Lerp(_cameraVerticalOffset, 0.00f, Time.deltaTime * 16.00f);
-        }
-
-        _cameraVerticalOffset = Mathf.Clamp(_cameraVerticalOffset, -1.00f, 1.00f);
-
-        float blendFactor = 5.25f * _cameraVerticalOffset;
-        blendFactor = Mathf.Clamp(blendFactor, -5.25f, 3.00f);
-        blendFactor = Mathf.Round(blendFactor * 100.00f) / 100.00f;
-
-        _cameraPositionComposer.TargetOffset = new Vector3(_cameraPositionComposer.TargetOffset.x, blendFactor, _cameraPositionComposer.TargetOffset.z);
-    }
     #endregion
 
     #region PHYSICS FRAME
@@ -354,15 +335,17 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region RENDERING 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(WallCheckerPoint.position, new Vector2(0.06f, 0.15f));
     }
     void OnGUI()
     {
 #if UNITY_EDITOR
         GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
         GUILayout.Label("Current State: " + CurrentState.ToString());
+        GUILayout.Label("Current Super State: " + (CurrentState.CurrentSuperState != null ? CurrentState.CurrentSuperState.ToString() : ""));
         GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
 
         GUILayout.Label("Dash Cool Down Time: " + DashCoolDownTime.ToString());

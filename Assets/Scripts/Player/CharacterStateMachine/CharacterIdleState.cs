@@ -18,7 +18,7 @@ public class CharacterIdleState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        CheckSwitchStates();
+        
     }
     public override void FixedUpdateState()
     {

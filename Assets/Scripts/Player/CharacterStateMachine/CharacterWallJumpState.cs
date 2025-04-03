@@ -18,9 +18,6 @@ public class CharacterWallJumpState : CharacterAbstractState
     {
         CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GravityUpwardSpeedLerpOvertime);
         CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.HorizontalSpeedLerpOvertime) * CharacterForwardDirection;
-
-        CheckSwitchStates();
-        CheckSwitchSubStates();
     }
     public override void FixedUpdateState()
     {

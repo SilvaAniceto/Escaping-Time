@@ -137,6 +137,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5859525621522234506}
+  - component: {fileID: 6143715647323644401}
   m_Layer: 0
   m_Name: 2D Camera
   m_TagString: Untagged
@@ -162,6 +163,19 @@ Transform:
   - {fileID: 6694209666896042098}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6143715647323644401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875133302763745453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5334a9a0bbc948d4cafaa3d9e359e30d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cameraPositionComposer: {fileID: 1894900180617853676}
 --- !u!1 &1883381027144589090
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,10 +353,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowDebugText: 0
   ShowCameraFrustum: 1
-  IgnoreTimeScale: 0
+  IgnoreTimeScale: 1
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 1
+  UpdateMethod: 2
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 0

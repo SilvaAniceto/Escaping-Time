@@ -11,6 +11,8 @@ public class CharacterGroundedState : CharacterAbstractState
     {
         CharacterContextManager.CeilingChecker.enabled = true;
 
+        CharacterContextManager.WallChecker.enabled = false;
+
         CharacterContextManager.AirJumpIsAllowed = true;
 
         CharacterContextManager.ResetDashCoolDownTime(0.30f);
@@ -27,8 +29,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void UpdateState()
     {
-        CheckSwitchStates();
-        CheckSwitchSubStates();
+        
     }
 
     public override void FixedUpdateState()
@@ -66,13 +67,27 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void CheckSwitchSubStates()
     {
-        if (PlayerInputManager.MoveInput != 0)
+        if (CurrentSubState == null)
         {
-            SetSubState(CharacterStateFactory.MoveState());
+            if (PlayerInputManager.MoveInput != 0)
+            {
+                SetSubState(CharacterStateFactory.MoveState());
+            }
+            else if (PlayerInputManager.MoveInput == 0)
+            {
+                SetSubState(CharacterStateFactory.IdleState());
+            }
         }
-        else if (PlayerInputManager.MoveInput == 0)
+        else
         {
-            SetSubState(CharacterStateFactory.IdleState());
+            if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState())
+            {
+                SetSubState(CharacterStateFactory.MoveState());
+            }
+            else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
+            {
+                SetSubState(CharacterStateFactory.IdleState());
+            }
         }
     }
     public override Quaternion CurrentLookRotation()

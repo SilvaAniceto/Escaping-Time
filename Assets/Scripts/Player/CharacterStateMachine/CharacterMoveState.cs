@@ -19,8 +19,6 @@ public class CharacterMoveState : CharacterAbstractState
         }
 
         CharacterContextManager.HorizontalSpeed = PlayerInputManager.MoveInput * Mathf.Lerp(CharacterContextManager.HorizontalStartSpeed, 7.0f, CharacterContextManager.HorizontalSpeedLerpOvertime);
-
-        CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {

@@ -21,8 +21,6 @@ public class CharacterSpawningState : CharacterAbstractState
     public override void UpdateState()
     {
         CharacterContextManager.transform.position = Vector3.MoveTowards(CharacterContextManager.transform.position, CharacterContextManager.SpawningPosition, 10f * Time.deltaTime);
-
-        CheckSwitchStates();
     }
     public override void FixedUpdateState()
     {

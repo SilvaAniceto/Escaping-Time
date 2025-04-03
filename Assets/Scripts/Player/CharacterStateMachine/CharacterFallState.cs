@@ -24,9 +24,6 @@ public class CharacterFallState : CharacterAbstractState
     public override void UpdateState()
     {
         CharacterContextManager.VerticalSpeed = Mathf.Lerp(CharacterContextManager.FallStartSpeed, -24.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
-
-        CheckSwitchStates();
-        CheckSwitchSubStates();
     }
     public override void FixedUpdateState()
     {
@@ -47,7 +44,7 @@ public class CharacterFallState : CharacterAbstractState
             SwitchState(CharacterStateFactory.GroundedState());
         }
 
-        if (IsWallColliding && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput == CharacterForwardDirection)
+        if (IsWallColliding && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput == CharacterForwardDirection && CharacterContextManager.ExitState != CharacterStateFactory.OnWallState())
         {
             SwitchState(CharacterStateFactory.OnWallState());
         }
@@ -68,13 +65,27 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void CheckSwitchSubStates()
     {
-        if (PlayerInputManager.MoveInput != 0)
+        if (CurrentSubState == null)
         {
-            SetSubState(CharacterStateFactory.MoveState());
+            if (PlayerInputManager.MoveInput != 0)
+            {
+                SetSubState(CharacterStateFactory.MoveState());
+            }
+            else if (PlayerInputManager.MoveInput == 0)
+            {
+                SetSubState(CharacterStateFactory.IdleState());
+            }
         }
-        else if (PlayerInputManager.MoveInput == 0)
+        else
         {
-            SetSubState(CharacterStateFactory.IdleState());
+            if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState())
+            {
+                SetSubState(CharacterStateFactory.MoveState());
+            }
+            else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
+            {
+                SetSubState(CharacterStateFactory.IdleState());
+            }
         }
     }
     public override Quaternion CurrentLookRotation()
