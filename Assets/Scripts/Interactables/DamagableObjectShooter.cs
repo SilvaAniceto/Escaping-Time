@@ -8,7 +8,7 @@ public class DamagableObjectShooter : MonoBehaviour
     [SerializeField] AnimationCurve _projectileCurve;
     [SerializeField, Range(0.1f, 5)] private float _shootInterval = 1.5f;
 
-    private List<DamagableObject> _damagableObjects = new List<DamagableObject>();
+    private List<ShooterProjectile> _damagableObjects = new List<ShooterProjectile>();
     private float _shootTimer;
     private int _projectileIndex = 0;
 
@@ -27,10 +27,12 @@ public class DamagableObjectShooter : MonoBehaviour
 
             damagable.transform.SetParent(transform);
             damagable.gameObject.SetActive(false);
-            _damagableObjects.Add(damagable);
+            _damagableObjects.Add(projectile);
         }
 
         _shootTimer = _shootInterval;
+
+        GameManagerContext.OnRunOrPauseStateChanged.AddListener(OnPauseState);
     }
 
     void Update()
@@ -58,6 +60,20 @@ public class DamagableObjectShooter : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        
+    }
+
+    private void OnPauseState(bool value)
+    {
+        foreach (ShooterProjectile obj in _damagableObjects)
+        {
+            obj.enabled = value;
+        }
+        this.enabled = value;
+    }
+
     [RequireComponent(typeof(Rigidbody2D))]
     private class ShooterProjectile : MonoBehaviour
     {
@@ -76,13 +92,10 @@ public class DamagableObjectShooter : MonoBehaviour
         public AnimationCurve ProjectileCurve { get; set; }
         private Rigidbody2D Rigidbody2D { get; set; }
         
-        private void OnEnable()
+        private void Start()
         {
             Rigidbody2D = GetComponent<Rigidbody2D>();
             Rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
-
-            transform.localPosition = Vector3.zero;
-            transform.rotation = transform.parent.rotation;
         }
 
         private void FixedUpdate()
@@ -95,7 +108,9 @@ public class DamagableObjectShooter : MonoBehaviour
             if (collision.CompareTag("Ground")  || collision.CompareTag("Ceiling"))
             {
                 gameObject.SetActive(false);
-            }
+				transform.localPosition = Vector3.zero;
+				transform.rotation = transform.parent.rotation;
+			}
         }
     }
 }

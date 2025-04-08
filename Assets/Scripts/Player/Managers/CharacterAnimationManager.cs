@@ -3,7 +3,7 @@ using UnityEngine;
 public class CharacterAnimationManager : MonoBehaviour
 {
     private Animator _characterAnimator;
-    public Animator CharacterAnimator { get => _characterAnimator; }
+    public Animator CharacterAnimator { get => _characterAnimator; set => _characterAnimator = value; }
 
     private const string IDLE_ANIMATION = "Idle";
     private const string RUN_ANIMATION = "Run";
@@ -14,11 +14,6 @@ public class CharacterAnimationManager : MonoBehaviour
     private const string HIT_ANIMATION = "Hit";
     private const string SPAWNING_ANIMATION = "Spawning";
     private const string DISABLED_ANIMATION = "Disabled";
-
-    void Start()
-    {
-        _characterAnimator = GetComponentInChildren<Animator>();
-    }
 
     public void SetIdleAnimation()
     {

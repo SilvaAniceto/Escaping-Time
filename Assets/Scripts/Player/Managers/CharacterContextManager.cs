@@ -39,6 +39,13 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region PHYSICS MOVEMENT PROPERTIES
+    public Vector2 MovePosition
+    {
+        get
+        {
+            return new Vector2(HorizontalSpeed, VerticalSpeed);
+        }
+    }
     public float HorizontalSpeed { get; set; }
     public float VerticalSpeed { get; set; }
     public float FallStartSpeed { get; set; }
@@ -122,10 +129,17 @@ public class CharacterContextManager : MonoBehaviour
     void Awake()
     {
         _currentState = new CharacterStateFactory(this, GetComponent<PlayerInputManager>(), GetComponent<CharacterAnimationManager>()).GroundedState();
+
+        CurrentState.CharacterAnimationManager.CharacterAnimator = CurrentState.CharacterAnimationManager.GetComponentInChildren<Animator>();
+
+        Rigidbody = GetComponent<Rigidbody2D>();
+
+        GameManagerContext.OnRunOrPauseStateChanged.AddListener((value) => this.enabled = value);
     }
     void OnEnable()
     {
-        Rigidbody = GetComponent<Rigidbody2D>();
+        CurrentState.PlayerInputManager.enabled = true;
+        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = true;
     }
     void Start()
     {
@@ -193,70 +207,28 @@ public class CharacterContextManager : MonoBehaviour
     #region PHYSICS FRAME
     void FixedUpdate()
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (!GameManager.ManagerInstance.GameIsPaused)
-            {
-                _currentState.FixedUpdateStates();
-            }
-        }
-        else
-        {
-            _currentState.FixedUpdateStates();
-        }
+        _currentState.FixedUpdateStates();
     }
     #endregion
 
     #region PHYSICS COLLISION
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (GameManager.ManagerInstance.GameIsPaused)
-            {
-                return;
-            }
-        }
-
         _currentState.OnCollisionEnter2D(collision);
     }
 
     void OnCollisionStay2D(Collision2D collision)
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (GameManager.ManagerInstance.GameIsPaused)
-            {
-                return;
-            }
-        }
-
         _currentState.OnCollisionStay(collision);
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (GameManager.ManagerInstance.GameIsPaused)
-            {
-                return;
-            }
-        }
-
         _currentState.OnCollisionExit2D(collision);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (GameManager.ManagerInstance.GameIsPaused)
-            {
-                return;
-            }
-        }
-
         _currentState.OnTriggerEnter2D(collision);
 
         if (collision.TryGetComponent(out IInteractable interactable) && collision.CompareTag("Interactable"))
@@ -270,14 +242,6 @@ public class CharacterContextManager : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (GameManager.ManagerInstance.GameIsPaused)
-            {
-                return;
-            }
-        }
-
         _currentState.OnTriggerStay2D(collision);
 
         if (collision.TryGetComponent(out IInteractable interactable))
@@ -291,14 +255,6 @@ public class CharacterContextManager : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (GameManager.ManagerInstance.GameIsPaused)
-            {
-                return;
-            }
-        }
-
         _currentState.OnTriggerExit2D(collision);
     }
     #endregion
@@ -306,31 +262,11 @@ public class CharacterContextManager : MonoBehaviour
     #region DELTA TIME    
     void Update()
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (!GameManager.ManagerInstance.GameIsPaused)
-            {
-                _currentState.UpdateStates();
-            }
-        }
-        else
-        {
-            _currentState.UpdateStates();
-        }
+        _currentState.UpdateStates();
     }
     void LateUpdate()
     {
-        if (GameManager.ManagerInstance)
-        {
-            if (!GameManager.ManagerInstance.GameIsPaused)
-            {
-                _currentState.LateUpdateStates();
-            }
-        }
-        else
-        {
-            _currentState.LateUpdateStates();
-        }
+        _currentState.LateUpdateStates();
     }
     #endregion
 
@@ -343,16 +279,16 @@ public class CharacterContextManager : MonoBehaviour
     void OnGUI()
     {
 #if UNITY_EDITOR
-        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
-        GUILayout.Label("Current State: " + CurrentState.ToString());
-        GUILayout.Label("Current Super State: " + (CurrentState.CurrentSuperState != null ? CurrentState.CurrentSuperState.ToString() : ""));
-        GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
+        //GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
+        //GUILayout.Label("Current State: " + CurrentState.ToString());
+        //GUILayout.Label("Current Super State: " + (CurrentState.CurrentSuperState != null ? CurrentState.CurrentSuperState.ToString() : ""));
+        //GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
 
-        GUILayout.Label("Dash Cool Down Time: " + DashCoolDownTime.ToString());
-        GUILayout.Label("Coyote Time: " + CoyoteTime.ToString());
-        GUILayout.Label("Character Forward Direction: " + CurrentState.CharacterForwardDirection.ToString());
-        GUILayout.Label("Horizontal Speed: " + HorizontalSpeed.ToString());
-        GUILayout.Label("Vertical Speed: " + VerticalSpeed.ToString());
+        //GUILayout.Label("Dash Cool Down Time: " + DashCoolDownTime.ToString());
+        //GUILayout.Label("Coyote Time: " + CoyoteTime.ToString());
+        //GUILayout.Label("Character Forward Direction: " + CurrentState.CharacterForwardDirection.ToString());
+        //GUILayout.Label("Horizontal Speed: " + HorizontalSpeed.ToString());
+        //GUILayout.Label("Vertical Speed: " + VerticalSpeed.ToString());
 #endif
 
     }
@@ -361,7 +297,8 @@ public class CharacterContextManager : MonoBehaviour
     #region DECOMMISSIONING
     void OnDisable()
     {
-
+        CurrentState.PlayerInputManager.enabled = false;
+        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = false;
     }
 
     void OnDestroy()

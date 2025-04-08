@@ -29,4 +29,9 @@ public class OutsideLimits : MonoBehaviour, IInteractable
     {
 
     }
+
+    public void InteractablePauseState(bool value)
+    {
+
+    }
 }

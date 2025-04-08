@@ -27,6 +27,12 @@ public class MovingPlatform : MonoBehaviour, IInteractable
 
         _pointA.SetParent(null);
         _pointB.SetParent(null);
+        
+        GameManagerContext.OnRunOrPauseStateChanged.AddListener(InteractablePauseState);
+    }
+    private void OnDestroy()
+    {
+        
     }
 
     void FixedUpdate()
@@ -64,5 +70,10 @@ public class MovingPlatform : MonoBehaviour, IInteractable
     public void ConfirmInteraction()
     {
 
+    }
+
+    public void InteractablePauseState(bool value)
+    {
+        this.enabled = value;
     }
 }

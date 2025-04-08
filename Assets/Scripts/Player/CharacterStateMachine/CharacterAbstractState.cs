@@ -19,9 +19,9 @@ public abstract class CharacterAbstractState
     private CharacterAbstractState _currentSubState;
 
     protected bool IsRootState { set { _isRootState = value; } }
-    protected PlayerInputManager PlayerInputManager { get { return _playerInputManager; } }
     protected CharacterContextManager CharacterContextManager { get { return _characterContextManager; } }
-    protected CharacterAnimationManager CharacterAnimationManager { get { return _characterAnimationManager; } }
+    public CharacterAnimationManager CharacterAnimationManager { get { return _characterAnimationManager; } }
+    public PlayerInputManager PlayerInputManager { get { return _playerInputManager; } }
     public CharacterStateFactory CharacterStateFactory { get { return _characterStateFactory; } }
     public CharacterAbstractState CurrentSuperState { get { return _currentSuperState; } }
     public CharacterAbstractState CurrentSubState { get { return _currentSubState; } }
@@ -41,9 +41,9 @@ public abstract class CharacterAbstractState
 
     public void FixedUpdateStates()
     {
-        CharacterContextManager.Rigidbody.MovePosition(CharacterContextManager.Rigidbody.position + (new Vector2(CharacterContextManager.HorizontalSpeed, CharacterContextManager.VerticalSpeed) * Time.fixedDeltaTime));
-
         FixedUpdateState();
+
+        CharacterContextManager.Rigidbody.MovePosition(CharacterContextManager.Rigidbody.position + CharacterContextManager.MovePosition * Time.fixedDeltaTime);
 
         if (_currentSubState != null)
         {

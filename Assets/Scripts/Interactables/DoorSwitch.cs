@@ -16,6 +16,13 @@ public class DoorSwitch : MonoBehaviour, IInteractable
 
         _collider = GetComponent<Collider2D>();
         _animator = GetComponent<Animator>();
+        
+        GameManagerContext.OnRunOrPauseStateChanged.AddListener(InteractablePauseState);
+    }
+
+    private void OnDestroy()
+    {
+        
     }
 
     public void SetInteraction(CharacterContextManager characterContextManager)
@@ -27,5 +34,12 @@ public class DoorSwitch : MonoBehaviour, IInteractable
         Activated = true;
         _collider.enabled = false;
         _animator.Play("Activated_Switch");
+    }
+
+    public void InteractablePauseState(bool value)
+    {
+        _animator.enabled = value;
+
+        this.enabled = value;
     }
 }
