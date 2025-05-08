@@ -14,7 +14,7 @@ public abstract class GameManagerAbstractState
 
     protected bool IsRootState { set { _isRootState = value; } }
     protected GameManagerContext GameManagerContext { get { return _gameManagerContext; } }
-    protected GameManagerStateFactory GameManagerStateFactory { get { return _gameManagerStateFactory; } }
+    public GameManagerStateFactory GameManagerStateFactory { get { return _gameManagerStateFactory; } }
     protected GameManagerAbstractState CurrentSuperState { get { return _currentSuperState; } }
     protected GameManagerAbstractState CurrentSubState { get { return _currentSubState; } }
 

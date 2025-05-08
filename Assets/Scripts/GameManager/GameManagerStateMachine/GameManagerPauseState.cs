@@ -26,6 +26,7 @@ public class GameManagerPauseState : GameManagerAbstractState
             GameManagerContext.ExitState = GameManagerStateFactory.GameMainMenuState();
             GameManagerContext.ConfirmPanel.SetActive(false);
             SwitchState(GameManagerStateFactory.GameLoadingState());
+            Object.Destroy(GameManagerContext.CharacterContextManager.gameObject);
         });
 
         GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.ContinueButton.gameObject);

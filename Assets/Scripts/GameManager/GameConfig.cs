@@ -1,15 +1,16 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "EscapingTime_Config_Asset", menuName = "Config Asset", order = 1)]
+[CreateAssetMenu(fileName = "GameConfig_Asset", menuName = "GameConfig Asset", order = 1)]
 public class GameConfig : ScriptableObject
 {
-    [SerializeField] private CharacterContextManager CharacterContextManager;
+    [SerializeField] private CharacterContextManager _characterContextManager;
+    [SerializeField] private string _defaultScene;
+    [SerializeField] private string _mainMenuScene;
     [SerializeField] private List<string> _scenesList = new List<string>();
 
-    private const string _mainMenuScene = "Assets/Scenes/MainMenu.unity";
-
+    public CharacterContextManager CharacterContextManager { get => _characterContextManager; }
+    public string DefaultScene { get => _defaultScene; }
     public string MainMenuScene {get => _mainMenuScene; }
     public List<string> SceneList { get => _scenesList; }
 }

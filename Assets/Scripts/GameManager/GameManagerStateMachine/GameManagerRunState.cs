@@ -11,6 +11,8 @@ public class GameManagerRunState : GameManagerAbstractState
     {
         GameManagerContext.OnRunOrPauseStateChanged?.Invoke(true);
 
+        GameManagerContext.ExitState = null;
+
         GameManagerContext.CharacterUI.SetActive(true);
     }
 

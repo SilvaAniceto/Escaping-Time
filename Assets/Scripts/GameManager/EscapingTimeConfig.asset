@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4f806a84d08bde46af67e36f25f21b4, type: 3}
-  m_Name: EscapingTime_Config_Asset
+  m_Name: EscapingTimeConfig
   m_EditorClassIdentifier: 
-  CharacterContextManager: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
-  _scenesList:
-  - Assets/Scenes/Fase_0.unity
+  _characterContextManager: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
+  _defaultScene: Fase_0
+  _mainMenuScene: MainMenu
+  _scenesList: []

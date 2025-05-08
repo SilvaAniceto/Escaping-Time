@@ -44,18 +44,24 @@ public class CharacterFallState : CharacterAbstractState
             SwitchState(CharacterStateFactory.GroundedState());
         }
 
-        if (IsWallColliding && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput == CharacterForwardDirection && CharacterContextManager.ExitState != CharacterStateFactory.OnWallState())
+        if (CharacterContextManager.HasWallMove)
         {
-            SwitchState(CharacterStateFactory.OnWallState());
+            if (IsWallColliding && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput == CharacterForwardDirection && CharacterContextManager.ExitState != CharacterStateFactory.OnWallState())
+            {
+                SwitchState(CharacterStateFactory.OnWallState());
+            }
         }
 
         if (PlayerInputManager.StartJumpInput && CharacterContextManager.CoyoteTime > 0.00f)
         {
             SwitchState(CharacterStateFactory.JumpState());
         }
-        else if (PlayerInputManager.StartJumpInput && CharacterContextManager.AirJumpIsAllowed)
+        else if (CharacterContextManager.HasAirJump)
         {
-            SwitchState(CharacterStateFactory.AirJumpState());
+            if (PlayerInputManager.StartJumpInput && CharacterContextManager.AirJumpIsAllowed)
+            {
+                SwitchState(CharacterStateFactory.AirJumpState());
+            }
         }
 
         if (PlayerInputManager.DashInput && CharacterContextManager.DashIsAllowed)

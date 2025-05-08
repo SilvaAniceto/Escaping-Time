@@ -11,7 +11,15 @@ public class GameManagerLoadingState : GameManagerAbstractState
     {
         GameManagerContext.LoadingScreen.SetActive(true);
 
-        GameManagerContext.LoadingScenes = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GameManagerContext.TargetScene);
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GameManagerContext.TargetScene);
+
+        GameManagerContext.OnLoadSceneEnd.RemoveAllListeners();
+        GameManagerContext.OnLoadSceneEnd.AddListener(() =>
+        {
+            SwitchState(GameManagerContext.ExitState);
+        });
+
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += GameManagerContext.AfterLoadSceneEnd;
     }
 
     public override void UpdateState()
@@ -21,15 +29,13 @@ public class GameManagerLoadingState : GameManagerAbstractState
 
     public override void ExitState()
     {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= GameManagerContext.AfterLoadSceneEnd;
         GameManagerContext.LoadingScreen.SetActive(false);
     }
 
     public override void CheckSwitchStates()
     {
-        if (GameManagerContext.LoadingScenes != null && GameManagerContext.LoadingScenes.progress >= 1)
-        {
-            SwitchState(GameManagerContext.ExitState);
-        }
+
     }
 
     public override void CheckSwitchSubStates()

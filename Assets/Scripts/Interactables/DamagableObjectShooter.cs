@@ -25,8 +25,8 @@ public class DamagableObjectShooter : MonoBehaviour
 
             projectile.ProjectileCurve = _projectileCurve;
 
-            damagable.transform.SetParent(transform);
-            damagable.gameObject.SetActive(false);
+            projectile.transform.SetParent(transform);
+            projectile.ResetProjectile();
             _damagableObjects.Add(projectile);
         }
 
@@ -53,10 +53,7 @@ public class DamagableObjectShooter : MonoBehaviour
                 _projectileIndex++;
             }
 
-            if (!_damagableObjects[_projectileIndex].gameObject.activeInHierarchy)
-            {
-                _damagableObjects[_projectileIndex].gameObject.SetActive(true);
-            }
+            _damagableObjects[_projectileIndex].gameObject.SetActive(true);
         }
     }
 
@@ -100,17 +97,23 @@ public class DamagableObjectShooter : MonoBehaviour
 
         private void FixedUpdate()
         {
-            Rigidbody2D.MovePosition(Rigidbody2D.position + (-(Vector2)transform.parent.right * Mathf.Lerp(3.50f, 8.00f, MoveSpeed)) * Time.fixedDeltaTime);
+            Rigidbody2D.MovePosition(Rigidbody2D.position + (-(Vector2)transform.parent.right * Mathf.Lerp(3.50f, 12.00f, MoveSpeed)) * Time.fixedDeltaTime);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.CompareTag("Ground")  || collision.CompareTag("Ceiling"))
             {
-                gameObject.SetActive(false);
-				transform.localPosition = Vector3.zero;
-				transform.rotation = transform.parent.rotation;
+                ResetProjectile();
 			}
+        }
+
+        public void ResetProjectile()
+        {
+            gameObject.SetActive(false);
+            transform.localPosition = Vector3.zero;
+            transform.localScale = Vector3.one;
+            transform.rotation = transform.parent.rotation;
         }
     }
 }

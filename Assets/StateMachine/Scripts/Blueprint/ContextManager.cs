@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
+using System.Collections;
 
 public class ContextManager : MonoBehaviour
 {
@@ -20,9 +21,24 @@ public class ContextManager : MonoBehaviour
     int _onDestroyCount = 0;
     float _startFlowTime = 0.0f;
     float _endFlowTime = 0.0f;
+    IEnumerator routine;
 
     EventSystem _eventSystem;
     InputSystemUIInputModule InputModule { get => (InputSystemUIInputModule)EventSystem.current.currentInputModule; }
+
+    IEnumerator Coroutine()
+    {
+        _startFlowTime++;
+        Debug.Log($"Antes da segunda corotina: {_startFlowTime}");
+        yield return StartCoroutine(Coroutine2());
+        _startFlowTime++;
+        Debug.Log($"Depois do segundo yield: {_startFlowTime}");
+    }
+    IEnumerator Coroutine2()
+    {
+        Debug.Log($"Só uma corotina para esperar 5 segundos");
+        yield return new WaitForSeconds(5);
+    }
 
     void Awake()
     {
@@ -40,11 +56,13 @@ public class ContextManager : MonoBehaviour
         _stateFactory = new StateFactory(this);
         _currentState = _stateFactory.State();
         _awakeCount++;
+        routine = Coroutine();
     }
 
     void OnEnable()
     {
         _onEnableCount++;
+        StartCoroutine(routine);
     }
 
     void Start()
@@ -94,16 +112,16 @@ public class ContextManager : MonoBehaviour
         _currentState.UpdateStates();
         _updateCount++;
 
-        if (InputModule.cancel.action.WasPressedThisFrame())
-        {
-            _startFlowTime += Time.deltaTime;
-            _startFlowTime = Mathf.Clamp01(_startFlowTime);
+        //if (InputModule.cancel.action.WasPressedThisFrame())
+        //{
+        //    _startFlowTime += Time.deltaTime;
+        //    _startFlowTime = Mathf.Clamp01(_startFlowTime);
 
-            if (_startFlowTime >= 1)
-            {
-                Debug.Break();
-            }
-        }
+        //    if (_startFlowTime >= 1)
+        //    {
+        //        Debug.Break();
+        //    }
+        //}
     }
 
     void LateUpdate()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 public enum EGameState
 {
     MainMenu,
+    SaveMenu,
     Loading,
     Running,
     Paused
@@ -17,6 +18,7 @@ public class GameManagerStateFactory
     {
         _gameManagerContext = currentContextManager;
         _states[EGameState.MainMenu] = new GameManagerMainMenuState(_gameManagerContext, this);
+        _states[EGameState.SaveMenu] = new GameManagerSaveMenuState(_gameManagerContext, this);
         _states[EGameState.Loading] = new GameManagerLoadingState(_gameManagerContext, this);
         _states[EGameState.Running] = new GameManagerRunState(_gameManagerContext, this);
         _states[EGameState.Paused] = new GameManagerPauseState(_gameManagerContext, this);
@@ -25,6 +27,11 @@ public class GameManagerStateFactory
     public GameManagerMainMenuState GameMainMenuState()
     {
         return (GameManagerMainMenuState)_states[EGameState.MainMenu];
+    }
+
+    public GameManagerSaveMenuState GameSaveMenuState()
+    {
+        return (GameManagerSaveMenuState)_states[EGameState.SaveMenu];
     }
 
     public GameManagerLoadingState GameLoadingState()

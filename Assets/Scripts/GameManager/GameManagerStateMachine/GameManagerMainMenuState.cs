@@ -14,12 +14,16 @@ public class GameManagerMainMenuState : GameManagerAbstractState
         GameManagerContext.StartButton.onClick.RemoveAllListeners();
         GameManagerContext.StartButton.onClick.AddListener(() =>
         {
-            GameManagerContext.TargetScene = GameManagerContext.GameConfig.SceneList[0];
-            GameManagerContext.ExitState = GameManagerStateFactory.GameRunState();
-            SwitchState(GameManagerStateFactory.GameLoadingState());
+            GameManagerContext.TargetScene = GameManagerContext.GameConfig.DefaultScene;
+            SwitchState(GameManagerStateFactory.GameSaveMenuState());
         });
 
+        GameManagerContext.QuitButton.onClick.RemoveAllListeners();
+        GameManagerContext.QuitButton.onClick.AddListener(GameManagerContext.QuitGame);
+
         GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.StartButton.gameObject);
+
+        GameManagerContext.ExitState = null;
     }
 
     public override void UpdateState()

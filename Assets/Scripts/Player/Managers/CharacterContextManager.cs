@@ -1,8 +1,6 @@
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.Cinemachine;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerInputManager), typeof(CharacterAnimationManager))]
+[RequireComponent(typeof(PlayerInputManager), typeof(CharacterAnimationManager))][System.Serializable]
 public class CharacterContextManager : MonoBehaviour
 {
     [Header("Layer Settings")]
@@ -26,6 +24,65 @@ public class CharacterContextManager : MonoBehaviour
 
     public CharacterAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
+
+    [Header("Development Settings")]
+    [SerializeField] private bool _hasDash = false;
+    public bool HasDash
+    {
+        get
+        {
+            return _hasDash;
+        }
+
+        set
+        {
+            if (value == _hasDash)
+            {
+                return;
+            }
+
+            _hasDash = value;
+        }
+    }
+
+    [SerializeField] private bool _hasAirJump = false;
+    public bool HasAirJump
+    {
+        get
+        {
+            return _hasAirJump;
+        }
+
+        set
+        {
+            if (value == _hasAirJump)
+            {
+                return;
+            }
+
+            _hasAirJump = value;
+        }
+    }
+
+    [SerializeField] private bool _hasWallMove = false;
+    public bool HasWallMove
+    {
+        get
+        {
+            return _hasWallMove;
+        }
+
+        set
+        {
+            if (value == _hasWallMove)
+            {
+                return;
+            }
+
+            _hasWallMove = value;
+        }
+    }
+
 
     #region COLLISION PROPERTIES
     public Rigidbody2D Rigidbody { get; private set; }
@@ -98,7 +155,7 @@ public class CharacterContextManager : MonoBehaviour
     {
         get
         {
-            return DashCoolDownTime <= 0 && !DashIsWaitingGroundedState;
+            return HasDash ? DashCoolDownTime <= 0 && !DashIsWaitingGroundedState : false;
         }
     }
     public float DamageSpeedOvertime { get; set; }
