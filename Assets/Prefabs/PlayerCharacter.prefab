@@ -358,6 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c92f6dad31ba34a478e5781139516ae3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cameraTarget: {fileID: 7181045947761126782}
   _groundLayerTarget:
     serializedVersion: 2
     m_Bits: 320

@@ -1,16 +1,15 @@
 using UnityEngine;
-using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "GameConfig_Asset", menuName = "GameConfig Asset", order = 1)]
-public class GameConfig : ScriptableObject
+[CreateAssetMenu(fileName = "PlayeableCharacterSet", menuName = "PlayeableCharacterSet Asset", order = 1)]
+public class PlayeableCharacterSet : ScriptableObject
 {
     [SerializeField] private CharacterContextManager _characterContextManager;
+    [SerializeField] private CameraBehaviourController _cameraBehaviourController;
     [SerializeField] private string _defaultScene;
     [SerializeField] private string _mainMenuScene;
-    [SerializeField] private List<string> _scenesList = new List<string>();
 
     public CharacterContextManager CharacterContextManager { get => _characterContextManager; }
+    public CameraBehaviourController CameraBehaviourController { get => _cameraBehaviourController; }
     public string DefaultScene { get => _defaultScene; }
     public string MainMenuScene {get => _mainMenuScene; }
-    public List<string> SceneList { get => _scenesList; }
 }

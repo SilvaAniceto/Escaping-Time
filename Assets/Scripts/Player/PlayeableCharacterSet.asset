@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4f806a84d08bde46af67e36f25f21b4, type: 3}
-  m_Name: EscapingTimeConfig
+  m_Name: PlayeableCharacterSet
   m_EditorClassIdentifier: 
   _characterContextManager: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
+  _cameraBehaviourController: {fileID: 6143715647323644401, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
   _defaultScene: Fase_0
   _mainMenuScene: MainMenu
-  _scenesList: []

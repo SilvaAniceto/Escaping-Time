@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 689132745953277357}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 29, y: 10.665814, z: -10}
+  m_LocalPosition: {x: 1.5, y: 4.6658144, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoundingShape2D: {fileID: 9050617963770532171}
+  BoundingShape2D: {fileID: 0}
   Damping: 0
   SlowingDistance: 0
   OversizeWindow:
@@ -160,7 +160,6 @@ Transform:
   m_Children:
   - {fileID: 7380639548345166203}
   - {fileID: 45114728624432133}
-  - {fileID: 6694209666896042098}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6143715647323644401
@@ -175,85 +174,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5334a9a0bbc948d4cafaa3d9e359e30d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cinemachineCamera: {fileID: 5044880141907532210}
   _cameraPositionComposer: {fileID: 1894900180617853676}
---- !u!1 &1883381027144589090
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6694209666896042098}
-  - component: {fileID: 9050617963770532171}
-  m_Layer: 7
-  m_Name: CAM Confiner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6694209666896042098
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1883381027144589090}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 28, y: 12, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5859525621522234506}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &9050617963770532171
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1883381027144589090}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.14051056, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 65.781006, y: 24}
-  m_EdgeRadius: 0
+  _confiner2D: {fileID: 7552504607136049614}
 --- !u!1 &6010272220970519013
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,7 +188,6 @@ GameObject:
   - component: {fileID: 7380639548345166203}
   - component: {fileID: 799469348287016453}
   - component: {fileID: 9038783241149268051}
-  - component: {fileID: 3129109379781427912}
   m_Layer: 0
   m_Name: CinemachineBrain
   m_TagString: Untagged
@@ -282,7 +204,7 @@ Transform:
   m_GameObject: {fileID: 6010272220970519013}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 29, y: 10.665814, z: -10}
+  m_LocalPosition: {x: 1.5, y: 4.6658144, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -371,11 +293,3 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
---- !u!81 &3129109379781427912
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6010272220970519013}
-  m_Enabled: 1

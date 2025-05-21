@@ -14,7 +14,7 @@ public class GameManagerMainMenuState : GameManagerAbstractState
         GameManagerContext.StartButton.onClick.RemoveAllListeners();
         GameManagerContext.StartButton.onClick.AddListener(() =>
         {
-            GameManagerContext.TargetScene = GameManagerContext.GameConfig.DefaultScene;
+            GameManagerContext.TargetScene = GameManagerContext.PlayeableCharacterSet.DefaultScene;
             SwitchState(GameManagerStateFactory.GameSaveMenuState());
         });
 

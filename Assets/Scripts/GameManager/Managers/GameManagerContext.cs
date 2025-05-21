@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -13,34 +14,13 @@ public class GameManagerContext : MonoBehaviour
     #region STATIC FIELDS
     public static GameManagerContext Instance;
 
-    private static PlayerCharacterData CharacterData = new PlayerCharacterData(new SavableVector(0.00f, 0.00f, 0.00f, 0.00f), false, false, false);
-
     public static UnityEvent<bool> OnRunOrPauseStateChanged = new UnityEvent<bool>();
     public static UnityEvent OnLoadSceneEnd = new UnityEvent();
     #endregion
 
-    #region INTERNAL CLASSES
-    [System.Serializable]
-    public class PlayerCharacterData
-    {
-        public SavableVector CharacterSpawningPosition;
-        public bool CharacterHasDash;
-        public bool CharacterHasAirJump;
-        public bool CharacterHasWallMove;
-
-        public PlayerCharacterData(SavableVector characterSpawningPosition, bool characterHasDash, bool characterHasAirJump, bool characterHasWallMove)
-        {
-            this.CharacterSpawningPosition = characterSpawningPosition;
-            this.CharacterHasDash = characterHasDash;
-            this.CharacterHasAirJump = characterHasAirJump;
-            this.CharacterHasWallMove = characterHasWallMove;
-        }
-    }
-    #endregion
-
     #region INSPECTOR FIELDS
     [Header("Game Config")]
-    [SerializeField] private GameConfig _gameConfig;
+    [SerializeField] private PlayeableCharacterSet _playeableCharacterSet;
 
     [Header("Game Save System")]
     [SerializeField] private GameSaveSystem _gameSaveSystem;
@@ -65,15 +45,17 @@ public class GameManagerContext : MonoBehaviour
     private GameManagerAbstractState _exitState;
     private GameManagerAbstractState _currentState;
     private CharacterContextManager _characterContextManager;
+    private CameraBehaviourController _cameraBehaviourController;
     #endregion
 
     #region PROPERTIES
     public GameManagerAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public GameManagerAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public CharacterContextManager CharacterContextManager { get => _characterContextManager; private set => _characterContextManager = value; }
+    public CameraBehaviourController CameraBehaviourController { get => _cameraBehaviourController; private set => _cameraBehaviourController = value; }
 
-    public GameConfig GameConfig { get => _gameConfig; }
-    public GameSaveSystem GameSaveSystem { get => _gameSaveSystem; }
+    public PlayeableCharacterSet PlayeableCharacterSet { get => _playeableCharacterSet; }
+    public GameSaveSystem SaveSystem { get => _gameSaveSystem; }
     public string TargetScene { get; set; }
 
     public GameObject MainMenu { get => _mainMenu; }
@@ -91,7 +73,7 @@ public class GameManagerContext : MonoBehaviour
 
     public EventSystem GameManagerEventSystem {  get => EventSystem.current; }
 
-    public bool InstantiateCharacter { get => CharacterContextManager == null && TargetScene != GameConfig.MainMenuScene; }
+    public bool InstantiateCharacter { get => CharacterContextManager == null && TargetScene != PlayeableCharacterSet.MainMenuScene; }
     public bool PauseInput 
     {
         get
@@ -144,45 +126,32 @@ public class GameManagerContext : MonoBehaviour
     {
         if (InstantiateCharacter)
         {
-            CharacterContextManager = Instantiate(GameConfig.CharacterContextManager, CharacterData.CharacterSpawningPosition.vector3Value, Quaternion.identity);
+            CharacterContextManager = Instantiate(PlayeableCharacterSet.CharacterContextManager, GameSaveSystem.ProfileData.CharacterSpawningPosition.vector3Value, Quaternion.identity);
 
-            _characterContextManager.HasAirJump = CharacterData.CharacterHasAirJump;
-            _characterContextManager.HasDash = CharacterData.CharacterHasDash;
-            _characterContextManager.HasWallMove = CharacterData.CharacterHasWallMove;
+            CharacterContextManager.HasAirJump = GameSaveSystem.ProfileData.CharacterHasAirJump;
+            CharacterContextManager.HasDash = GameSaveSystem.ProfileData.CharacterHasDash;
+            CharacterContextManager.HasWallMove = GameSaveSystem.ProfileData.CharacterHasWallMove;
 
-            DontDestroyOnLoad(_characterContextManager.gameObject);
+            if (CameraBehaviourController == null)
+            {
+                CameraBehaviourController = Instantiate(PlayeableCharacterSet.CameraBehaviourController);
+                CameraBehaviourController.SetCinemachineTarget(CharacterContextManager.CameraTarget);
+            }
+
+            DontDestroyOnLoad(CharacterContextManager.gameObject);
+        }
+
+        GameObject confiner = GameObject.FindGameObjectWithTag("CamConfiner");
+
+        if (confiner)
+        {
+           CameraBehaviourController.SetCameraConfiner2D(confiner.GetComponent<Collider2D>());
         }
 
         yield return new WaitForEndOfFrame();
 
         OnLoadSceneEnd?.Invoke();
     }
-
-    #region CHARACTER DATA MANAGEMENT
-    public static void PrepareCharacterDataToSave(CharacterContextManager characterContextManager)
-    {
-        CharacterData.CharacterSpawningPosition = characterContextManager.transform.position.ToSavable();
-        CharacterData.CharacterHasAirJump = characterContextManager.HasAirJump;
-        CharacterData.CharacterHasDash = characterContextManager.HasDash;
-        CharacterData.CharacterHasWallMove = characterContextManager.HasWallMove;
-    }
-    public static void ApplyLoadedCharacterData(PlayerCharacterData data)
-    {
-        CharacterData.CharacterSpawningPosition = data.CharacterSpawningPosition;
-        CharacterData.CharacterHasAirJump = data.CharacterHasAirJump;
-        CharacterData.CharacterHasDash = data.CharacterHasDash;
-        CharacterData.CharacterHasWallMove = data.CharacterHasWallMove;
-    }
-    public static PlayerCharacterData CreateCharacterData()
-    {
-        return new PlayerCharacterData(new SavableVector(0.00f, 3.00f, 0.00f, 0.00f), false, false, false);
-    }
-    public static PlayerCharacterData GetCharacterData()
-    {
-        return CharacterData;
-    }
-    #endregion
-
     public void QuitGame()
     {
         Application.Quit();

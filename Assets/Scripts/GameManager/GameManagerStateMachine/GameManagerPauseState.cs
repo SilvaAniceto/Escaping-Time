@@ -22,11 +22,12 @@ public class GameManagerPauseState : GameManagerAbstractState
         GameManagerContext.ConfirmMainMenuButton.onClick.RemoveAllListeners();
         GameManagerContext.ConfirmMainMenuButton.onClick.AddListener(() =>
         {
-            GameManagerContext.TargetScene = GameManagerContext.GameConfig.MainMenuScene;
+            GameManagerContext.TargetScene = GameManagerContext.PlayeableCharacterSet.MainMenuScene;
             GameManagerContext.ExitState = GameManagerStateFactory.GameMainMenuState();
             GameManagerContext.ConfirmPanel.SetActive(false);
             SwitchState(GameManagerStateFactory.GameLoadingState());
             Object.Destroy(GameManagerContext.CharacterContextManager.gameObject);
+            Object.Destroy(GameManagerContext.CameraBehaviourController.gameObject);
         });
 
         GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.ContinueButton.gameObject);

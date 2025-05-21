@@ -1,0 +1,67 @@
+{
+  "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[Esper.ESave.SavableObjects.SavableObject, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+  "Profile_01": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "Profile_01",
+      "saveLocation": 1,
+      "filePath": "SaveProfiles",
+      "fileType": 0,
+      "encryptionMethod": 1,
+      "aesKey": "bLPWcc6UmEvsXQgw3k9UVV5K8WeGB/25xX2zFYiwvLw=",
+      "aesIV": "zW/7XxEA8C1lNn/HED26tw==",
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "Profile_01"
+  },
+  "Profile_02": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "Profile_02",
+      "saveLocation": 1,
+      "filePath": "SaveProfiles",
+      "fileType": 0,
+      "encryptionMethod": 1,
+      "aesKey": "bLPWcc6UmEvsXQgw3k9UVV5K8WeGB/25xX2zFYiwvLw=",
+      "aesIV": "zW/7XxEA8C1lNn/HED26tw==",
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "Profile_02"
+  },
+  "Profile_03": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "Profile_03",
+      "saveLocation": 1,
+      "filePath": "SaveProfiles",
+      "fileType": 0,
+      "encryptionMethod": 1,
+      "aesKey": "bLPWcc6UmEvsXQgw3k9UVV5K8WeGB/25xX2zFYiwvLw=",
+      "aesIV": "zW/7XxEA8C1lNn/HED26tw==",
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "Profile_03"
+  },
+  "Profile_04": {
+    "$type": "Esper.ESave.SavableObjects.SavableData`1[[Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "value": {
+      "$type": "Esper.ESave.SaveFileSetupData, ESave, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "fileName": "Profile_04",
+      "saveLocation": 1,
+      "filePath": "SaveProfiles",
+      "fileType": 0,
+      "encryptionMethod": 1,
+      "aesKey": "bLPWcc6UmEvsXQgw3k9UVV5K8WeGB/25xX2zFYiwvLw=",
+      "aesIV": "zW/7XxEA8C1lNn/HED26tw==",
+      "addToStorage": true,
+      "backgroundTask": false
+    },
+    "id": "Profile_04"
+  }
+}

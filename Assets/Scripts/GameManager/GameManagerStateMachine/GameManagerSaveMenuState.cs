@@ -13,8 +13,8 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
 
         GameManagerContext.BackButton.gameObject.SetActive(true);
 
-        GameManagerContext.GameSaveSystem.OnLaunchGame.RemoveAllListeners();
-        GameManagerContext.GameSaveSystem.OnLaunchGame.AddListener(() =>
+        GameManagerContext.SaveSystem.OnLaunchGame.RemoveAllListeners();
+        GameManagerContext.SaveSystem.OnLaunchGame.AddListener(() =>
         {
             SwitchState(GameManagerStateFactory.GameLoadingState());
         });
@@ -36,10 +36,10 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
 
     public override void CheckSwitchStates()
     {
-        if (GameManagerContext.GameSaveSystem.SlotIsSelected)
+        if (GameManagerContext.SaveSystem.SlotIsSelected)
         {
             GameManagerContext.BackButton.onClick.RemoveAllListeners();
-            GameManagerContext.BackButton.onClick.AddListener(GameManagerContext.GameSaveSystem.HideOptions);
+            GameManagerContext.BackButton.onClick.AddListener(GameManagerContext.SaveSystem.HideOptions);
         }
         else
         {

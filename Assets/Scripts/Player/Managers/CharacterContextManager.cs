@@ -3,6 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInputManager), typeof(CharacterAnimationManager))][System.Serializable]
 public class CharacterContextManager : MonoBehaviour
 {
+    [Header("Camera Target")]
+    [SerializeField] private Transform _cameraTarget;
     [Header("Layer Settings")]
     [SerializeField] private LayerMask _groundLayerTarget;
     [SerializeField] private LayerMask _wallLayerTarget;
@@ -22,6 +24,7 @@ public class CharacterContextManager : MonoBehaviour
     private CharacterAbstractState _exitState;
     private CharacterAbstractState _currentState;
 
+    public Transform CameraTarget { get => _cameraTarget; }
     public CharacterAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
 

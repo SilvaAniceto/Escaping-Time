@@ -1,4 +1,5 @@
 using Esper.ESave;
+using Esper.ESave.SavableObjects;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -6,6 +7,28 @@ using UnityEngine.UI;
 [RequireComponent(typeof(SaveStorage))]
 public class GameSaveSystem : MonoBehaviour
 {
+    #region STATIC FIELDS
+    private static PlayerProfileData _profileData;
+    public static PlayerProfileData ProfileData
+    {
+        get
+        {
+            if (_profileData == null)
+            {
+                _profileData = new PlayerProfileData();
+                return _profileData;
+            }
+
+            return _profileData;
+        }
+
+        private set
+        {
+            _profileData = value;
+        }
+    }
+    #endregion
+
     #region INTERNAL CLASSES
     [System.Serializable]
     public class GameSaveSlot 
@@ -29,6 +52,26 @@ public class GameSaveSystem : MonoBehaviour
             return this.slotIndex;
         }
     }
+    [System.Serializable]
+    public class PlayerProfileData
+    {
+        public string ProfileName;
+        public SavableVector CharacterSpawningPosition;
+        public bool CharacterHasDash;
+        public bool CharacterHasAirJump;
+        public bool CharacterHasWallMove;
+
+        public PlayerProfileData(string profileName, SavableVector characterSpawningPosition, bool characterHasDash, bool characterHasAirJump, bool characterHasWallMove)
+        {
+            this.ProfileName = profileName;
+            this.CharacterSpawningPosition = characterSpawningPosition;
+            this.CharacterHasDash = characterHasDash;
+            this.CharacterHasAirJump = characterHasAirJump;
+            this.CharacterHasWallMove = characterHasWallMove;
+        }
+
+        public PlayerProfileData() { }
+    }
     #endregion
 
     #region INSPECTOR FIELD
@@ -47,10 +90,12 @@ public class GameSaveSystem : MonoBehaviour
     #region PRIVATE FIELDS
     private int _currentSlotIndex;
     private string _currentProfile;
+    private SaveFile _currentSaveFile;
+
+    private const string PLAYER_PROFILE = "Player_ProfileData";
     #endregion
 
     #region PROPERTIES
-    public SaveFile CurrentSave {  get; private set; }
     public bool SlotIsSelected { get; private set; }
     #endregion
 
@@ -59,6 +104,18 @@ public class GameSaveSystem : MonoBehaviour
     #endregion
 
     #region UNITY DEFAULT METHODS
+    private void Awake()
+    {
+        for (int i = 0; i < _saveSlots.Length; i++)
+        {
+            _saveSlots[i].SetSlotIndex(i);
+        }
+
+        if (SaveStorage.instance.saveCount == 0)
+        {
+            SetSaveSlots();
+        }
+    }
     private void Start ()
     {
         _deleteButton.onClick.AddListener(() =>
@@ -84,40 +141,46 @@ public class GameSaveSystem : MonoBehaviour
     #endregion
 
     #region SAVE SLOTS METHODS
-    private void SetSaveSlots(string profile, int index)
+    private void SetSaveSlots()
     {
-        SaveFileSetupData saveFileSetupData = new SaveFileSetupData
-        {
-            fileName = $"{profile}",
-            saveLocation = _saveFileSetup.saveFileData.saveLocation,
-            filePath = _saveFileSetup.saveFileData.filePath,
-            fileType = _saveFileSetup.saveFileData.fileType,
-            encryptionMethod = _saveFileSetup.saveFileData.encryptionMethod,
-            addToStorage = true
-        };
+        _saveFileSetup.GenerateAESTokens();
 
-        SaveFile saveFile = new SaveFile(saveFileSetupData);
+        for (int i = 0; i < _saveSlots.Length; i++)
+        {
+            SaveFileSetupData saveFileSetupData = new SaveFileSetupData
+            {
+                fileName = $"Profile_0{(i + 1).ToString()}",
+            #if UNITY_EDITOR
+                saveLocation = SaveFileSetupData.SaveLocation.DataPath,
+            #else
+                saveLocation = SaveFileSetupData.SaveLocation.PersistentDataPath,
+            #endif
+                filePath = _saveFileSetup.saveFileData.filePath,
+                fileType = _saveFileSetup.saveFileData.fileType,
+                encryptionMethod = SaveFileSetupData.EncryptionMethod.AES,
+                aesKey = _saveFileSetup.saveFileData.aesKey,
+                aesIV = _saveFileSetup.saveFileData.aesIV,
+                addToStorage = true
+            };
+
+            SaveFile saveFile = new SaveFile(saveFileSetupData);
+        }
     }
     private void CheckSaveSlots()
     {
         for (int i = 0; i < _saveSlots.Length; i++)
         {
-            CurrentSave = null;
-
-            if (i < SaveStorage.instance.saveCount)
-            {
-                CurrentSave = SaveStorage.instance.GetSaveAtIndex(i);
-            }
-
             GameSaveSlot slot = _saveSlots[i];
 
-            slot.SetSlotIndex(i);
+            SaveFile save = SaveStorage.instance.GetSaveAtIndex(slot.GetSlotIndex());
 
-            if (CurrentSave != null)
+            if (save != null)
             {
-                if (CurrentSave.HasData("CharacterData"))
+                if (save.HasData(PLAYER_PROFILE))
                 {
-                    slot.SetLabelText(CurrentSave.fileName);
+                    PlayerProfileData data = save.GetData<PlayerProfileData>(PLAYER_PROFILE);
+
+                    slot.SetLabelText(data.ProfileName);
 
                     slot.slotButton.onClick.RemoveAllListeners();
                     slot.slotButton.onClick.AddListener(() => 
@@ -141,60 +204,68 @@ public class GameSaveSystem : MonoBehaviour
                         });
                     });
                 }
+                else
+                {
+                    SetNewGameSlot(slot);
+                }
             }
             else
             {
-                slot.SetLabelText("New Game");
-
-                slot.slotButton.onClick.RemoveAllListeners();
-                slot.slotButton.onClick.AddListener(() => 
-                {
-                    ShowOptions();
-
-                    _currentSlotIndex = slot.GetSlotIndex();
-                    _selectSaveButton.GetComponentInChildren<Text>().text = "Start";
-                    _deleteButton.gameObject.SetActive(false);
-
-                    slot.slotButton.gameObject.SetActive(true);
-                    slot.slotButton.interactable = false;
-                    slot.inputField.enabled = true;
-                    slot.inputField.text = $"Profile_0{_currentSlotIndex + 1}";
-
-                    slot.inputField.onSubmit.RemoveAllListeners();
-                    slot.inputField.onSubmit.AddListener((value) =>
-                    {
-                        if (!string.IsNullOrEmpty(value))
-                        {
-                            _currentProfile = value;
-                        }
-                        else
-                        {
-                            _currentProfile = $"Profile_0{_currentSlotIndex + 1}";
-                        }
-
-                        GameManagerContext.Instance.GameManagerEventSystem.SetSelectedGameObject(_selectSaveButton.gameObject);
-                    });
-
-                    GameManagerContext.Instance.GameManagerEventSystem.SetSelectedGameObject(slot.inputField.gameObject);
-
-                    _selectSaveButton.onClick.RemoveAllListeners();
-                    _selectSaveButton.onClick.AddListener(() =>
-                    {
-                        _currentProfile = slot.inputField.text;
-
-                        if (string.IsNullOrEmpty(_currentProfile))
-                        {
-                            _currentProfile = $"Profile_0{_currentSlotIndex + 1}";
-                        }
-
-                        CreateSaveGame();
-                        HideOptions();
-                    });
-                });
+                SetNewGameSlot(slot);
             }
         }
 
         GameManagerContext.Instance.GameManagerEventSystem.SetSelectedGameObject(_saveSlots[0].slotButton.gameObject);
+    }
+    private void SetNewGameSlot(GameSaveSlot slot)
+    {
+        slot.SetLabelText("New Game");
+
+        slot.slotButton.onClick.RemoveAllListeners();
+        slot.slotButton.onClick.AddListener(() =>
+        {
+            ShowOptions();
+
+            _currentSlotIndex = slot.GetSlotIndex();
+            _selectSaveButton.GetComponentInChildren<Text>().text = "Start";
+            _deleteButton.gameObject.SetActive(false);
+
+            slot.slotButton.gameObject.SetActive(true);
+            slot.slotButton.interactable = false;
+            slot.inputField.enabled = true;
+            slot.inputField.text = $"Profile_0{_currentSlotIndex + 1}";
+
+            slot.inputField.onSubmit.RemoveAllListeners();
+            slot.inputField.onSubmit.AddListener((value) =>
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _currentProfile = value;
+                }
+                else
+                {
+                    _currentProfile = $"Profile_0{_currentSlotIndex + 1}";
+                }
+
+                GameManagerContext.Instance.GameManagerEventSystem.SetSelectedGameObject(_selectSaveButton.gameObject);
+            });
+
+            GameManagerContext.Instance.GameManagerEventSystem.SetSelectedGameObject(slot.inputField.gameObject);
+
+            _selectSaveButton.onClick.RemoveAllListeners();
+            _selectSaveButton.onClick.AddListener(() =>
+            {
+                _currentProfile = slot.inputField.text;
+
+                if (string.IsNullOrEmpty(_currentProfile))
+                {
+                    _currentProfile = $"Profile_0{_currentSlotIndex + 1}";
+                }
+
+                CreateSaveGame();
+                HideOptions();
+            });
+        });
     }
     #endregion
 
@@ -231,17 +302,15 @@ public class GameSaveSystem : MonoBehaviour
     #region SAVES METHODS
     private void CreateSaveGame()
     {
-        SetSaveSlots(_currentProfile, _currentSlotIndex);
+        _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
-        CurrentSave = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
+        _currentSaveFile.AddOrUpdateData(PLAYER_PROFILE, CreateProfileData(_currentProfile));
 
-        CurrentSave.AddOrUpdateData("CharacterData", GameManagerContext.CreateCharacterData());
+        _currentSaveFile.Save();
 
-        CurrentSave.Save();
+        var data = _currentSaveFile.GetData<PlayerProfileData>(PLAYER_PROFILE);
 
-        var data = CurrentSave.GetData<GameManagerContext.PlayerCharacterData>("CharacterData");
-
-        GameManagerContext.ApplyLoadedCharacterData(data);
+        ApplyLoadedProfileData(data);
 
         OnLaunchGame?.Invoke();
     }
@@ -253,27 +322,62 @@ public class GameSaveSystem : MonoBehaviour
     }
     public void LoadGame()
     {
-        CurrentSave = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
+        _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
-        var data = CurrentSave.GetData<GameManagerContext.PlayerCharacterData>("CharacterData");
+        var data = _currentSaveFile.GetData<PlayerProfileData>(PLAYER_PROFILE);
 
-        GameManagerContext.ApplyLoadedCharacterData(data);
+        _currentProfile = data.ProfileName;
+
+        ApplyLoadedProfileData(data);
     }
     public void SaveGame()
     {
-        GameManagerContext.PrepareCharacterDataToSave(GameManagerContext.Instance.CharacterContextManager);
+        PrepareProfileDataToSave(_currentProfile, GameManagerContext.Instance.CharacterContextManager);
 
-        CurrentSave = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
+        _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
-        CurrentSave.AddOrUpdateData("CharacterData", GameManagerContext.GetCharacterData());
+        _currentSaveFile.AddOrUpdateData(PLAYER_PROFILE, GetProfileData());
 
-        CurrentSave.Save();
+        _currentSaveFile.Save();
+
+        ProfileData = null;
     }
     public void DeleteSaveGame()
     {
-        CurrentSave = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
+        _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
-        CurrentSave.DeleteFile();
+        _currentSaveFile.DeleteData(PLAYER_PROFILE);
+
+        _currentSaveFile.Save();
+    }
+    #endregion
+
+    #region PROFILE DATA MANAGEMENT
+    private void PrepareProfileDataToSave(string profile, CharacterContextManager characterContextManager)
+    {
+        ProfileData.ProfileName = profile;
+        ProfileData.CharacterSpawningPosition = characterContextManager.transform.position.ToSavable();
+        ProfileData.CharacterHasAirJump = characterContextManager.HasAirJump;
+        ProfileData.CharacterHasDash = characterContextManager.HasDash;
+        ProfileData.CharacterHasWallMove = characterContextManager.HasWallMove;
+    }
+    private void ApplyLoadedProfileData(PlayerProfileData data)
+    {
+        ProfileData.ProfileName = data.ProfileName;
+        ProfileData.CharacterSpawningPosition = data.CharacterSpawningPosition;
+        ProfileData.CharacterHasAirJump = data.CharacterHasAirJump;
+        ProfileData.CharacterHasDash = data.CharacterHasDash;
+        ProfileData.CharacterHasWallMove = data.CharacterHasWallMove;
+    }
+    private PlayerProfileData CreateProfileData(string profileName)
+    {
+        ProfileData = new PlayerProfileData(profileName, new SavableVector(0.00f, 3.00f, 0.00f, 0.00f), false, false, false);
+
+        return ProfileData;
+    }
+    private PlayerProfileData GetProfileData()
+    {
+        return ProfileData;
     }
     #endregion
 }
