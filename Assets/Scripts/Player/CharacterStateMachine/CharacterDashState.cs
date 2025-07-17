@@ -36,6 +36,11 @@ public class CharacterDashState : CharacterAbstractState
     }
     public override void ExitState()
     {
+        if (CharacterContextManager.HasTemporaryDash)
+        {
+            CharacterContextManager.HasTemporaryDash = false;
+            CharacterContextManager.DispatchPowerUpInteractableRecharge();
+        }
         CharacterContextManager.HorizontalSpeed = 0.00f;
     }
     public override void CheckSwitchStates()

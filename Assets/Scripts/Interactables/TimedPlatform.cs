@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,14 +9,10 @@ public class TimedPlatform : MonoBehaviour, IInteractable
 
     private BoxCollider2D _boxCollider;
     private SpriteRenderer _spriteRenderer;
-
-    private float _activeTimer = 0.00f;
-    private float _resetingTimer = 0.00f;
-    private bool _reseting = false;
+    private Animator _animator;
 
     public List<EInteractionType> Interactions { get; set; } = new List<EInteractionType>();
     public bool Activated { get; set; }
-    public bool MovableObject { get; set; }
 
     private void Awake()
     {
@@ -24,42 +20,11 @@ public class TimedPlatform : MonoBehaviour, IInteractable
 
         _boxCollider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        
+        _animator = GetComponent<Animator>();
+
+        _animator.enabled = false;
+
         GameManagerContext.OnRunOrPauseStateChanged.AddListener(InteractablePauseState);
-    }
-
-    private void Update()
-    {
-        if (Activated)
-        {
-            _activeTimer += Time.deltaTime;
-            _activeTimer = Mathf.Round(_activeTimer * 100.00f) / 100.00f;
-
-            if (_activeTimer >= 0.12f * _tileCount)
-            {
-                _resetingTimer = 0.00f;
-                _reseting = true;
-                Activated = false;
-				_boxCollider.enabled = false;
-				_spriteRenderer.color = Color.gray;
-			}
-        }
-        else
-        {
-            if (_reseting)
-            {
-			    _resetingTimer += Time.deltaTime;
-			    _resetingTimer = Mathf.Round(_resetingTimer * 100.00f) / 100.00f;
-
-                if (_resetingTimer >= 0.8f)
-                {
-                    _activeTimer = 0.00f;
-                    _reseting = false;
-				    _boxCollider.enabled = true;
-				    _spriteRenderer.color = Color.white;
-			    }
-            }
-		}
     }
 
     private void OnDestroy()
@@ -78,26 +43,33 @@ public class TimedPlatform : MonoBehaviour, IInteractable
         _spriteRenderer.size = new Vector2(_tileCount, _spriteRenderer.size.y);
     }
 
-    public void SetInteraction(CharacterContextManager characterContextManager)
+    public void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {        
         if (Activated)
         {
             return;
         }
 
-        Activated = true;
-        //StartCoroutine("SetTimedPlatformBehaviour");
+        SetTimedPlatformBehaviour();
     }
 
-    IEnumerator SetTimedPlatformBehaviour()
+    private async void SetTimedPlatformBehaviour()
     {
         Activated = true;
-        yield return new WaitForSeconds(0.12f * _tileCount);
+
+        _animator.enabled = true;
+
+        await Task.Delay(_tileCount * 167);
+
+        _animator.enabled = false;
         _boxCollider.enabled = false;
-        _spriteRenderer.color = Color.gray;
-        yield return new WaitForSeconds(0.8f);
+        _spriteRenderer.color = new Color(Color.gray.r, Color.gray.g, Color.gray.b, 0.50f);
+
+        await Task.Delay(800);
+
         _boxCollider.enabled = true;
         _spriteRenderer.color = Color.white;
+
         Activated = false;
     }
     public void ConfirmInteraction()

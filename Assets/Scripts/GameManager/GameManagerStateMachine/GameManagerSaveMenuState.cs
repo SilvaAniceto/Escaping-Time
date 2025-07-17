@@ -1,8 +1,6 @@
-using UnityEngine;
-
 public class GameManagerSaveMenuState : GameManagerAbstractState
 {
-    public GameManagerSaveMenuState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory) : base(gameManagerContext, gameManagerStateFactory)
+    public GameManagerSaveMenuState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -19,7 +17,7 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
             SwitchState(GameManagerStateFactory.GameLoadingState());
         });
 
-        GameManagerContext.ExitState = GameManagerStateFactory.GameRunState();
+        GameManagerContext.ExitState = GameManagerStateFactory.GameHubState();
     }
 
     public override void UpdateState()

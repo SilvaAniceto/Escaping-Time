@@ -6,22 +6,28 @@ public enum EGameState
     SaveMenu,
     Loading,
     Running,
-    Paused
+    Paused,
+    Hub,
+    ScoreMenu,
 }
 
 public class GameManagerStateFactory
 {
     GameManagerContext _gameManagerContext;
+    GameUIInputsManager _gameUIInputsManager;
     Dictionary<EGameState, GameManagerAbstractState> _states = new Dictionary<EGameState, GameManagerAbstractState>();
 
-    public GameManagerStateFactory(GameManagerContext currentContextManager)
+    public GameManagerStateFactory(GameManagerContext currentContextManager, GameUIInputsManager gameUIInputsManager)
     {
         _gameManagerContext = currentContextManager;
-        _states[EGameState.MainMenu] = new GameManagerMainMenuState(_gameManagerContext, this);
-        _states[EGameState.SaveMenu] = new GameManagerSaveMenuState(_gameManagerContext, this);
-        _states[EGameState.Loading] = new GameManagerLoadingState(_gameManagerContext, this);
-        _states[EGameState.Running] = new GameManagerRunState(_gameManagerContext, this);
-        _states[EGameState.Paused] = new GameManagerPauseState(_gameManagerContext, this);
+        _gameUIInputsManager = gameUIInputsManager;
+        _states[EGameState.MainMenu] = new GameManagerMainMenuState(_gameManagerContext, this, _gameUIInputsManager);
+        _states[EGameState.SaveMenu] = new GameManagerSaveMenuState(_gameManagerContext, this, _gameUIInputsManager);
+        _states[EGameState.Loading] = new GameManagerLoadingState(_gameManagerContext, this, _gameUIInputsManager);
+        _states[EGameState.Running] = new GameManagerRunState(_gameManagerContext, this, _gameUIInputsManager);
+        _states[EGameState.Paused] = new GameManagerPauseState(_gameManagerContext, this, _gameUIInputsManager);
+        _states[EGameState.Hub] = new GameManagerHubState(_gameManagerContext, this, _gameUIInputsManager);
+        _states[EGameState.ScoreMenu] = new GameManagerScoreState(_gameManagerContext, this, _gameUIInputsManager);
     }
 
     public GameManagerMainMenuState GameMainMenuState()
@@ -47,5 +53,15 @@ public class GameManagerStateFactory
     public GameManagerPauseState GamePauseState()
     {
         return (GameManagerPauseState)_states[EGameState.Paused];
+    }
+
+    public GameManagerHubState GameHubState()
+    {
+        return (GameManagerHubState)_states[EGameState.Hub];
+    }
+
+    public GameManagerScoreState GameScoreState()
+    {
+        return (GameManagerScoreState)_states[EGameState.ScoreMenu];
     }
 }

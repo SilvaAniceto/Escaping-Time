@@ -9,9 +9,17 @@ public class CharacterOnWallState : CharacterAbstractState
 
     public override void EnterState()
     {
+        if (CharacterContextManager.HasTemporaryWallMove && CharacterContextManager.TemporaryWallMoveTime == 0.00f)
+        {
+            CharacterContextManager.ResetTemporaryWallMoveTime(6.00f);
+        }
+
         CharacterContextManager.WallChecker.enabled = true;
 
-        CharacterContextManager.AirJumpIsAllowed = true;
+        if (CharacterContextManager.HasAirJump)
+        {
+            CharacterContextManager.AirJumpIsAllowed = true;
+        }
 
         CharacterAnimationManager.CharacterAnimator.transform.rotation *= Quaternion.Euler(0, 180, 0);
 

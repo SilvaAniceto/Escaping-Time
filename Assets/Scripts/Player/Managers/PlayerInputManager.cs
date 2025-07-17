@@ -6,7 +6,15 @@ public class PlayerInputManager : MonoBehaviour
 
     private PlayerInputActions PlayerInputActions { get; set; }
 
-    public float MoveInput { get => PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(); }
+    public float MoveInput
+    {
+        get
+        {
+            Vector2 move = new Vector2(PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(), 0.00f);
+            move = move.normalized;
+            return move.x;
+        }
+    }
     public bool HoldJumpInput { get => PlayerInputActions.PlayerActionMap.Jump.IsPressed(); }
     public bool StartJumpInput { get => PlayerInputActions.PlayerActionMap.Jump.WasPressedThisFrame(); }
     public bool InteractionInput { get => PlayerInputActions.PlayerActionMap.Interact.WasPressedThisFrame(); }

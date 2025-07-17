@@ -5,68 +5,14 @@ EditorUserSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 4
   m_ConfigSettings:
-    GraphicsSettingsInspector_UserSettings:
-      value: 18134705175a055722080a3115371d4a0d55006876786860616b0471b8b07a68ffab74f9ee2a3a30300cea1a11320d0beb1a0c25f7060f494b4cdf1b18f3045e38cb5ad8
-      flags: 0
     RecentlyUsedSceneGuid-0:
-      value: 0709025f070d515a540a5f7b41270744104f1d2c2f7925677b704531b3b06561
-      flags: 0
-    RecentlyUsedSceneGuid-1:
-      value: 5502025f5c565e0c5c5a082711730e4441154c7d7e7171672c2b4d6bbbe6603e
-      flags: 0
-    RecentlyUsedSceneGuid-2:
-      value: 5a000c53530c0b0c580b557040720644144f4f287a7b70637e7e1c62b6e2616f
-      flags: 0
-    RecentlyUsedSceneGuid-3:
-      value: 5153035f5c53085a595c0d7044725e444f151b7d7f2c73652b7d4d35b1b76c3b
-      flags: 0
-    RecentlyUsedSceneGuid-4:
-      value: 54080c5f51055003090c0a7a15220a441015412c7d7a713278284a30b1b1616e
-      flags: 0
-    RecentlyUsedSceneGuid-5:
-      value: 5b53055004570b0c5f580d731221084440154d7f7c2d71617f28456bb3b7353d
-      flags: 0
-    RecentlyUsedSceneGuid-6:
-      value: 5b55000706010b5a085808204276594440154d2b7d2d7e69747e4932b0e13260
-      flags: 0
-    RecentlyUsedSceneGuid-7:
-      value: 015406510703085a540b5b23137a0644414f4e7b787f71622e7d4961e1b2606c
-      flags: 0
-    RecentlyUsedSceneGuid-8:
       value: 515250075c0c595e5f5a5e71122159444e4e4a2f7a7d7f602f284d66b4b76661
       flags: 0
-    RecentlyUsedSceneGuid-9:
+    RecentlyUsedSceneGuid-1:
+      value: 065400555d0d5f0c5e0d5a234572084447161a7d7b7a7367792f456ab6b7643c
+      flags: 0
+    RecentlyUsedSceneGuid-2:
       value: 02035657540459590b0c542046250f4443164173787b203628794e37bbb5373a
-      flags: 0
-    RecentlyUsedScenePath-0:
-      value: 22424703114646680e0b0227036c791105122773623d28393930
-      flags: 0
-    RecentlyUsedScenePath-1:
-      value: 22424703114646680e0b0227036c79110512277b7c66333e243d04
-      flags: 0
-    RecentlyUsedScenePath-2:
-      value: 22424703114646680e0b0227036c78111b1227053a2d347e38271427fb
-      flags: 0
-    RecentlyUsedScenePath-3:
-      value: 22424703114646680e0b0227036c791105122779623d28393930
-      flags: 0
-    RecentlyUsedScenePath-4:
-      value: 2242470311464668190f18273d225c181f191d651f2b233e283a5200f6e1203da2ca37eaef3331397926ea2a01320e2fff0f071fb81e04020517
-      flags: 0
-    RecentlyUsedScenePath-5:
-      value: 22424703114646680e0b0227036c79110512277b623d28393930
-      flags: 0
-    RecentlyUsedScenePath-6:
-      value: 22424703114646680e0b0227036c791105122778623d28393930
-      flags: 0
-    RecentlyUsedScenePath-7:
-      value: 22424703114646680e0b0227036c6b15050327192f2d2835633c133af6f9
-      flags: 0
-    RecentlyUsedScenePath-8:
-      value: 22424703114646680e0b0227036c79110512277a623d28393930
-      flags: 0
-    RecentlyUsedScenePath-9:
-      value: 22424703114646680e0b0227036c72151802563f22213229
       flags: 0
     vcSharedLogLevel:
       value: 0d5e400f0650

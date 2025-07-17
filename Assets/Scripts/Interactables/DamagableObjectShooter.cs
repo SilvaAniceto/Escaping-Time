@@ -110,9 +110,9 @@ public class DamagableObjectShooter : MonoBehaviour
 
         public void ResetProjectile()
         {
+            _speed = 0.00f;
             gameObject.SetActive(false);
             transform.localPosition = Vector3.zero;
-            transform.localScale = Vector3.one;
             transform.rotation = transform.parent.rotation;
         }
     }

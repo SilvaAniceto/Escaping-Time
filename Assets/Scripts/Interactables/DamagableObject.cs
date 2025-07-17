@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,8 +11,9 @@ public class DamagableObject : MonoBehaviour, IInteractable
         Both
     }
 
+    [SerializeField] private bool _ignoreDashState = false;
     [SerializeField] private EDamageHitDirection _damageHitDirection;
-    [SerializeField, Range (0.0f, 1.0f)] private float _hitMagnitude = 1.0f;
+    [SerializeField, Range (0.42f, 1.68f)] private float _hitMagnitude = 1.0f;
 
     private Collider2D _collider;
     private Animator _animator;
@@ -23,7 +23,7 @@ public class DamagableObject : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        Interactions.Add(EInteractionType.Enter);
+        Interactions.Add(EInteractionType.Stay);
 
         _collider = transform.GetComponent<Collider2D>();
         _animator = GetComponent<Animator>();
@@ -41,12 +41,17 @@ public class DamagableObject : MonoBehaviour, IInteractable
         
     }
 
-    public void SetInteraction(CharacterContextManager characterContextManager)
+    public void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {
-        if (characterContextManager.TakingDamage) return; 
+        if (characterContextManager.CurrentState == CharacterStateFactory.Instance.DamagedState() || characterContextManager.CurrentState == CharacterStateFactory.Instance.SpawningState()) return;
+
+        if (_ignoreDashState)
+        {
+            if (characterContextManager.CurrentState == CharacterStateFactory.Instance.DashState()) return;
+        }
 
         float currentDirection = 0;
-        
+
         switch (_damageHitDirection)
         {
             case EDamageHitDirection.None:

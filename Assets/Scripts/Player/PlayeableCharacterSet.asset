@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _characterContextManager: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
   _cameraBehaviourController: {fileID: 6143715647323644401, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-  _defaultScene: Fase_0
+  _defaultScene: Level_01
   _mainMenuScene: MainMenu

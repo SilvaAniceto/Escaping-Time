@@ -9,7 +9,7 @@ public class CharacterFallState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.RemoveFixedJoint2D();
+        CharacterContextManager.HorizontalTopSpeed = 6.30f;
 
         CharacterContextManager.CeilingChecker.enabled = false;
         CharacterContextManager.WallChecker.enabled = false;
@@ -60,7 +60,7 @@ public class CharacterFallState : CharacterAbstractState
         {
             if (PlayerInputManager.StartJumpInput && CharacterContextManager.AirJumpIsAllowed)
             {
-                SwitchState(CharacterStateFactory.AirJumpState());
+                SwitchState(CharacterStateFactory.AirJumpState()); 
             }
         }
 

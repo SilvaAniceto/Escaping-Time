@@ -29,6 +29,11 @@ public class CharacterAirJumpState : CharacterAbstractState
     }
     public override void ExitState()
     {
+        if (CharacterContextManager.HasTemporaryAirJump)
+        {
+            CharacterContextManager.HasTemporaryAirJump = false;
+            CharacterContextManager.DispatchPowerUpInteractableRecharge();
+        }
         CharacterContextManager.FallStartSpeed = 0.00f;
     }
     public override void CheckSwitchStates()

@@ -1,8 +1,6 @@
-using UnityEngine;
-
 public class GameManagerPauseState : GameManagerAbstractState
 {
-    public GameManagerPauseState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory) : base(gameManagerContext, gameManagerStateFactory)
+    public GameManagerPauseState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -16,18 +14,7 @@ public class GameManagerPauseState : GameManagerAbstractState
         GameManagerContext.ContinueButton.onClick.RemoveAllListeners();
         GameManagerContext.ContinueButton.onClick.AddListener(() =>
         {
-            SwitchState(GameManagerStateFactory.GameRunState());
-        });
-
-        GameManagerContext.ConfirmMainMenuButton.onClick.RemoveAllListeners();
-        GameManagerContext.ConfirmMainMenuButton.onClick.AddListener(() =>
-        {
-            GameManagerContext.TargetScene = GameManagerContext.PlayeableCharacterSet.MainMenuScene;
-            GameManagerContext.ExitState = GameManagerStateFactory.GameMainMenuState();
-            GameManagerContext.ConfirmPanel.SetActive(false);
-            SwitchState(GameManagerStateFactory.GameLoadingState());
-            Object.Destroy(GameManagerContext.CharacterContextManager.gameObject);
-            Object.Destroy(GameManagerContext.CameraBehaviourController.gameObject);
+            SwitchState(GameManagerContext.ExitState);
         });
 
         GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.ContinueButton.gameObject);
@@ -45,9 +32,9 @@ public class GameManagerPauseState : GameManagerAbstractState
 
     public override void CheckSwitchStates()
     {
-        if (GameManagerContext.PauseInput)
+        if (GameUIInputsManager.Cancel)
         {
-            SwitchState(GameManagerStateFactory.GameRunState());
+            SwitchState(GameManagerContext.ExitState);
         }
     }
 

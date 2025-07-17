@@ -1,8 +1,6 @@
-using UnityEngine;
-
 public class GameManagerMainMenuState : GameManagerAbstractState
 {
-    public GameManagerMainMenuState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory) : base(gameManagerContext, gameManagerStateFactory)
+    public GameManagerMainMenuState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -14,7 +12,7 @@ public class GameManagerMainMenuState : GameManagerAbstractState
         GameManagerContext.StartButton.onClick.RemoveAllListeners();
         GameManagerContext.StartButton.onClick.AddListener(() =>
         {
-            GameManagerContext.TargetScene = GameManagerContext.PlayeableCharacterSet.DefaultScene;
+            GameManagerContext.TargetScene = "Level_Hub";
             SwitchState(GameManagerStateFactory.GameSaveMenuState());
         });
 
@@ -28,7 +26,13 @@ public class GameManagerMainMenuState : GameManagerAbstractState
 
     public override void UpdateState()
     {
-
+        if (GameManagerContext.GameManagerEventSystem.currentSelectedGameObject == null)
+        {
+            if (GameUIInputsManager.Navigating)
+            {
+                GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.StartButton.gameObject);
+            }
+        }
     }
 
     public override void ExitState()

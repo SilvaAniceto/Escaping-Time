@@ -1,20 +1,23 @@
 public abstract class GameManagerAbstractState
 {
-    public GameManagerAbstractState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory)
+    public GameManagerAbstractState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager)
     {
         _gameManagerContext = gameManagerContext;
         _gameManagerStateFactory = gameManagerStateFactory;
+        _gameUIInputsManager = gameUIInputsManager;
     }
 
     private bool _isRootState = false;
     private GameManagerContext _gameManagerContext;
     private GameManagerStateFactory _gameManagerStateFactory;
+    private GameUIInputsManager _gameUIInputsManager;
     private GameManagerAbstractState _currentSuperState;
     private GameManagerAbstractState _currentSubState;
 
     protected bool IsRootState { set { _isRootState = value; } }
     protected GameManagerContext GameManagerContext { get { return _gameManagerContext; } }
     public GameManagerStateFactory GameManagerStateFactory { get { return _gameManagerStateFactory; } }
+    public GameUIInputsManager GameUIInputsManager { get { return _gameUIInputsManager; } }
     protected GameManagerAbstractState CurrentSuperState { get { return _currentSuperState; } }
     protected GameManagerAbstractState CurrentSubState { get { return _currentSubState; } }
 

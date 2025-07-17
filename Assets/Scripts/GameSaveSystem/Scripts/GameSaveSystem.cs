@@ -1,5 +1,5 @@
 using Esper.ESave;
-using Esper.ESave.SavableObjects;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -56,18 +56,20 @@ public class GameSaveSystem : MonoBehaviour
     public class PlayerProfileData
     {
         public string ProfileName;
-        public SavableVector CharacterSpawningPosition;
         public bool CharacterHasDash;
         public bool CharacterHasAirJump;
         public bool CharacterHasWallMove;
+        public int MasterScore;
+        public GameLevelManager[] GameLevelManager;
 
-        public PlayerProfileData(string profileName, SavableVector characterSpawningPosition, bool characterHasDash, bool characterHasAirJump, bool characterHasWallMove)
+        public PlayerProfileData(string profileName, bool characterHasDash, bool characterHasAirJump, bool characterHasWallMove, int masterScore, GameLevelManager[] gameLevelManager)
         {
             this.ProfileName = profileName;
-            this.CharacterSpawningPosition = characterSpawningPosition;
             this.CharacterHasDash = characterHasDash;
             this.CharacterHasAirJump = characterHasAirJump;
             this.CharacterHasWallMove = characterHasWallMove;
+            this.MasterScore = masterScore;
+            this.GameLevelManager = gameLevelManager;
         }
 
         public PlayerProfileData() { }
@@ -82,6 +84,7 @@ public class GameSaveSystem : MonoBehaviour
     [SerializeField] private GameSaveSlot[] _saveSlots;
 
     [Header("Save Options Objects")]
+    [SerializeField] private GameObject _savingScreen;
     [SerializeField] private GameObject _optionsParent;
     [SerializeField] private Button _selectSaveButton;
     [SerializeField] private Button _deleteButton;
@@ -160,7 +163,8 @@ public class GameSaveSystem : MonoBehaviour
                 encryptionMethod = SaveFileSetupData.EncryptionMethod.AES,
                 aesKey = _saveFileSetup.saveFileData.aesKey,
                 aesIV = _saveFileSetup.saveFileData.aesIV,
-                addToStorage = true
+                addToStorage = true,
+                backgroundTask = _saveFileSetup.saveFileData.backgroundTask,
             };
 
             SaveFile saveFile = new SaveFile(saveFileSetupData);
@@ -302,17 +306,27 @@ public class GameSaveSystem : MonoBehaviour
     #region SAVES METHODS
     private void CreateSaveGame()
     {
+        foreach (GameLevelManager level in GameManagerContext.Instance.GameLevelManager)
+        {
+            level.State = GameLevelManager.EState.Closed;
+            level.ClassficationTierReached = EClassficationTier.None;
+            level.CurrentGemScore = 0;
+            level.CurrentHourglassScore = 0;
+            level.MaxGemScoreReached = 0;
+            level.MaxHourglassScoreReached = 0;
+        }
+
         _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
         _currentSaveFile.AddOrUpdateData(PLAYER_PROFILE, CreateProfileData(_currentProfile));
 
         _currentSaveFile.Save();
 
-        var data = _currentSaveFile.GetData<PlayerProfileData>(PLAYER_PROFILE);
+        PlayerProfileData data = _currentSaveFile.GetData<PlayerProfileData>(PLAYER_PROFILE);
 
-        ApplyLoadedProfileData(data);
+        UpdateLoadedProfileData(data);
 
-        OnLaunchGame?.Invoke();
+        OnLaunchGame?.Invoke();            
     }
     private void LoadAndLaunch()
     {
@@ -328,11 +342,33 @@ public class GameSaveSystem : MonoBehaviour
 
         _currentProfile = data.ProfileName;
 
-        ApplyLoadedProfileData(data);
+        UpdateLoadedProfileData(data);
+    }
+    public void LoadedProfileDataToContext()
+    {
+        GameManagerContext.Instance.CharacterContextManager.HasInfinityAirJump = ProfileData.CharacterHasAirJump;
+        GameManagerContext.Instance.CharacterContextManager.HasInfinityDash = ProfileData.CharacterHasDash;
+        GameManagerContext.Instance.CharacterContextManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
+        GameManagerContext.Instance.ScoreManager.MasterScore = ProfileData.MasterScore;
+        for (int i = 0; i < GameManagerContext.Instance.GameLevelManager.Length; i++)
+        {
+            GameManagerContext.Instance.GameLevelManager[i].State = ProfileData.GameLevelManager[i].State;
+            GameManagerContext.Instance.GameLevelManager[i].CurrentGemScore = ProfileData.GameLevelManager[i].CurrentGemScore;
+            GameManagerContext.Instance.GameLevelManager[i].CurrentHourglassScore = ProfileData.GameLevelManager[i].CurrentHourglassScore;
+            GameManagerContext.Instance.GameLevelManager[i].MaxGemScoreReached = ProfileData.GameLevelManager[i].MaxGemScoreReached;
+            GameManagerContext.Instance.GameLevelManager[i].MaxHourglassScoreReached = ProfileData.GameLevelManager[i].MaxHourglassScoreReached;
+            GameManagerContext.Instance.GameLevelManager[i].ClassficationTierReached = ProfileData.GameLevelManager[i].ClassficationTierReached;
+        }
     }
     public void SaveGame()
     {
-        PrepareProfileDataToSave(_currentProfile, GameManagerContext.Instance.CharacterContextManager);
+        SaveGameAsync();
+    }
+    private async void SaveGameAsync()
+    {
+        _savingScreen.SetActive(true);
+
+        PrepareProfileDataToSave(_currentProfile, GameManagerContext.Instance.CharacterContextManager, GameManagerContext.Instance.ScoreManager);
 
         _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
@@ -340,7 +376,9 @@ public class GameSaveSystem : MonoBehaviour
 
         _currentSaveFile.Save();
 
-        ProfileData = null;
+        await Task.Delay(3000);
+
+        _savingScreen.SetActive(false);
     }
     public void DeleteSaveGame()
     {
@@ -353,25 +391,27 @@ public class GameSaveSystem : MonoBehaviour
     #endregion
 
     #region PROFILE DATA MANAGEMENT
-    private void PrepareProfileDataToSave(string profile, CharacterContextManager characterContextManager)
+    private void PrepareProfileDataToSave(string profile, CharacterContextManager characterContextManager, GameScoreManager scoreManager)
     {
         ProfileData.ProfileName = profile;
-        ProfileData.CharacterSpawningPosition = characterContextManager.transform.position.ToSavable();
-        ProfileData.CharacterHasAirJump = characterContextManager.HasAirJump;
-        ProfileData.CharacterHasDash = characterContextManager.HasDash;
-        ProfileData.CharacterHasWallMove = characterContextManager.HasWallMove;
+        ProfileData.CharacterHasAirJump = characterContextManager.HasInfinityAirJump;
+        ProfileData.CharacterHasDash = characterContextManager.HasInfinityDash;
+        ProfileData.CharacterHasWallMove = characterContextManager.HasInfinityWallMove;
+        ProfileData.MasterScore = scoreManager.MasterScore;
+        ProfileData.GameLevelManager = GameManagerContext.Instance.GameLevelManager;
     }
-    private void ApplyLoadedProfileData(PlayerProfileData data)
+    private void UpdateLoadedProfileData(PlayerProfileData data)
     {
         ProfileData.ProfileName = data.ProfileName;
-        ProfileData.CharacterSpawningPosition = data.CharacterSpawningPosition;
         ProfileData.CharacterHasAirJump = data.CharacterHasAirJump;
         ProfileData.CharacterHasDash = data.CharacterHasDash;
         ProfileData.CharacterHasWallMove = data.CharacterHasWallMove;
+        ProfileData.MasterScore = data.MasterScore;
+        ProfileData.GameLevelManager = data.GameLevelManager;
     }
     private PlayerProfileData CreateProfileData(string profileName)
     {
-        ProfileData = new PlayerProfileData(profileName, new SavableVector(0.00f, 3.00f, 0.00f, 0.00f), false, false, false);
+        ProfileData = new PlayerProfileData(profileName, false, false, false, 0, GameManagerContext.Instance.GameLevelManager);
 
         return ProfileData;
     }

@@ -25,8 +25,24 @@ public abstract class CharacterAbstractState
     public CharacterStateFactory CharacterStateFactory { get { return _characterStateFactory; } }
     public CharacterAbstractState CurrentSuperState { get { return _currentSuperState; } }
     public CharacterAbstractState CurrentSubState { get { return _currentSubState; } }
-    protected bool IsWallColliding { get => Physics2D.OverlapBox(CharacterContextManager.WallCheckerPoint.position, new Vector2(0.06f, 0.15f), 0.00f, CharacterContextManager.WallLayerTarget); }
-    protected bool Grounded { get => Physics2D.OverlapBox(CharacterContextManager.transform.position, new Vector2(0.40f, 0.04f), 0.00f, CharacterContextManager.GroundLayerTarget); }
+    protected bool IsWallColliding 
+    {
+        get
+        {
+            Collider2D collider = Physics2D.OverlapBox(CharacterContextManager.WallCheckerPoint.position, new Vector2(0.06f, 0.15f), 0.00f, CharacterContextManager.WallLayerTarget);
+
+            if (collider != null)
+            {
+                if (collider.gameObject.CompareTag("Ground"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+    protected bool Grounded { get => Physics2D.OverlapBox(CharacterContextManager.transform.position, new Vector2(0.40f, 0.2f), 0.00f, CharacterContextManager.GroundLayerTarget); }
     public int CharacterForwardDirection { get => (int)Vector3.SignedAngle(Vector3.right, CharacterAnimationManager.CharacterAnimator.transform.right, Vector3.up) < 0 ? -1 : 1; }
     protected float DashSpeed { get; set; }
 
@@ -44,7 +60,7 @@ public abstract class CharacterAbstractState
         FixedUpdateState();
 
         CharacterContextManager.Rigidbody.MovePosition(CharacterContextManager.Rigidbody.position + CharacterContextManager.MovePosition * Time.fixedDeltaTime);
-
+        
         if (_currentSubState != null)
         {
             _currentSubState.FixedUpdateStates();
@@ -54,6 +70,8 @@ public abstract class CharacterAbstractState
     {
         _characterContextManager.SetCoyoteTime();
         _characterContextManager.SetDashCoolDownTime();
+        _characterContextManager.SetDamageExitWaitTime();
+        _characterContextManager.SetTemporaryWallMoveTime();
 
         UpdateState();
 

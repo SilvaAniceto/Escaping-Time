@@ -23,8 +23,12 @@ public class CharacterStateFactory
     CharacterAnimationManager _animationManager;
     Dictionary<ECharacterState, CharacterAbstractState> _states = new Dictionary<ECharacterState, CharacterAbstractState>();
 
+    public static CharacterStateFactory Instance;
+
     public CharacterStateFactory(CharacterContextManager currentContextManager, PlayerInputManager inputManager, CharacterAnimationManager animationManager)
     {
+        Instance = this;
+
         _contextManager = currentContextManager;
         _inputManager = inputManager;
         _animationManager = animationManager;

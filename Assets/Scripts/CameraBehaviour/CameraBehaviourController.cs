@@ -3,14 +3,29 @@ using UnityEngine;
 
 public class CameraBehaviourController : MonoBehaviour
 {
+    public static CameraBehaviourController Instance;
+
     [SerializeField] private CinemachineCamera _cinemachineCamera;
     [SerializeField] private CinemachinePositionComposer _cameraPositionComposer;
     [SerializeField] private CinemachineConfiner2D _confiner2D;
 
     private float _cameraVerticalOffset;
 
+    public Transform CameraTarget
+    {
+        get
+        {
+            return _cinemachineCamera.Target.TrackingTarget;
+        }
+    }
+
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+
         GameManagerContext.OnRunOrPauseStateChanged.AddListener((value) => { this.enabled = value; });
     }
 
@@ -35,8 +50,8 @@ public class CameraBehaviourController : MonoBehaviour
 
         _cameraVerticalOffset = Mathf.Clamp(_cameraVerticalOffset, -1.00f, 1.00f);
 
-        float blendFactor = 5.25f * _cameraVerticalOffset;
-        blendFactor = Mathf.Clamp(blendFactor, -5.25f, 3.00f);
+        float blendFactor = 16.00f * _cameraVerticalOffset;
+        blendFactor = Mathf.Clamp(blendFactor, -4.00f, 3.00f);
         blendFactor = Mathf.Round(blendFactor * 100.00f) / 100.00f;
 
         _cameraPositionComposer.TargetOffset = new Vector3(_cameraPositionComposer.TargetOffset.x, blendFactor, _cameraPositionComposer.TargetOffset.z);

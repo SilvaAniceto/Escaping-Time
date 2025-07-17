@@ -1,8 +1,6 @@
-using UnityEngine;
-
 public class GameManagerRunState : GameManagerAbstractState
 {
-    public GameManagerRunState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory) : base(gameManagerContext, gameManagerStateFactory)
+    public GameManagerRunState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -13,7 +11,9 @@ public class GameManagerRunState : GameManagerAbstractState
 
         GameManagerContext.ExitState = null;
 
-        GameManagerContext.CharacterUI.SetActive(true);
+        GameManagerContext.CharacterUI.SetLevelUIObjects();
+
+        GameManagerContext.CharacterUI.gameObject.SetActive(true);
     }
 
     public override void UpdateState()
@@ -23,14 +23,36 @@ public class GameManagerRunState : GameManagerAbstractState
 
     public override void ExitState()
     {
-        GameManagerContext.CharacterUI.SetActive(false);
+        GameManagerContext.CharacterUI.gameObject.SetActive(false);
+
+        GameManagerContext.SetLevelScore = false;
     }
 
     public override void CheckSwitchStates()
     {
-        if (GameManagerContext.PauseInput)
+        if (GameUIInputsManager.Cancel)
         {
+            GameManagerContext.ExitState = GameManagerStateFactory.GameRunState();
+
+            GameManagerContext.ExitLevelButtonText.text = "Back to Hub";
+
+            GameManagerContext.ConfirmMainMenuButton.onClick.RemoveAllListeners();
+            GameManagerContext.ConfirmMainMenuButton.onClick.AddListener(() =>
+            {
+                GameManagerContext.TargetScene = "Level_Hub";
+                GameManagerContext.ExitState = GameManagerStateFactory.GameHubState();
+                GameManagerContext.ConfirmPanel.SetActive(false);
+                SwitchState(GameManagerStateFactory.GameLoadingState());
+            });
+
             SwitchState(GameManagerStateFactory.GamePauseState());
+        }
+
+        if (GameManagerContext.SetLevelScore)
+        {
+            GameManagerContext.ExitState = GameManagerStateFactory.GameHubState();
+
+            SwitchState(GameManagerStateFactory.GameScoreState());
         }
     }
 

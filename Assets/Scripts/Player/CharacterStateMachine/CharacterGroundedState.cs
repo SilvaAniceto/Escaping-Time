@@ -9,11 +9,20 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
+        CharacterContextManager.AddFixedJoint2D();
+
+        CharacterContextManager.Rigidbody.gravityScale = 50.00f;
+
+        CharacterContextManager.HorizontalTopSpeed = 6.30f;
+
         CharacterContextManager.CeilingChecker.enabled = true;
 
         CharacterContextManager.WallChecker.enabled = false;
 
-        CharacterContextManager.AirJumpIsAllowed = true;
+        if (CharacterContextManager.HasAirJump)
+        {
+            CharacterContextManager.AirJumpIsAllowed = true;
+        }
 
         CharacterContextManager.ResetDashCoolDownTime(0.30f);
 
@@ -44,6 +53,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void ExitState()
     {
+        CharacterContextManager.Rigidbody.gravityScale = 0.00f;
         CharacterContextManager.FallStartSpeed = 0.00f;
     }
 
@@ -71,7 +81,10 @@ public class CharacterGroundedState : CharacterAbstractState
         {
             if (PlayerInputManager.MoveInput != 0)
             {
-                SetSubState(CharacterStateFactory.MoveState());
+                if (CharacterContextManager.DamageExitWaitTime <= 0.00f)
+                {
+                    SetSubState(CharacterStateFactory.MoveState());
+                }
             }
             else if (PlayerInputManager.MoveInput == 0)
             {

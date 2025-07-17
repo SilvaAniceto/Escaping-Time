@@ -9,7 +9,9 @@ public class CharacterIdleState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.HorizontalSpeed = 0;
+        CharacterContextManager.AddFixedJoint2D();
+
+        CharacterContextManager.HorizontalSpeed = 0.00f;
 
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState())
         {

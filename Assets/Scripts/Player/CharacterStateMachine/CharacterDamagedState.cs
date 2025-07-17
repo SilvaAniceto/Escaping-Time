@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class CharacterDamagedState : CharacterAbstractState
@@ -13,9 +10,9 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.RemoveFixedJoint2D();
-
         CharacterContextManager.TakingDamage = false;
+
+        CharacterContextManager.RemoveFixedJoint2D();
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.VerticalSpeed = 0.00f;
@@ -42,20 +39,23 @@ public class CharacterDamagedState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.VerticalSpeed = 0.00f;
-        CharacterContextManager.HorizontalStartSpeed = 0.00f;
+        CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
         CharacterContextManager.DashIsWaitingGroundedState = true;
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.VerticalSpeed <= -5.00f && Grounded)
+        if (CharacterContextManager.VerticalSpeed <= -10.00f)
         {
-            CharacterContextManager.SetDamageExitWaitTime();
+            CharacterContextManager.FallStartSpeed = CharacterContextManager.VerticalSpeed;
 
-            if (CharacterContextManager.DamageExitWaitTime <= 0.00f)
+            if (Grounded)
             {
                 SwitchState(CharacterStateFactory.GroundedState());
+            }
+            else
+            {
+                SwitchState(CharacterStateFactory.FallState());
             }
         }
     }

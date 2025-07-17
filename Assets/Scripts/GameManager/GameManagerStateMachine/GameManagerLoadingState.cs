@@ -1,14 +1,13 @@
-using UnityEngine;
-
 public class GameManagerLoadingState : GameManagerAbstractState
 {
-    public GameManagerLoadingState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory) : base(gameManagerContext, gameManagerStateFactory)
+    public GameManagerLoadingState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
+        GameManagerContext.CharacterUI.gameObject.SetActive(false);
         GameManagerContext.LoadingScreen.SetActive(true);
 
         UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GameManagerContext.TargetScene);

@@ -9,39 +9,39 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: a2b1110bfb8b6f045a9943ffe03d95cb
   - enabled: 1
-    path: Assets/Scenes/Fase_0.unity
+    path: Assets/Scenes/Level_01.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_1.unity
     guid: 8d4ac4bae6db25f46b5a1e89974a2af8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_2.unity
     guid: 6251b01b12c05b84c8500d49f26b280a
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_3.unity
     guid: a2b7d078ad021694686ff90f4fbf2e3b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_4.unity
     guid: 718fb8a3ca613044db33991cf5729f8a
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_5.unity
     guid: 04d73cae05297cd4ea391385c5363cbd
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_6.unity
     guid: eb202ee66cd793a498f15c10115582f8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_7.unity
     guid: e7038f74eb8428148ac59519e41762b4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_8.unity
     guid: d869b88a9d391d84f8efc1c7698b1019
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_9.unity
     guid: 63699c7714dea0147b472977ab089f4f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Fase_10.unity
     guid: 918569b75e920194b87b636337a14b57
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Game_Over.unity
     guid: 2b799faa42a241a49bc73d55f40f378c
   m_configObjects:

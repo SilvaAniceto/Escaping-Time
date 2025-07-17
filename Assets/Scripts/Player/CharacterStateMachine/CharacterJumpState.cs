@@ -9,6 +9,9 @@ public class CharacterJumpState : CharacterAbstractState
 
     public override void EnterState()
     {
+        CharacterContextManager.HorizontalStartSpeed = CharacterContextManager.HorizontalSpeed * PlayerInputManager.MoveInput;
+        CharacterContextManager.HorizontalTopSpeed = 7.86f;
+
         CharacterContextManager.RemoveFixedJoint2D();
 
         CharacterContextManager.CeilingChecker.enabled = true;
