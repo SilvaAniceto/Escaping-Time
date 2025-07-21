@@ -35,6 +35,7 @@ public class GameManagerRunState : GameManagerAbstractState
             GameManagerContext.ExitState = GameManagerStateFactory.GameRunState();
 
             GameManagerContext.ExitLevelButtonText.text = "Back to Hub";
+            GameManagerContext.ConfirmPanelText.text = "Quit to Hub?";
 
             GameManagerContext.ConfirmMainMenuButton.onClick.RemoveAllListeners();
             GameManagerContext.ConfirmMainMenuButton.onClick.AddListener(() =>

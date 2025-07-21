@@ -13,6 +13,12 @@ public class CharacterSpawningState : CharacterAbstractState
 
     public override void EnterState()
     {
+        CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Kinematic;
+
+        CharacterContextManager.HorizontalSpeed = 0.00f;
+        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
+
         _spawningWaitTime = 0.84f;
 
         CharacterAnimationManager.SetDisabledAnimation();

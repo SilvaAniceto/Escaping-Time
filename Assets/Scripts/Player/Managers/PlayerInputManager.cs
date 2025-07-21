@@ -20,6 +20,7 @@ public class PlayerInputManager : MonoBehaviour
     public bool InteractionInput { get => PlayerInputActions.PlayerActionMap.Interact.WasPressedThisFrame(); }
     public bool DashInput { get => PlayerInputActions.PlayerActionMap.Dash.WasPressedThisFrame(); }
     public float CameraTiltInput { get => PlayerInputActions.PlayerActionMap.CameraTilt.ReadValue<float>(); }
+    public bool WallMoveInput { get => PlayerInputActions.PlayerActionMap.WallMove.IsPressed(); }
 
     void Awake()
     {

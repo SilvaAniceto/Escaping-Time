@@ -64,6 +64,11 @@ public class CharacterOnWallState : CharacterAbstractState
         {
             SwitchState(CharacterStateFactory.WallJumpState());
         }
+
+        if (!PlayerInputManager.WallMoveInput)
+        {
+            SwitchState(CharacterStateFactory.FallState());
+        }
     }
 
     public override void CheckSwitchSubStates()

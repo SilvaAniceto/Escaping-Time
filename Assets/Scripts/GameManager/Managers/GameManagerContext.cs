@@ -44,6 +44,7 @@ public class GameManagerContext : MonoBehaviour
     [SerializeField] private GameObject _scorePanel;
     [SerializeField] private GameObject _loadingScren;
     [SerializeField] private GameObject _confirmPanel;
+    [SerializeField] private Text _confirmPanelText;
 
     [Header("UI Button")]
     [SerializeField] private Button _startButton;
@@ -68,6 +69,7 @@ public class GameManagerContext : MonoBehaviour
     public GameManagerAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public GameManagerAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public CharacterContextManager CharacterContextManager { get => _characterContextManager; private set => _characterContextManager = value; }
+    public Vector2 CharacterStartPosition { get; set; }
     public CameraBehaviourController CameraBehaviourController { get => _cameraBehaviourController; private set => _cameraBehaviourController = value; }
 
     public GameSaveSystem SaveSystem { get => _gameSaveSystem; }
@@ -82,6 +84,7 @@ public class GameManagerContext : MonoBehaviour
     public GameObject ScorePanel { get => _scorePanel; }
     public GameObject LoadingScreen { get => _loadingScren; }
     public GameObject ConfirmPanel { get => _confirmPanel; }
+    public Text ConfirmPanelText { get => _confirmPanelText; }
 
     public Button StartButton { get => _startButton; }
     public Button QuitButton { get => _quitButton; }
@@ -166,9 +169,9 @@ public class GameManagerContext : MonoBehaviour
 
         SaveSystem.LoadedProfileDataToContext();
 
-        List<Door> doors = FindObjectsByType<Door>(FindObjectsSortMode.None).ToList();
+        List<LevelDoor> doors = FindObjectsByType<LevelDoor>(FindObjectsSortMode.None).ToList();
 
-        foreach (Door door in doors)
+        foreach (LevelDoor door in doors)
         {
             door.CharacterContextManager = CharacterContextManager;
             door.SetOpeningAnimation();
@@ -180,16 +183,17 @@ public class GameManagerContext : MonoBehaviour
         {
             CharacterContextManager.EnableCharacterGraphics = active;
             CharacterContextManager.CurrentState.PlayerInputManager.enabled = active;
-            CharacterContextManager.transform.position = Vector3.zero;
 
             if (!active)
             {
                 ScoreManager.ResetPlayerScorePoints();
                 CharacterUI.SetScoreDisplay(ScoreManager.CurrentScore);
+                CharacterContextManager.transform.position = Vector3.zero;
             }
             else
             {
                 CharacterUI.SetScoreDisplay(ScoreManager.MasterScore);
+                CharacterContextManager.transform.position = CharacterStartPosition;
             }
         }
     }

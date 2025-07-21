@@ -17,6 +17,11 @@ public class CharacterJumpState : CharacterAbstractState
         CharacterContextManager.CeilingChecker.enabled = true;
 
         CharacterContextManager.GravityUpwardSpeedOvertime = 0;
+
+        if (CharacterContextManager.HasAirJump)
+        {
+            CharacterContextManager.AirJumpIsAllowed = true;
+        }
     }
     public override void UpdateState()
     {

@@ -2,12 +2,12 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider2D), typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class TimedPlatform : MonoBehaviour, IInteractable
 {
     [SerializeField, Range(1, 5)] private int _tileCount = 1;
 
-    private BoxCollider2D _boxCollider;
+    private Collider2D _collider;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
 
@@ -18,7 +18,7 @@ public class TimedPlatform : MonoBehaviour, IInteractable
     {
         Interactions.Add(EInteractionType.Stay);
 
-        _boxCollider = GetComponent<BoxCollider2D>();
+        _collider = GetComponent<Collider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
 
@@ -45,7 +45,7 @@ public class TimedPlatform : MonoBehaviour, IInteractable
 
     public void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {        
-        if (Activated)
+        if (Activated || characterContextManager.transform.position.y < transform.position.y)
         {
             return;
         }
@@ -62,12 +62,12 @@ public class TimedPlatform : MonoBehaviour, IInteractable
         await Task.Delay(_tileCount * 167);
 
         _animator.enabled = false;
-        _boxCollider.enabled = false;
+        _collider.enabled = false;
         _spriteRenderer.color = new Color(Color.gray.r, Color.gray.g, Color.gray.b, 0.50f);
 
         await Task.Delay(800);
 
-        _boxCollider.enabled = true;
+        _collider.enabled = true;
         _spriteRenderer.color = Color.white;
 
         Activated = false;

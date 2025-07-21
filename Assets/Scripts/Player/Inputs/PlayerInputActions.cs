@@ -131,10 +131,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""CameraTilt"",
                     ""type"": ""Value"",
                     ""id"": ""716be4ee-5775-4fc7-b70f-86bc8631920c"",
-                    ""expectedControlType"": ""Axis"",
+                    ""expectedControlType"": ""Analog"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""WallMove"",
+                    ""type"": ""Button"",
+                    ""id"": ""4e46eb11-0ec6-4a25-b640-ebe6f5a640b2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -184,17 +193,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""da77d23e-c027-443f-8d9b-c317c4acfeb2"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Mouse/Keyboard"",
-                    ""action"": ""Interact"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""7ad8c365-6edc-4abc-8184-7ad2b78cd320"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
@@ -207,7 +205,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""0a9369c1-aa7a-423e-9676-a953fdb79af4"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -229,7 +227,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""edb1e8c7-9ddd-4d50-83e2-1a6b81a46695"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -280,6 +278,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""CameraTilt"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""535a3462-909b-4efe-9077-a99e9271ae08"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Mouse/Keyboard"",
+                    ""action"": ""CameraTilt"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""96ab8595-df92-45fc-9aed-1f0c5ab55070"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""WallMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f5dd214e-89f4-4aa7-a411-8f75d19abcac"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Mouse/Keyboard"",
+                    ""action"": ""WallMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -304,6 +335,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_PlayerActionMap_Interact = m_PlayerActionMap.FindAction("Interact", throwIfNotFound: true);
         m_PlayerActionMap_Dash = m_PlayerActionMap.FindAction("Dash", throwIfNotFound: true);
         m_PlayerActionMap_CameraTilt = m_PlayerActionMap.FindAction("CameraTilt", throwIfNotFound: true);
+        m_PlayerActionMap_WallMove = m_PlayerActionMap.FindAction("WallMove", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -389,6 +421,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActionMap_Interact;
     private readonly InputAction m_PlayerActionMap_Dash;
     private readonly InputAction m_PlayerActionMap_CameraTilt;
+    private readonly InputAction m_PlayerActionMap_WallMove;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerActionMap".
     /// </summary>
@@ -420,6 +453,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerActionMap/CameraTilt".
         /// </summary>
         public InputAction @CameraTilt => m_Wrapper.m_PlayerActionMap_CameraTilt;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActionMap/WallMove".
+        /// </summary>
+        public InputAction @WallMove => m_Wrapper.m_PlayerActionMap_WallMove;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -461,6 +498,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CameraTilt.started += instance.OnCameraTilt;
             @CameraTilt.performed += instance.OnCameraTilt;
             @CameraTilt.canceled += instance.OnCameraTilt;
+            @WallMove.started += instance.OnWallMove;
+            @WallMove.performed += instance.OnWallMove;
+            @WallMove.canceled += instance.OnWallMove;
         }
 
         /// <summary>
@@ -487,6 +527,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CameraTilt.started -= instance.OnCameraTilt;
             @CameraTilt.performed -= instance.OnCameraTilt;
             @CameraTilt.canceled -= instance.OnCameraTilt;
+            @WallMove.started -= instance.OnWallMove;
+            @WallMove.performed -= instance.OnWallMove;
+            @WallMove.canceled -= instance.OnWallMove;
         }
 
         /// <summary>
@@ -588,5 +631,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCameraTilt(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "WallMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWallMove(InputAction.CallbackContext context);
     }
 }

@@ -526,10 +526,10 @@ public class CharacterContextManager : MonoBehaviour
     void OnGUI()
     {
 #if UNITY_EDITOR
-        //GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
-        //GUILayout.Label("Current State: " + CurrentState.ToString());
+        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
+        GUILayout.Label("Current State: " + CurrentState.ToString());
         //GUILayout.Label("Current Super State: " + (CurrentState.CurrentSuperState != null ? CurrentState.CurrentSuperState.ToString() : ""));
-        //GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
+        GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
 
         //GUILayout.Label("Dash Cool Down Time: " + DashCoolDownTime.ToString());
         //GUILayout.Label("Coyote Time: " + CoyoteTime.ToString());

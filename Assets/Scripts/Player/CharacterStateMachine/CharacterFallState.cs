@@ -20,6 +20,11 @@ public class CharacterFallState : CharacterAbstractState
         {
             CharacterContextManager.ResetCoyoteTime();
         }
+
+        if (CharacterContextManager.HasAirJump)
+        {
+            CharacterContextManager.AirJumpIsAllowed = true;
+        }
     }
     public override void UpdateState()
     {
@@ -46,7 +51,7 @@ public class CharacterFallState : CharacterAbstractState
 
         if (CharacterContextManager.HasWallMove)
         {
-            if (IsWallColliding && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput == CharacterForwardDirection && CharacterContextManager.ExitState != CharacterStateFactory.OnWallState())
+            if (IsWallColliding && PlayerInputManager.WallMoveInput)
             {
                 SwitchState(CharacterStateFactory.OnWallState());
             }

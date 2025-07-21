@@ -314,6 +314,7 @@ public class GameSaveSystem : MonoBehaviour
             level.CurrentHourglassScore = 0;
             level.MaxGemScoreReached = 0;
             level.MaxHourglassScoreReached = 0;
+            level.MaxLevelScoreReached = 0;
         }
 
         _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
@@ -350,6 +351,7 @@ public class GameSaveSystem : MonoBehaviour
         GameManagerContext.Instance.CharacterContextManager.HasInfinityDash = ProfileData.CharacterHasDash;
         GameManagerContext.Instance.CharacterContextManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
         GameManagerContext.Instance.ScoreManager.MasterScore = ProfileData.MasterScore;
+
         for (int i = 0; i < GameManagerContext.Instance.GameLevelManager.Length; i++)
         {
             GameManagerContext.Instance.GameLevelManager[i].State = ProfileData.GameLevelManager[i].State;
@@ -357,6 +359,7 @@ public class GameSaveSystem : MonoBehaviour
             GameManagerContext.Instance.GameLevelManager[i].CurrentHourglassScore = ProfileData.GameLevelManager[i].CurrentHourglassScore;
             GameManagerContext.Instance.GameLevelManager[i].MaxGemScoreReached = ProfileData.GameLevelManager[i].MaxGemScoreReached;
             GameManagerContext.Instance.GameLevelManager[i].MaxHourglassScoreReached = ProfileData.GameLevelManager[i].MaxHourglassScoreReached;
+            GameManagerContext.Instance.GameLevelManager[i].MaxLevelScoreReached = ProfileData.GameLevelManager[i].MaxLevelScoreReached;
             GameManagerContext.Instance.GameLevelManager[i].ClassficationTierReached = ProfileData.GameLevelManager[i].ClassficationTierReached;
         }
     }

@@ -22,6 +22,8 @@ public class GameManagerMainMenuState : GameManagerAbstractState
         GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.StartButton.gameObject);
 
         GameManagerContext.ExitState = null;
+
+        GameManagerContext.CharacterStartPosition = UnityEngine.Vector2.zero;
     }
 
     public override void UpdateState()

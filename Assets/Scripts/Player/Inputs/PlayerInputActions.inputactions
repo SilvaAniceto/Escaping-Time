@@ -45,10 +45,19 @@
                     "name": "CameraTilt",
                     "type": "Value",
                     "id": "716be4ee-5775-4fc7-b70f-86bc8631920c",
-                    "expectedControlType": "Axis",
+                    "expectedControlType": "Analog",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "WallMove",
+                    "type": "Button",
+                    "id": "4e46eb11-0ec6-4a25-b640-ebe6f5a640b2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -98,17 +107,6 @@
                 },
                 {
                     "name": "",
-                    "id": "da77d23e-c027-443f-8d9b-c317c4acfeb2",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Mouse/Keyboard",
-                    "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "7ad8c365-6edc-4abc-8184-7ad2b78cd320",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -121,7 +119,7 @@
                 {
                     "name": "",
                     "id": "0a9369c1-aa7a-423e-9676-a953fdb79af4",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -143,7 +141,7 @@
                 {
                     "name": "",
                     "id": "edb1e8c7-9ddd-4d50-83e2-1a6b81a46695",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -192,6 +190,39 @@
                     "processors": "AxisDeadzone(min=0.4)",
                     "groups": ";Gamepad",
                     "action": "CameraTilt",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "535a3462-909b-4efe-9077-a99e9271ae08",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mouse/Keyboard",
+                    "action": "CameraTilt",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "96ab8595-df92-45fc-9aed-1f0c5ab55070",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "WallMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f5dd214e-89f4-4aa7-a411-8f75d19abcac",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mouse/Keyboard",
+                    "action": "WallMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
