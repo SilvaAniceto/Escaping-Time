@@ -7,6 +7,11 @@ public class GameManagerLoadingState : GameManagerAbstractState
 
     public override void EnterState()
     {
+        if (GameManagerContext.CharacterContextManager)
+        {
+            GameManagerContext.CharacterContextManager.DisableCharacter();
+        }
+
         GameManagerContext.CharacterUI.gameObject.SetActive(false);
         GameManagerContext.LoadingScreen.SetActive(true);
 

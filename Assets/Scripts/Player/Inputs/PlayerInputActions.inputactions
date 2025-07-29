@@ -42,15 +42,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CameraTilt",
-                    "type": "Value",
-                    "id": "716be4ee-5775-4fc7-b70f-86bc8631920c",
-                    "expectedControlType": "Analog",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "WallMove",
                     "type": "Button",
                     "id": "4e46eb11-0ec6-4a25-b640-ebe6f5a640b2",
@@ -58,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CameraTilt",
+                    "type": "Value",
+                    "id": "716be4ee-5775-4fc7-b70f-86bc8631920c",
+                    "expectedControlType": "Analog",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -141,7 +141,7 @@
                 {
                     "name": "",
                     "id": "edb1e8c7-9ddd-4d50-83e2-1a6b81a46695",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -207,7 +207,7 @@
                 {
                     "name": "",
                     "id": "96ab8595-df92-45fc-9aed-1f0c5ab55070",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",

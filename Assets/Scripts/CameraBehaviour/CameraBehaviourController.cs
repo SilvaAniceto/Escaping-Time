@@ -19,6 +19,8 @@ public class CameraBehaviourController : MonoBehaviour
         }
     }
 
+    public CinemachinePositionComposer CinemachinePositionComposer { get =>  _cameraPositionComposer; }
+
     private void Awake()
     {
         if (Instance == null)

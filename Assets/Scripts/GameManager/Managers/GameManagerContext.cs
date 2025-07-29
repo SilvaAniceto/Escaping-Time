@@ -181,19 +181,15 @@ public class GameManagerContext : MonoBehaviour
 
         if (CharacterContextManager != null)
         {
-            CharacterContextManager.EnableCharacterGraphics = active;
-            CharacterContextManager.CurrentState.PlayerInputManager.enabled = active;
-
             if (!active)
             {
                 ScoreManager.ResetPlayerScorePoints();
                 CharacterUI.SetScoreDisplay(ScoreManager.CurrentScore);
-                CharacterContextManager.transform.position = Vector3.zero;
             }
             else
             {
                 CharacterUI.SetScoreDisplay(ScoreManager.MasterScore);
-                CharacterContextManager.transform.position = CharacterStartPosition;
+                CharacterContextManager.EnableCharacter(CharacterStartPosition); 
             }
         }
     }

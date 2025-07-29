@@ -128,15 +128,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CameraTilt"",
-                    ""type"": ""Value"",
-                    ""id"": ""716be4ee-5775-4fc7-b70f-86bc8631920c"",
-                    ""expectedControlType"": ""Analog"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
                     ""name"": ""WallMove"",
                     ""type"": ""Button"",
                     ""id"": ""4e46eb11-0ec6-4a25-b640-ebe6f5a640b2"",
@@ -144,6 +135,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraTilt"",
+                    ""type"": ""Value"",
+                    ""id"": ""716be4ee-5775-4fc7-b70f-86bc8631920c"",
+                    ""expectedControlType"": ""Analog"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -227,7 +227,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""edb1e8c7-9ddd-4d50-83e2-1a6b81a46695"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -293,7 +293,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""96ab8595-df92-45fc-9aed-1f0c5ab55070"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -334,8 +334,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_PlayerActionMap_Jump = m_PlayerActionMap.FindAction("Jump", throwIfNotFound: true);
         m_PlayerActionMap_Interact = m_PlayerActionMap.FindAction("Interact", throwIfNotFound: true);
         m_PlayerActionMap_Dash = m_PlayerActionMap.FindAction("Dash", throwIfNotFound: true);
-        m_PlayerActionMap_CameraTilt = m_PlayerActionMap.FindAction("CameraTilt", throwIfNotFound: true);
         m_PlayerActionMap_WallMove = m_PlayerActionMap.FindAction("WallMove", throwIfNotFound: true);
+        m_PlayerActionMap_CameraTilt = m_PlayerActionMap.FindAction("CameraTilt", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -420,8 +420,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActionMap_Jump;
     private readonly InputAction m_PlayerActionMap_Interact;
     private readonly InputAction m_PlayerActionMap_Dash;
-    private readonly InputAction m_PlayerActionMap_CameraTilt;
     private readonly InputAction m_PlayerActionMap_WallMove;
+    private readonly InputAction m_PlayerActionMap_CameraTilt;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerActionMap".
     /// </summary>
@@ -450,13 +450,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Dash => m_Wrapper.m_PlayerActionMap_Dash;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerActionMap/CameraTilt".
-        /// </summary>
-        public InputAction @CameraTilt => m_Wrapper.m_PlayerActionMap_CameraTilt;
-        /// <summary>
         /// Provides access to the underlying input action "PlayerActionMap/WallMove".
         /// </summary>
         public InputAction @WallMove => m_Wrapper.m_PlayerActionMap_WallMove;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActionMap/CameraTilt".
+        /// </summary>
+        public InputAction @CameraTilt => m_Wrapper.m_PlayerActionMap_CameraTilt;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -495,12 +495,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dash.started += instance.OnDash;
             @Dash.performed += instance.OnDash;
             @Dash.canceled += instance.OnDash;
-            @CameraTilt.started += instance.OnCameraTilt;
-            @CameraTilt.performed += instance.OnCameraTilt;
-            @CameraTilt.canceled += instance.OnCameraTilt;
             @WallMove.started += instance.OnWallMove;
             @WallMove.performed += instance.OnWallMove;
             @WallMove.canceled += instance.OnWallMove;
+            @CameraTilt.started += instance.OnCameraTilt;
+            @CameraTilt.performed += instance.OnCameraTilt;
+            @CameraTilt.canceled += instance.OnCameraTilt;
         }
 
         /// <summary>
@@ -524,12 +524,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dash.started -= instance.OnDash;
             @Dash.performed -= instance.OnDash;
             @Dash.canceled -= instance.OnDash;
-            @CameraTilt.started -= instance.OnCameraTilt;
-            @CameraTilt.performed -= instance.OnCameraTilt;
-            @CameraTilt.canceled -= instance.OnCameraTilt;
             @WallMove.started -= instance.OnWallMove;
             @WallMove.performed -= instance.OnWallMove;
             @WallMove.canceled -= instance.OnWallMove;
+            @CameraTilt.started -= instance.OnCameraTilt;
+            @CameraTilt.performed -= instance.OnCameraTilt;
+            @CameraTilt.canceled -= instance.OnCameraTilt;
         }
 
         /// <summary>
@@ -625,18 +625,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDash(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "CameraTilt" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnCameraTilt(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "WallMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnWallMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CameraTilt" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraTilt(InputAction.CallbackContext context);
     }
 }

@@ -100,6 +100,7 @@ public class GameSaveSystem : MonoBehaviour
 
     #region PROPERTIES
     public bool SlotIsSelected { get; private set; }
+    public Button SelectSaveButton { get => _selectSaveButton; }
     #endregion
 
     #region CALLBACKS

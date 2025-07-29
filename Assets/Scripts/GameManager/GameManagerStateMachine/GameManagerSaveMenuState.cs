@@ -1,3 +1,6 @@
+using System.Linq;
+using static GameSaveSystem;
+
 public class GameManagerSaveMenuState : GameManagerAbstractState
 {
     public GameManagerSaveMenuState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
@@ -22,7 +25,10 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
 
     public override void UpdateState()
     {
-
+        if (GameManagerContext.CurrentState.GameUIInputsManager.Start)
+        {
+            GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.SaveSystem.SelectSaveButton.gameObject);
+        }
     }
 
     public override void ExitState()

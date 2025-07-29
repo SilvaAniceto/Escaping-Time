@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -341,14 +342,19 @@ public class CharacterContextManager : MonoBehaviour
 
         RemoveFixedJoint2D();
 
-        GameManagerContext.OnRunOrPauseStateChanged.AddListener((value) => this.enabled = value);
+        GameManagerContext.OnRunOrPauseStateChanged.AddListener((value) => 
+        {
+            this.enabled = value;
+            Rigidbody.bodyType = value ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
+            CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = value;
+        });
 
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ceiling"), LayerMask.NameToLayer("Default"));
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ground"), LayerMask.NameToLayer("Default"));
     }
     void OnEnable()
     {
-        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = true;
+        
     }
     void Start()
     {
@@ -439,6 +445,53 @@ public class CharacterContextManager : MonoBehaviour
     public void ResetDamageExitWaitTime()
     {
         DamageExitWaitTime = 2.52f;
+    }
+    public void DisableCharacter(bool zeroPosition = true)
+    {
+        _currentState.ExitState();
+
+        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).GroundedState();
+
+        CurrentState.PlayerInputManager.enabled = false;
+
+        _currentState.EnterState();
+
+        Rigidbody.bodyType = RigidbodyType2D.Kinematic;
+
+        HorizontalSpeed = 0.00f;
+        VerticalSpeed = 0.00f;
+
+        EnableCharacterGraphics = false;
+
+        if (zeroPosition)
+        {
+            transform.position = Vector3.zero;
+        }
+
+        CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
+
+        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = false;
+    }
+    public void EnableCharacter(Vector2 position)
+    {
+        transform.position = position;
+
+        CurrentState.PlayerInputManager.enabled = true;
+
+        Rigidbody.bodyType = RigidbodyType2D.Dynamic;
+
+        EnableCharacterGraphics = true;
+
+        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = true;
+
+        StartCoroutine(DelayCameraDamping());
+
+        IEnumerator DelayCameraDamping()
+        {
+            yield return new WaitForEndOfFrame();
+
+            CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(1.00f, 0.80f, 0.00f);
+        }
     }
     #endregion
 
@@ -544,7 +597,7 @@ public class CharacterContextManager : MonoBehaviour
     #region DECOMMISSIONING
     void OnDisable()
     {
-        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = false;
+        
     }
 
     void OnDestroy()
