@@ -9,7 +9,7 @@ public class CharacterDashState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.RemoveFixedJoint2D();
+        CharacterContextManager.DisableFixedJoint2D();
 
         CharacterContextManager.DashSpeedOvertime = 0;
 
@@ -18,6 +18,11 @@ public class CharacterDashState : CharacterAbstractState
             CharacterContextManager.ExitState = CharacterStateFactory.FallState();
             CharacterContextManager.DashIsWaitingGroundedState = true;
         }
+
+        CharacterContextManager.DashOnCoolDown = true;
+
+        GameAudioManager.Instance.StopCharacterSFX();
+        GameAudioManager.Instance.PlayCharacterSFX("Dash");
     }
     public override void UpdateState()
     {

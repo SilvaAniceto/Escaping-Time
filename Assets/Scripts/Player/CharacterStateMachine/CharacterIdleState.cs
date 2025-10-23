@@ -9,7 +9,7 @@ public class CharacterIdleState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.AddFixedJoint2D();
+        CharacterContextManager.EnableFixedJoint2D();
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
 
@@ -41,7 +41,10 @@ public class CharacterIdleState : CharacterAbstractState
     {
         if (PlayerInputManager.MoveInput != 0 && !IsWallColliding)
         {
-            SwitchState(CharacterStateFactory.MoveState());
+            if (!CharacterContextManager.DamageOnCoolDown)
+            {
+                SwitchState(CharacterStateFactory.MoveState());
+            }
         }
     }
     public override void CheckSwitchSubStates()

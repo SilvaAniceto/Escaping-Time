@@ -1,29 +1,33 @@
+using System.Diagnostics;
+
 public class GameManagerLoadingState : GameManagerAbstractState
 {
-    public GameManagerLoadingState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerLoadingState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        if (GameManagerContext.CharacterContextManager)
+        GameStateTransitionManager.FadeOff();
+
+        GameContextManager.CharacterUI.gameObject.SetActive(false);
+        GameContextManager.LoadingScreen.SetActive(true);
+
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GameContextManager.TargetScene);
+
+        GameContextManager.OnLoadSceneEnd.RemoveAllListeners();
+        GameContextManager.OnLoadSceneEnd.AddListener(() =>
         {
-            GameManagerContext.CharacterContextManager.DisableCharacter();
-        }
-
-        GameManagerContext.CharacterUI.gameObject.SetActive(false);
-        GameManagerContext.LoadingScreen.SetActive(true);
-
-        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GameManagerContext.TargetScene);
-
-        GameManagerContext.OnLoadSceneEnd.RemoveAllListeners();
-        GameManagerContext.OnLoadSceneEnd.AddListener(() =>
-        {
-            SwitchState(GameManagerContext.ExitState);
+            GameContextManager.WaitFrameEnd(() =>
+            {
+                SwitchState(GameContextManager.ExitState);
+            });
         });
 
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += GameManagerContext.AfterLoadSceneEnd;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += GameContextManager.AfterLoadSceneEnd;
+
+        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(null);
     }
 
     public override void UpdateState()
@@ -33,8 +37,9 @@ public class GameManagerLoadingState : GameManagerAbstractState
 
     public override void ExitState()
     {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= GameManagerContext.AfterLoadSceneEnd;
-        GameManagerContext.LoadingScreen.SetActive(false);
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= GameContextManager.AfterLoadSceneEnd;
+        GameContextManager.LoadingScreen.SetActive(false);
+        GameStateTransitionManager.FadeIn();
     }
 
     public override void CheckSwitchStates()

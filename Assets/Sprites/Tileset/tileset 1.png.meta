@@ -3269,6 +3269,84 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: tileset 1_87
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 98
+        width: 48
+        height: 6
+      alignment: 9
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape:
+      - - {x: 24, y: 3}
+        - {x: -24, y: 3}
+        - {x: -24, y: -1}
+        - {x: 24, y: -1}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ebbb70518b3fd14a84ec3d5596101cc
+      internalID: -1649025462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tileset 1_88
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 82
+        width: 16
+        height: 6
+      alignment: 9
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape:
+      - - {x: 8, y: 3}
+        - {x: -8, y: 3}
+        - {x: -8, y: -1}
+        - {x: 8, y: -1}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a03844bad073fd42832e53fd671e517
+      internalID: 824199939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tileset 1_89
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 76
+        width: 16
+        height: 4
+      alignment: 9
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape:
+      - - {x: 8, y: 2}
+        - {x: -8, y: 2}
+        - {x: -8, y: -2}
+        - {x: 8, y: -2}
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1f111ab02a027e469c86be3e052fd7d
+      internalID: 454779769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3385,6 +3463,9 @@ TextureImporter:
       tileset 1_84: -4489275990009560674
       tileset 1_85: -2325617538317772605
       tileset 1_86: 803691507685032644
+      tileset 1_87: -1649025462
+      tileset 1_88: 824199939
+      tileset 1_89: 454779769
       tileset 1_9: 205408305262063334
       tileset 1_90: -8837969695579268413
       tileset 1_91: -5285491068375479001

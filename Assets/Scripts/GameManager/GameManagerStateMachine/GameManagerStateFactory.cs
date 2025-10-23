@@ -13,21 +13,21 @@ public enum EGameState
 
 public class GameManagerStateFactory
 {
-    GameManagerContext _gameManagerContext;
+    GameContextManager _gameContextManager;
     GameUIInputsManager _gameUIInputsManager;
     Dictionary<EGameState, GameManagerAbstractState> _states = new Dictionary<EGameState, GameManagerAbstractState>();
 
-    public GameManagerStateFactory(GameManagerContext currentContextManager, GameUIInputsManager gameUIInputsManager)
+    public GameManagerStateFactory(GameContextManager currentContextManager, GameUIInputsManager gameUIInputsManager)
     {
-        _gameManagerContext = currentContextManager;
+        _gameContextManager = currentContextManager;
         _gameUIInputsManager = gameUIInputsManager;
-        _states[EGameState.MainMenu] = new GameManagerMainMenuState(_gameManagerContext, this, _gameUIInputsManager);
-        _states[EGameState.SaveMenu] = new GameManagerSaveMenuState(_gameManagerContext, this, _gameUIInputsManager);
-        _states[EGameState.Loading] = new GameManagerLoadingState(_gameManagerContext, this, _gameUIInputsManager);
-        _states[EGameState.Running] = new GameManagerRunState(_gameManagerContext, this, _gameUIInputsManager);
-        _states[EGameState.Paused] = new GameManagerPauseState(_gameManagerContext, this, _gameUIInputsManager);
-        _states[EGameState.Hub] = new GameManagerHubState(_gameManagerContext, this, _gameUIInputsManager);
-        _states[EGameState.ScoreMenu] = new GameManagerScoreState(_gameManagerContext, this, _gameUIInputsManager);
+        _states[EGameState.MainMenu] = new GameManagerMainMenuState(_gameContextManager, this, _gameUIInputsManager);
+        _states[EGameState.SaveMenu] = new GameManagerSaveMenuState(_gameContextManager, this, _gameUIInputsManager);
+        _states[EGameState.Loading] = new GameManagerLoadingState(_gameContextManager, this, _gameUIInputsManager);
+        _states[EGameState.Running] = new GameManagerRunState(_gameContextManager, this, _gameUIInputsManager);
+        _states[EGameState.Paused] = new GameManagerPauseState(_gameContextManager, this, _gameUIInputsManager);
+        _states[EGameState.Hub] = new GameManagerHubState(_gameContextManager, this, _gameUIInputsManager);
+        _states[EGameState.ScoreMenu] = new GameManagerScoreState(_gameContextManager, this, _gameUIInputsManager);
     }
 
     public GameManagerMainMenuState GameMainMenuState()

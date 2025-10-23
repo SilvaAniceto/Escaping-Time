@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -31,54 +32,28 @@ public class CharacterContextManager : MonoBehaviour
     public Transform CameraTarget { get => _cameraTarget; }
     public CharacterAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
-    public bool EnableCharacterGraphics { set => _characterGraphic.SetActive(value); }
 
     #region POWER UP
-    public bool HasDash
+    #region Dash
+    [SerializeField] private bool _hasInfinityDash;
+    public bool HasInfinityDash
     {
         get
         {
-            return HasTemporaryDash || HasInfinityDash ? true : false;
-        }
-    }
-    public bool HasAirJump
-    {
-        get
-        {
-            return HasTemporaryAirJump || HasInfinityAirJump ? true : false;
-        }
-    }
-    public bool HasWallMove
-    {
-        get
-        {
-            return HasInfinityWallMove || HasTemporaryWallMove ? true : false;
-        }
-    }
-
-    private bool _hasTemporaryAirJump;
-    public bool HasTemporaryAirJump 
-    { 
-        get
-        {
-            return _hasTemporaryAirJump;
+            return _hasInfinityDash;
         }
         set
         {
-            if (value == _hasTemporaryAirJump || HasInfinityAirJump)
+            if (_hasInfinityDash == value)
             {
                 return;
             }
 
-            _hasTemporaryAirJump = value;
+            _hasInfinityDash = value;
 
-            if (_hasTemporaryAirJump)
+            if (_hasInfinityDash)
             {
-                OnAirJumpPowerStateChange.Invoke("PwrUp_UI_Lit");
-            }
-            else
-            {
-                OnAirJumpPowerStateChange.Invoke("PwrUp_UI_Unlit");
+                OnDashPowerStateChange.Invoke("PwrUp_Infinity");
             }
         }
     }
@@ -110,6 +85,109 @@ public class CharacterContextManager : MonoBehaviour
         }
     }
 
+    public bool HasDash
+    {
+        get
+        {
+            return HasTemporaryDash || HasInfinityDash ? true : false;
+        }
+    }
+    public bool DashIsAllowed
+    {
+        get
+        {
+            return HasDash ? !DashOnCoolDown && !DashIsWaitingGroundedState : false;
+        }
+    }
+    public bool DashOnCoolDown { get; set; }
+    public bool DashIsWaitingGroundedState { get; set; }
+    #endregion
+
+    #region AirJump
+    [SerializeField] private bool _hasInfinityAirJump;
+    public bool HasInfinityAirJump
+    {
+        get
+        {
+            return _hasInfinityAirJump;
+        }
+        set
+        {
+            if (_hasInfinityAirJump == value)
+            {
+                return;
+            }
+
+            _hasInfinityAirJump = value;
+
+            if (_hasInfinityAirJump)
+            {
+                OnAirJumpPowerStateChange.Invoke("PwrUp_Infinity");
+            }
+        }
+    }
+
+    private bool _hasTemporaryAirJump;
+    public bool HasTemporaryAirJump 
+    { 
+        get
+        {
+            return _hasTemporaryAirJump;
+        }
+        set
+        {
+            if (value == _hasTemporaryAirJump || HasInfinityAirJump)
+            {
+                return;
+            }
+
+            _hasTemporaryAirJump = value;
+
+            if (_hasTemporaryAirJump)
+            {
+                OnAirJumpPowerStateChange.Invoke("PwrUp_UI_Lit");
+            }
+            else
+            {
+                OnAirJumpPowerStateChange.Invoke("PwrUp_UI_Unlit");
+            }
+        }
+    }
+
+    public bool HasAirJump
+    {
+        get
+        {
+            return HasTemporaryAirJump || HasInfinityAirJump ? true : false;
+        }
+    }
+    public bool AirJumpIsAllowed { get; set; }
+    #endregion
+
+    #region WallMove
+    [SerializeField] private bool _hasInfinityWallMove;
+    public bool HasInfinityWallMove
+    {
+        get
+        {
+            return _hasInfinityWallMove;
+        }
+        set
+        {
+            if (_hasInfinityWallMove == value)
+            {
+                return;
+            }
+
+            _hasInfinityWallMove = value;
+
+            if (_hasInfinityWallMove)
+            {
+                OnWallMovePowerStateChange.Invoke("PwrUp_Infinity");
+            }
+        }
+    }
+
     private bool _hasTemporaryWallMove;
     public bool HasTemporaryWallMove
     {
@@ -136,76 +214,16 @@ public class CharacterContextManager : MonoBehaviour
             }
         }
     }
-    public float TemporaryWallMoveTime { get; set; }
 
-    [SerializeField] private bool _hasInfinityAirJump;
-    public bool HasInfinityAirJump 
+    public bool HasWallMove
     {
         get
         {
-            return _hasInfinityAirJump;
-        }
-        set
-        {
-            if (_hasInfinityAirJump == value)
-            {
-                return;
-            }
-
-            _hasInfinityAirJump = value;
-
-            if (_hasInfinityAirJump)
-            {
-                OnAirJumpPowerStateChange.Invoke("PwrUp_Infinity");
-            }
+            return HasInfinityWallMove || HasTemporaryWallMove ? true : false;
         }
     }
-
-    [SerializeField] private bool _hasInfinityDash;
-    public bool HasInfinityDash
-    {
-        get
-        {
-            return _hasInfinityDash;
-        }
-        set
-        {
-            if (_hasInfinityDash == value)
-            {
-                return;
-            }
-
-            _hasInfinityDash = value;
-
-            if (_hasInfinityDash)
-            {
-                OnDashPowerStateChange.Invoke("PwrUp_Infinity");
-            }
-        }
-    }
-
-    [SerializeField] private bool _hasInfinityWallMove;
-    public bool HasInfinityWallMove
-    {
-        get
-        {
-            return _hasInfinityWallMove;
-        }
-        set
-        {
-            if (_hasInfinityWallMove == value)
-            {
-                return;
-            }
-
-            _hasInfinityWallMove = value;
-
-            if (_hasInfinityWallMove)
-            {
-                OnWallMovePowerStateChange.Invoke("PwrUp_Infinity");
-            }
-        }
-    }
+    public bool TemporaryWallMoveOnCoolDown { get; set; }
+    #endregion
     #endregion
 
     #region POWER UP CALLBACKS
@@ -216,11 +234,11 @@ public class CharacterContextManager : MonoBehaviour
 
     private void SetPowerUpCallBack()
     {
-        if (GameManagerContext.Instance.CharacterUI != null)
+        if (GameContextManager.Instance.CharacterUI != null)
         {
-            OnAirJumpPowerStateChange.AddListener(GameManagerContext.Instance.CharacterUI.SetAirJumpPowerUpUI);
-            OnDashPowerStateChange.AddListener(GameManagerContext.Instance.CharacterUI.SetDashPowerUpUI);
-            OnWallMovePowerStateChange.AddListener(GameManagerContext.Instance.CharacterUI.SetWallMovePowerUpUI);
+            OnAirJumpPowerStateChange.AddListener(GameContextManager.Instance.CharacterUI.SetAirJumpPowerUpUI);
+            OnDashPowerStateChange.AddListener(GameContextManager.Instance.CharacterUI.SetDashPowerUpUI);
+            OnWallMovePowerStateChange.AddListener(GameContextManager.Instance.CharacterUI.SetWallMovePowerUpUI);
         }
     }
     public void DispatchPowerUpInteractableRecharge()
@@ -252,6 +270,7 @@ public class CharacterContextManager : MonoBehaviour
     public float HorizontalSpeed { get; set; }
     public float VerticalSpeed { get; set; }
     public float FallStartSpeed { get; set; }
+    public bool CoyoteTime { get; set; }
     public float HorizontalStartSpeed { get; set; }
     public float HorizontalTopSpeed { get; set; }
     public float HorizontalSpeedOvertime { get; set; }
@@ -264,8 +283,6 @@ public class CharacterContextManager : MonoBehaviour
             return _accelerationCurve.Evaluate(Mathf.Clamp01(HorizontalSpeedOvertime));
         }
     }
-    public float CoyoteTime { get; set; }
-    public bool AirJumpIsAllowed { get; set; }
     public float GravityUpwardSpeedOvertime { get; set; }
     public float GravityUpwardSpeedLerpOvertime
     {
@@ -296,15 +313,6 @@ public class CharacterContextManager : MonoBehaviour
             return _dashCurve.Evaluate(Mathf.Clamp01(DashSpeedOvertime));
         }
     }
-    public float DashCoolDownTime { get; set; }
-    public bool DashIsWaitingGroundedState { get; set; }
-    public bool DashIsAllowed
-    {
-        get
-        {
-            return HasDash ? DashCoolDownTime <= 0 && !DashIsWaitingGroundedState : false;
-        }
-    }
     public float DamageSpeedOvertime { get; set; }
     public float DamageSpeedLerpOvertime
     {
@@ -315,7 +323,7 @@ public class CharacterContextManager : MonoBehaviour
             return _damageCurve.Evaluate(Mathf.Clamp01(DamageSpeedOvertime));
         }
     }
-    public float DamageExitWaitTime { get; private set; }
+    public bool DamageOnCoolDown { get; set; } = false;
     #endregion
 
     #region PHYSICS DETECTION PROPERTIES
@@ -324,33 +332,22 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region DAMAGE PROPERTIES
-    public bool TakingDamage { get; set; }
     public float DamageHitDirection { get; private set; }
-    public bool SpawningCharacter { get; set; }
     public Vector3 SpawningPosition { get; set; }
     #endregion
 
     #region INITIALIZATION
     void Awake()
     {
-        _currentState = new CharacterStateFactory(this, GetComponent<PlayerInputManager>(), GetComponent<CharacterAnimationManager>()).GroundedState();
-
-        CurrentState.CharacterAnimationManager.CharacterAnimator = CurrentState.CharacterAnimationManager.GetComponentInChildren<Animator>();
-
         Rigidbody = GetComponent<Rigidbody2D>();
         FixedJoint2D = GetComponent<FixedJoint2D>();
 
-        RemoveFixedJoint2D();
-
-        GameManagerContext.OnRunOrPauseStateChanged.AddListener((value) => 
-        {
-            this.enabled = value;
-            Rigidbody.bodyType = value ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
-            CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = value;
-        });
+        DisableFixedJoint2D();
 
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ceiling"), LayerMask.NameToLayer("Default"));
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ground"), LayerMask.NameToLayer("Default"));
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("WallChecker"), LayerMask.NameToLayer("Default"));
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("WallChecker"), LayerMask.NameToLayer("Camera Objects"));
     }
     void OnEnable()
     {
@@ -358,6 +355,10 @@ public class CharacterContextManager : MonoBehaviour
     }
     void Start()
     {
+        _currentState = GameContextManager.Instance.CurrentEnvironment == GameContextManager.Environment.GameContext ? new CharacterStateFactory(this, GetComponent<PlayerInputManager>(), GetComponent<CharacterAnimationManager>()).DisabledState() : new CharacterStateFactory(this, GetComponent<PlayerInputManager>(), GetComponent<CharacterAnimationManager>()).GroundedState();
+
+        _currentState.CharacterAnimationManager.CharacterAnimator = _currentState.CharacterAnimationManager.GetComponentInChildren<Animator>();
+
         SetPowerUpCallBack();
 
         _currentState.EnterState();
@@ -365,57 +366,31 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region CHARACTER CONTEXT
-    public void SetCoyoteTime()
+    public void WaitFrameEnd(Action action)
     {
-        CoyoteTime -= Time.deltaTime;
-
-        CoyoteTime = Mathf.Clamp01(CoyoteTime);
+        StartCoroutine(OnWaitFrameEnd(action));
     }
-    public void ResetCoyoteTime()
+    IEnumerator OnWaitFrameEnd(Action action)
     {
-        CoyoteTime = 0.084f;
-    }
-    public void SetDashCoolDownTime()
-    {
-        DashCoolDownTime -= Time.deltaTime;
-
-        DashCoolDownTime = Mathf.Clamp01(DashCoolDownTime);
-    }
-    public void ResetDashCoolDownTime(float value)
-    {
-        DashIsWaitingGroundedState = false;
-        DashCoolDownTime = value;
-    }
-    public void SetTemporaryWallMoveTime()
-    {
-        if (TemporaryWallMoveTime == 0.00f)
+        yield return new WaitForEndOfFrame();
+        if (action != null)
         {
-            GameManagerContext.Instance.CharacterUI.SetOvertimeWallMovePowerUpUI(1.00f);
-            return;
-        }
-
-        TemporaryWallMoveTime -= Time.deltaTime;
-
-        TemporaryWallMoveTime = Mathf.Clamp(TemporaryWallMoveTime, 0.00f, 6.00f);
-
-        GameManagerContext.Instance.CharacterUI.SetOvertimeWallMovePowerUpUI(Mathf.InverseLerp(0.00f, 6.00f, TemporaryWallMoveTime));
-
-        if (HasTemporaryWallMove && TemporaryWallMoveTime == 0.00f)
-        {
-            ResetTemporaryWallMoveTime(0.00f);
+            action();
         }
     }
-    public void ResetTemporaryWallMoveTime(float value)
+    public void WaitSeconds(Action action, float waitTime)
     {
-        if (HasTemporaryWallMove && value == 0.00f)
-        {
-            HasTemporaryWallMove = false;
-            DispatchPowerUpInteractableRecharge();
-        }
-
-        TemporaryWallMoveTime = value;
+        StartCoroutine(OnWaitSeconds(action, waitTime));
     }
-    public void AddFixedJoint2D()
+    IEnumerator OnWaitSeconds(Action action, float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        if (action != null)
+        {
+            action();
+        }
+    }
+    public void EnableFixedJoint2D()
     {
         if (FixedJoint2D.enabled || !FixedJointConnectedBody || CurrentState.CurrentSubState != CharacterStateFactory.Instance.IdleState() || CurrentState != CharacterStateFactory.Instance.GroundedState())
         {
@@ -426,70 +401,51 @@ public class CharacterContextManager : MonoBehaviour
         FixedJoint2D.enableCollision = true;
         FixedJoint2D.enabled = true;
     }
-    public void RemoveFixedJoint2D()
+    public void DisableFixedJoint2D()
     {
         FixedJoint2D.enabled = false;
         FixedJoint2D.connectedBody = null;
     }
-    public void ApplyDamage(float damageDirection)
+    public void ApplyDamage(float damageDirection, int damage)
     {
+        GameContextManager.Instance.ScoreManager.AddGemScore(-damage);
+
         DamageHitDirection = damageDirection;
-        TakingDamage = true;
-    }
-    public void SetDamageExitWaitTime()
-    {
-        DamageExitWaitTime -= Time.deltaTime;
 
-        DamageExitWaitTime = Mathf.Clamp(DamageExitWaitTime, 0.00f, 3.00f);
-    }
-    public void ResetDamageExitWaitTime()
-    {
-        DamageExitWaitTime = 2.52f;
-    }
-    public void DisableCharacter(bool zeroPosition = true)
-    {
-        _currentState.ExitState();
+        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).DamagedState();
 
-        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).GroundedState();
-
-        CurrentState.PlayerInputManager.enabled = false;
+        _currentState.EnterState();
+    }
+    public void ResetCharacter()
+    {
+        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).ResetState();
 
         _currentState.EnterState();
 
-        Rigidbody.bodyType = RigidbodyType2D.Kinematic;
-
-        HorizontalSpeed = 0.00f;
-        VerticalSpeed = 0.00f;
-
-        EnableCharacterGraphics = false;
-
-        if (zeroPosition)
+        if (CameraBehaviourController.Instance)
         {
-            transform.position = Vector3.zero;
+            CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
         }
-
-        CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
-
-        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = false;
     }
-    public void EnableCharacter(Vector2 position)
+    public void DisableCharacterContext()
     {
-        transform.position = position;
+        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).DisabledState();
 
-        CurrentState.PlayerInputManager.enabled = true;
+        _currentState.EnterState();
 
-        Rigidbody.bodyType = RigidbodyType2D.Dynamic;
-
-        EnableCharacterGraphics = true;
-
-        CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = true;
-
-        StartCoroutine(DelayCameraDamping());
-
-        IEnumerator DelayCameraDamping()
+        if (CameraBehaviourController.Instance)
         {
-            yield return new WaitForEndOfFrame();
+            CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
+        }
+    }
+    public void EnableCharacterContext()
+    {
+        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).GroundedState();
 
+        _currentState.EnterState();
+
+        if (CameraBehaviourController.Instance)
+        {
             CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(1.00f, 0.80f, 0.00f);
         }
     }
@@ -572,24 +528,14 @@ public class CharacterContextManager : MonoBehaviour
     #region RENDERING 
     private void OnDrawGizmosSelected()
     {
+#if UNITY_EDITOR
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(WallCheckerPoint.position, new Vector2(0.06f, 0.15f));
         Gizmos.DrawWireCube(transform.position, new Vector2(0.40f, 0.04f));
+#endif
     }
     void OnGUI()
     {
-#if UNITY_EDITOR
-        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
-        GUILayout.Label("Current State: " + CurrentState.ToString());
-        //GUILayout.Label("Current Super State: " + (CurrentState.CurrentSuperState != null ? CurrentState.CurrentSuperState.ToString() : ""));
-        GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
-
-        //GUILayout.Label("Dash Cool Down Time: " + DashCoolDownTime.ToString());
-        //GUILayout.Label("Coyote Time: " + CoyoteTime.ToString());
-        //GUILayout.Label("Character Forward Direction: " + CurrentState.CharacterForwardDirection.ToString());
-        //GUILayout.Label("Horizontal Speed: " + HorizontalSpeed.ToString());
-        //GUILayout.Label("Vertical Speed: " + VerticalSpeed.ToString());
-#endif
 
     }
     #endregion

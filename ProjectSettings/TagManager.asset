@@ -19,8 +19,8 @@ TagManager:
   - Camera Objects
   - Interaction Trigger
   - Ceiling
-  - 
-  - 
+  - WallChecker
+  - JumpThrough
   - 
   - 
   - 

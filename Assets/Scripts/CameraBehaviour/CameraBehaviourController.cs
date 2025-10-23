@@ -28,7 +28,7 @@ public class CameraBehaviourController : MonoBehaviour
             Instance = this;
         }
 
-        GameManagerContext.OnRunOrPauseStateChanged.AddListener((value) => { this.enabled = value; });
+        GameContextManager.OnRunOrPauseStateChanged.AddListener((value) => { this.enabled = value; });
     }
 
     private void Update()

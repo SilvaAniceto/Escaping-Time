@@ -4,8 +4,9 @@ public class PlayerInputManager : MonoBehaviour
 {
     public static PlayerInputManager PlayerInputInstance;
 
-    private PlayerInputActions PlayerInputActions { get; set; }
+    public PlayerInputActions PlayerInputActions { get; private set; }
 
+    public bool Cancel { get => PlayerInputActions.PlayerActionMap.Cancel.triggered; }
     public float MoveInput
     {
         get

@@ -9,9 +9,20 @@ public class CharacterOnWallState : CharacterAbstractState
 
     public override void EnterState()
     {
-        if (CharacterContextManager.HasTemporaryWallMove && CharacterContextManager.TemporaryWallMoveTime == 0.00f)
+        if (CharacterContextManager.HasTemporaryWallMove && !CharacterContextManager.TemporaryWallMoveOnCoolDown)
         {
-            CharacterContextManager.ResetTemporaryWallMoveTime(6.00f);
+            CharacterContextManager.TemporaryWallMoveOnCoolDown = true;
+
+            System.Action tempWallMoveAction = () =>
+            {
+                CharacterContextManager.HasTemporaryWallMove = false;
+                CharacterContextManager.TemporaryWallMoveOnCoolDown = false;
+                CharacterContextManager.DispatchPowerUpInteractableRecharge();
+            };
+
+            CharacterContextManager.WaitSeconds(tempWallMoveAction, 5.00f);
+
+            GameContextManager.Instance.CharacterUI.SetOvertimeWallMovePowerUpUI(5.00f);
         }
 
         CharacterContextManager.WallChecker.enabled = true;
@@ -23,7 +34,14 @@ public class CharacterOnWallState : CharacterAbstractState
 
         CharacterAnimationManager.CharacterAnimator.transform.rotation *= Quaternion.Euler(0, 180, 0);
 
-        CharacterContextManager.ResetDashCoolDownTime(0);
+        CharacterContextManager.DashIsWaitingGroundedState = false;
+
+        System.Action action = () =>
+        {
+            CharacterContextManager.DashOnCoolDown = false;
+        };
+
+        CharacterContextManager.WaitFrameEnd(action);
     }
 
     public override void UpdateState()
@@ -40,6 +58,7 @@ public class CharacterOnWallState : CharacterAbstractState
     public override void LateUpdateState()
     {
         CharacterAnimationManager.SetOnWallAnimation();
+        GameAudioManager.Instance.PlayCharacterSFX("OnWall", 0.062f);
     }
 
     public override void ExitState()
@@ -94,9 +113,6 @@ public class CharacterOnWallState : CharacterAbstractState
 
     public override void OnTriggerExit2D(Collider2D collision) 
     {
-        //if (collision.CompareTag("Ceiling") || collision.CompareTag("Interactable"))
-        //{
-        //}
-            SwitchState(CharacterStateFactory.FallState());
+        SwitchState(CharacterStateFactory.FallState());
     }
 }

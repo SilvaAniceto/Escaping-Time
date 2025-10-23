@@ -68,11 +68,6 @@ public abstract class CharacterAbstractState
     }
     public void UpdateStates()
     {
-        _characterContextManager.SetCoyoteTime();
-        _characterContextManager.SetDashCoolDownTime();
-        _characterContextManager.SetDamageExitWaitTime();
-        _characterContextManager.SetTemporaryWallMoveTime();
-
         UpdateState();
 
         CheckSwitchStates();
@@ -81,19 +76,6 @@ public abstract class CharacterAbstractState
         if (_currentSubState != null)
         {
              _currentSubState.UpdateStates();
-        }
-
-        if (_isRootState)
-        {
-            if (_characterContextManager.TakingDamage)
-            {
-                SwitchState(_characterStateFactory.DamagedState());
-            }
-
-            if (_characterContextManager.SpawningCharacter)
-            {
-                SwitchState(_characterStateFactory.SpawningState());
-            }
         }
     }
     public void LateUpdateStates()

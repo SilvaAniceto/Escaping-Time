@@ -2,7 +2,8 @@ using System.Collections.Generic;
 
 public enum ECharacterState
 {
-    Grounded = 0,
+    Disabled = 0,
+    Grounded,
     Idle,
     Moving,
     Jumping,
@@ -10,7 +11,7 @@ public enum ECharacterState
     Falling,
     Damaged,
     Interacting,
-    Spawning,
+    Reset,
     Dashing,
     OnWall,
     WallJump
@@ -32,6 +33,7 @@ public class CharacterStateFactory
         _contextManager = currentContextManager;
         _inputManager = inputManager;
         _animationManager = animationManager;
+        _states[ECharacterState.Disabled] = new CharacterDisabledState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.Grounded] = new CharacterGroundedState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.Idle] = new CharacterIdleState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.Moving] = new CharacterMoveState(_contextManager, this, _inputManager, _animationManager);
@@ -40,12 +42,16 @@ public class CharacterStateFactory
         _states[ECharacterState.Falling] = new CharacterFallState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.Damaged] = new CharacterDamagedState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.Interacting] = new CharacterInteractionState(_contextManager, this, _inputManager, _animationManager);
-        _states[ECharacterState.Spawning] = new CharacterSpawningState(_contextManager, this, _inputManager, _animationManager);
+        _states[ECharacterState.Reset] = new CharacterResetState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.Dashing] = new CharacterDashState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.OnWall] = new CharacterOnWallState(_contextManager, this, _inputManager, _animationManager);
         _states[ECharacterState.WallJump] = new CharacterWallJumpState(_contextManager, this, _inputManager, _animationManager);
     }
 
+    public CharacterDisabledState DisabledState()
+    {
+        return (CharacterDisabledState)_states[ECharacterState.Disabled];
+    }
     public CharacterGroundedState GroundedState()
     {
         return (CharacterGroundedState)_states[ECharacterState.Grounded];
@@ -78,9 +84,9 @@ public class CharacterStateFactory
     {
         return (CharacterInteractionState)_states[ECharacterState.Interacting];
     }
-    public CharacterSpawningState SpawningState()
+    public CharacterResetState ResetState()
     {
-        return (CharacterSpawningState)_states[ECharacterState.Spawning];
+        return (CharacterResetState)_states[ECharacterState.Reset];
     }
     public CharacterDashState DashState()
     {

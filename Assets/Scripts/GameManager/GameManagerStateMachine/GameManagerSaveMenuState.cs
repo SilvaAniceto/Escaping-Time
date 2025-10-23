@@ -1,56 +1,103 @@
-using System.Linq;
-using static GameSaveSystem;
-
 public class GameManagerSaveMenuState : GameManagerAbstractState
 {
-    public GameManagerSaveMenuState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerSaveMenuState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        GameManagerContext.SaveMenu.SetActive(true);
+        GameContextManager.SaveSystem.ShowSlots();
 
-        GameManagerContext.BackButton.gameObject.SetActive(true);
+        GameContextManager.SaveMenu.SetActive(true);
 
-        GameManagerContext.SaveSystem.OnLaunchGame.RemoveAllListeners();
-        GameManagerContext.SaveSystem.OnLaunchGame.AddListener(() =>
+        GameContextManager.BackButton.gameObject.SetActive(true);
+
+        GameContextManager.SaveSystem.OnLaunchGame.RemoveAllListeners();
+        GameContextManager.SaveSystem.OnLaunchGame.AddListener(() =>
         {
-            SwitchState(GameManagerStateFactory.GameLoadingState());
+            GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
+            {
+                System.Action action = () =>
+                {
+                    SwitchState(GameManagerStateFactory.GameLoadingState());
+                };
+
+                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+            });
+
+            GameStateTransitionManager.FadeOut();
         });
 
-        GameManagerContext.ExitState = GameManagerStateFactory.GameHubState();
+        GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
+
+        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SaveSlots[0].slotButton.gameObject);
     }
 
     public override void UpdateState()
     {
-        if (GameManagerContext.CurrentState.GameUIInputsManager.Start)
+        if (GameContextManager.CurrentState.GameUIInputsManager.Start)
         {
-            GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.SaveSystem.SelectSaveButton.gameObject);
+            GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SelectSaveButton.gameObject);
+        }
+
+        if (GameUIInputsManager.Navigating)
+        {
+            if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
+            {
+                if (GameContextManager.SaveSystem.SlotIsSelected)
+                {
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SelectSaveButton.gameObject);
+                }
+                else
+                {
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SaveSlots[0].slotButton.gameObject);
+                }
+            }
         }
     }
 
     public override void ExitState()
     {
-        GameManagerContext.SaveMenu.SetActive(false);
+        GameContextManager.SaveMenu.SetActive(false);
 
-        GameManagerContext.BackButton.gameObject.SetActive(false);
+        GameContextManager.BackButton.gameObject.SetActive(false);
+
+        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(null);
     }
 
     public override void CheckSwitchStates()
     {
-        if (GameManagerContext.SaveSystem.SlotIsSelected)
+        if (GameContextManager.SaveSystem.SlotIsSelected)
         {
-            GameManagerContext.BackButton.onClick.RemoveAllListeners();
-            GameManagerContext.BackButton.onClick.AddListener(GameManagerContext.SaveSystem.HideOptions);
+            GameContextManager.BackButton.onClick.RemoveAllListeners();
+            GameContextManager.BackButton.onClick.AddListener(() =>
+            {
+                GameUIInputsManager.enabled = false;
+
+                GameAudioManager.Instance.PlaySFX("Menu_Back");
+
+                System.Action action = () =>
+                {
+                    GameContextManager.SaveSystem.HideOptions();
+                };
+
+                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Back"));
+            });
         }
         else
         {
-            GameManagerContext.BackButton.onClick.RemoveAllListeners();
-            GameManagerContext.BackButton.onClick.AddListener(() =>
+            GameContextManager.BackButton.onClick.RemoveAllListeners();
+            GameContextManager.BackButton.onClick.AddListener(() =>
             {
-                SwitchState(GameManagerStateFactory.GameMainMenuState());
+                GameAudioManager.Instance.PlaySFX("Menu_Back");
+
+                System.Action action = () =>
+                {
+                    SwitchState(GameManagerStateFactory.GameMainMenuState());
+                };
+
+                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Back"));
             });
         }
     }

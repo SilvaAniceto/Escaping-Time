@@ -1,7 +1,5 @@
 //***************************************************************************************
 // Writer: Stylish Esper
-// Last Updated: June 2024
-// Description: For ease of saving vectors and quaternions.
 //***************************************************************************************
 
 using Newtonsoft.Json;
@@ -9,6 +7,9 @@ using UnityEngine;
 
 namespace Esper.ESave.SavableObjects
 {
+    /// <summary>
+    /// A savable version of a Vector, Quaternion, and Color.
+    /// </summary>
     [System.Serializable]
     public class SavableVector
     {
@@ -158,6 +159,56 @@ namespace Esper.ESave.SavableObjects
             y = color.g;
             z = color.b;
             w = color.a;
+        }
+
+        public static implicit operator SavableVector(Vector2 v2)
+        {
+            return new SavableVector(v2);
+        }
+
+        public static implicit operator SavableVector(Vector3 v3)
+        {
+            return new SavableVector(v3);
+        }
+
+        public static implicit operator SavableVector(Vector4 v4)
+        {
+            return new SavableVector(v4);
+        }
+
+        public static implicit operator SavableVector(Quaternion q)
+        {
+            return new SavableVector(q);
+        }
+
+        public static implicit operator SavableVector(Color c)
+        {
+            return new SavableVector(c);
+        }
+
+        public static implicit operator Vector2(SavableVector v2)
+        {
+            return v2.vector2Value;
+        }
+
+        public static implicit operator Vector3(SavableVector v3)
+        {
+            return v3.vector3Value;
+        }
+
+        public static implicit operator Vector4(SavableVector v4)
+        {
+            return v4.vector4Value;
+        }
+
+        public static implicit operator Quaternion(SavableVector q)
+        {
+            return q.quaternionValue;
+        }
+
+        public static implicit operator Color(SavableVector c)
+        {
+            return c.colorValue;
         }
     }
 }

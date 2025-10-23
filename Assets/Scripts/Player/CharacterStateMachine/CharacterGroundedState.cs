@@ -9,7 +9,14 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.AddFixedJoint2D();
+        if (CharacterContextManager.Rigidbody.bodyType == RigidbodyType2D.Kinematic)
+        {
+            CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        }
+
+        PlayerInputManager.PlayerInputActions.Enable();
+
+        CharacterContextManager.EnableFixedJoint2D();
 
         CharacterContextManager.Rigidbody.gravityScale = 50.00f;
 
@@ -24,15 +31,29 @@ public class CharacterGroundedState : CharacterAbstractState
             CharacterContextManager.AirJumpIsAllowed = true;
         }
 
-        CharacterContextManager.ResetDashCoolDownTime(0.30f);
+        CharacterContextManager.DashIsWaitingGroundedState = false;
+
+        System.Action dashAction = () =>
+        {
+            CharacterContextManager.DashOnCoolDown = false;
+        };
+
+        CharacterContextManager.WaitSeconds(dashAction, 0.30f);
 
         CharacterContextManager.HorizontalStartSpeed = CharacterContextManager.HorizontalSpeed;
 
-        if (CharacterContextManager.ExitState == CharacterStateFactory.DamagedState())
+        if (CharacterContextManager.DamageOnCoolDown)
         {
             CharacterContextManager.HorizontalStartSpeed = 0.00f;
             CharacterContextManager.HorizontalSpeed = 0.00f;
             CharacterContextManager.VerticalSpeed = 0.00f;
+
+            System.Action damagedAction = () =>
+            {
+                CharacterContextManager.DamageOnCoolDown = false;
+            };
+
+            CharacterContextManager.WaitSeconds(damagedAction, 0.60f);
         }
     }
 
@@ -59,6 +80,8 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void CheckSwitchStates()
     {
+        if (CharacterContextManager.DamageOnCoolDown) return;
+
         if (!Grounded)
         {
             SwitchState(CharacterStateFactory.FallState());
@@ -77,14 +100,13 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void CheckSwitchSubStates()
     {
+        if (CharacterContextManager.DamageOnCoolDown) return;
+
         if (CurrentSubState == null)
         {
             if (PlayerInputManager.MoveInput != 0)
             {
-                if (CharacterContextManager.DamageExitWaitTime <= 0.00f)
-                {
-                    SetSubState(CharacterStateFactory.MoveState());
-                }
+                SetSubState(CharacterStateFactory.MoveState());
             }
             else if (PlayerInputManager.MoveInput == 0)
             {

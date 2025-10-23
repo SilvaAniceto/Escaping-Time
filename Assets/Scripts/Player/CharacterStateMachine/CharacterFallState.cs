@@ -18,10 +18,17 @@ public class CharacterFallState : CharacterAbstractState
 
         if (CharacterContextManager.ExitState == CharacterStateFactory.GroundedState())
         {
-            CharacterContextManager.ResetCoyoteTime();
+            CharacterContextManager.CoyoteTime = true;
+
+            System.Action action = () =>
+            {
+                CharacterContextManager.CoyoteTime = false;
+            };
+
+            CharacterContextManager.WaitSeconds(action, 0.084f);
         }
 
-        if (CharacterContextManager.HasAirJump)
+        if (CharacterContextManager.HasAirJump && CharacterContextManager.ExitState == CharacterStateFactory.JumpState())
         {
             CharacterContextManager.AirJumpIsAllowed = true;
         }
@@ -36,7 +43,10 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void LateUpdateState()
     {
-        CharacterAnimationManager.SetFallAnimation();
+        if (!CharacterContextManager.DamageOnCoolDown)
+        {
+            CharacterAnimationManager.SetFallAnimation();
+        }
     }
     public override void ExitState()
     {
@@ -49,6 +59,8 @@ public class CharacterFallState : CharacterAbstractState
             SwitchState(CharacterStateFactory.GroundedState());
         }
 
+        if (CharacterContextManager.DamageOnCoolDown) return;
+
         if (CharacterContextManager.HasWallMove)
         {
             if (IsWallColliding && PlayerInputManager.WallMoveInput)
@@ -57,7 +69,7 @@ public class CharacterFallState : CharacterAbstractState
             }
         }
 
-        if (PlayerInputManager.StartJumpInput && CharacterContextManager.CoyoteTime > 0.00f)
+        if (PlayerInputManager.StartJumpInput && CharacterContextManager.CoyoteTime)
         {
             SwitchState(CharacterStateFactory.JumpState());
         }
@@ -80,7 +92,10 @@ public class CharacterFallState : CharacterAbstractState
         {
             if (PlayerInputManager.MoveInput != 0)
             {
-                SetSubState(CharacterStateFactory.MoveState());
+                if (!CharacterContextManager.DamageOnCoolDown)
+                {
+                    SetSubState(CharacterStateFactory.MoveState());
+                }
             }
             else if (PlayerInputManager.MoveInput == 0)
             {
@@ -91,7 +106,10 @@ public class CharacterFallState : CharacterAbstractState
         {
             if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState())
             {
-                SetSubState(CharacterStateFactory.MoveState());
+                if (!CharacterContextManager.DamageOnCoolDown)
+                {
+                    SetSubState(CharacterStateFactory.MoveState());
+                }
             }
             else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
             {

@@ -13,6 +13,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 283140
   packageName: ESave - Save System for Unity
-  packageVersion: 1.0.9
+  packageVersion: 1.2.0
   assetPath: Assets/StylishEsper/ESave/Scripts/Editor/SaveFileSetupEditor.cs
-  uploadId: 749492
+  uploadId: 773960

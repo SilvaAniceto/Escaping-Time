@@ -10,9 +10,11 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.TakingDamage = false;
+        CharacterContextManager.DamageOnCoolDown = true;
 
-        CharacterContextManager.RemoveFixedJoint2D();
+        CharacterContextManager.DisableFixedJoint2D();
+
+        CharacterContextManager.Rigidbody.gravityScale = 0.00f;
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.VerticalSpeed = 0.00f;
@@ -20,13 +22,11 @@ public class CharacterDamagedState : CharacterAbstractState
         CharacterContextManager.DamageSpeedOvertime = 0;
         CharacterContextManager.HorizontalSpeedOvertime = 0;
         CharacterContextManager.GravityDownwardSpeedOvertime = 0;
-
-        CharacterContextManager.ResetDamageExitWaitTime();
     }
     public override void UpdateState()
     {
-        CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.50f, 7.00f, CharacterContextManager.DamageSpeedLerpOvertime) * CharacterContextManager.DamageHitDirection;
-        CharacterContextManager.VerticalSpeed = Mathf.Lerp(5.00f, -12.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
+        CharacterContextManager.HorizontalSpeed = Mathf.Lerp(2.50f, 10.00f, CharacterContextManager.DamageSpeedLerpOvertime) * CharacterContextManager.DamageHitDirection;
+        CharacterContextManager.VerticalSpeed = Mathf.Lerp(7.00f, -24.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
     }
     public override void FixedUpdateState()
     {
@@ -53,10 +53,10 @@ public class CharacterDamagedState : CharacterAbstractState
             {
                 SwitchState(CharacterStateFactory.GroundedState());
             }
-            else
-            {
-                SwitchState(CharacterStateFactory.FallState());
-            }
+            //else
+            //{
+            //    SwitchState(CharacterStateFactory.FallState());
+            //}
         }
     }
     public override void CheckSwitchSubStates()

@@ -1,7 +1,5 @@
 //***************************************************************************************
 // Writer: Stylish Esper
-// Last Updated: June 2024
-// Description: A save file contains savable data.
 //***************************************************************************************
 
 using Esper.ESave.SavableObjects;
@@ -19,6 +17,9 @@ using Esper.ESave.Threading;
 
 namespace Esper.ESave
 {
+    /// <summary>
+    /// A save file contains savable data.
+    /// </summary>
     public class SaveFile
     {
         private Dictionary<string, SavableObject> saveData = new();
@@ -88,7 +89,15 @@ namespace Esper.ESave
         /// </summary>
         public bool isJson { get => dataType == FileType.Json; }
 
+        /// <summary>
+        /// This will return true if a saving or loading operation is currently ongoing. Otherwise, it will return false.
+        /// </summary>
         public bool isOperationOngoing { get => operation != null && operation.state == SaveFileOperation.OperationState.Ongoing; }
+
+        /// <summary>
+        /// If the save file has any data.
+        /// </summary>
+        public bool HasAnyData { get => saveData != null && saveData.Count > 0; }
 
         /// <summary>
         /// Constructor.
@@ -125,7 +134,7 @@ namespace Esper.ESave
                      break;
             }
 
-            if (saveFileSetupData.addToStorage && !SaveStorage.instance.ContainsKey(fileName))
+            if (saveFileSetupData.addToStorage && SaveStorage.instance && !SaveStorage.instance.ContainsKey(fileName))
             {
                 // Ensure the file still exists and if not, remove the path from storage
                 if (!File.Exists(fullPath) && shouldExist)
@@ -162,7 +171,7 @@ namespace Esper.ESave
         /// <param name="saveFileSetupData">The save file setup data.</param>
         public void SetSetupData(SaveFileSetupData saveFileSetupData)
         {
-            this.saveFileSetupData= saveFileSetupData;
+            this.saveFileSetupData = saveFileSetupData;
             SetupFile();
         }
 
@@ -236,7 +245,7 @@ namespace Esper.ESave
                         break;
 
                     case EncryptionMethod.AES:
-                        File.WriteAllBytes(fullPath, json.AESEncrypt(saveFileSetupData.aesKey.FromBase64String(), saveFileSetupData.aesIV.FromBase64String()));
+                        File.WriteAllBytes(fullPath, json.AESEncrypt(saveFileSetupData.aesKey.ToAesBytes(), saveFileSetupData.aesIV.ToAesBytes()));
                         break;
 
                     default:
@@ -279,7 +288,7 @@ namespace Esper.ESave
 
                     case EncryptionMethod.AES:
                         var cipher = File.ReadAllBytes(fullPath);
-                        json = cipher.AESDecrypt(saveFileSetupData.aesKey.FromBase64String(), saveFileSetupData.aesIV.FromBase64String());
+                        json = cipher.AESDecrypt(saveFileSetupData.aesKey.ToAesBytes(), saveFileSetupData.aesIV.ToAesBytes());
                         break;
 
                     default:
@@ -312,7 +321,7 @@ namespace Esper.ESave
             if (File.Exists(fullPath))
             {
                 // Remove from the save storage if it exists in it
-                if (SaveStorage.instance.ContainsFile(this))
+                if (SaveStorage.instance && SaveStorage.instance.ContainsFile(this))
                 {
                     SaveStorage.instance.RemoveSave(this);
                 }
@@ -363,6 +372,16 @@ namespace Esper.ESave
             {
                 saveData.Add(id, new SavableData<T>(id, value));
             }
+        }
+
+        /// <summary>
+        /// Adds to or updates save data by ID.
+        /// </summary>
+        /// <param name="id">The ID of the data.</param>
+        /// <param name="value">The value of the data.</param>
+        public void AddOrUpdateData(string id, Vector4 value)
+        {
+            AddOrUpdateData(id, value.ToFloat4());
         }
 
         /// <summary>
@@ -436,47 +455,104 @@ namespace Esper.ESave
         /// <summary>
         /// Gets Vector3 by ID.
         /// <param name="id">The ID of the data.</param>
+        /// <param name="defaultValue">A default value to fallback to in case the data doesn't exist.</param>
         /// <returns>The data with the ID or null if it doesn't exist.</returns>
-        public Vector3 GetVector3(string id)
+        public Vector3 GetVector4(string id, Vector4 defaultValue = default)
         {
-            return GetData<float[]>(id).ToVector3();
+            var result = GetData<float[]>(id);
+
+            if (result == null || result.Length == 0)
+            {
+                return defaultValue;
+            }
+
+            return result.ToVector4();
+        }
+
+        /// <summary>
+        /// Gets Vector3 by ID.
+        /// <param name="id">The ID of the data.</param>
+        /// <param name="defaultValue">A default value to fallback to in case the data doesn't exist.</param>
+        /// <returns>The data with the ID or null if it doesn't exist.</returns>
+        public Vector3 GetVector3(string id, Vector3 defaultValue = default)
+        {
+            var result = GetData<float[]>(id);
+
+            if (result == null || result.Length == 0)
+            {
+                return defaultValue;
+            }
+
+            return result.ToVector3();
         }
 
         /// <summary>
         /// Gets Vector2 by ID.
         /// <param name="id">The ID of the data.</param>
+        /// <param name="defaultValue">A default value to fallback to in case the data doesn't exist.</param>
         /// <returns>The data with the ID or null if it doesn't exist.</returns>
-        public Vector2 GetVector2(string id)
+        public Vector2 GetVector2(string id, Vector2 defaultValue = default)
         {
-            return GetData<float[]>(id).ToVector2();
+            var result = GetData<float[]>(id);
+
+            if (result == null || result.Length == 0)
+            {
+                return defaultValue;
+            }
+
+            return result.ToVector2();
         }
 
         /// <summary>
         /// Gets Quaternion by ID.
         /// <param name="id">The ID of the data.</param>
+        /// <param name="defaultValue">A default value to fallback to in case the data doesn't exist.</param>
         /// <returns>The data with the ID or null if it doesn't exist.</returns>
-        public Quaternion GetQuaternion(string id)
+        public Quaternion GetQuaternion(string id, Quaternion defaultValue = default)
         {
-            return GetData<float[]>(id).ToQuaternion();
+            var result = GetData<float[]>(id);
+
+            if (result == null || result.Length == 0)
+            {
+                return defaultValue;
+            }
+
+            return result.ToQuaternion();
         }
 
         /// <summary>
         /// Gets color by ID.
         /// <param name="id">The ID of the data.</param>
+        /// <param name="defaultValue">A default value to fallback to in case the data doesn't exist.</param>
         /// <returns>The data with the ID or null if it doesn't exist.</returns>
-        public Color GetColor(string id)
+        public Color GetColor(string id, Color defaultValue = default)
         {
-            return GetData<float[]>(id).ToColor();
+            var result = GetData<float[]>(id);
+
+            if (result == null || result.Length == 0)
+            {
+                return defaultValue;
+            }
+
+            return result.ToColor();
         }
 
         /// <summary>
         /// Gets a savable transform by ID.
         /// </summary>
         /// <param name="id">The ID of the data.</param>
+        /// <param name="defaultValue">A default value to fallback to in case the data doesn't exist.</param>
         /// <returns>The data with the ID or null if it doesn't exist.</returns>
-        public SavableTransform GetTransform(string id)
+        public SavableTransform GetTransform(string id, SavableTransform defaultValue = default)
         {
-            return GetData<SavableTransform>(id);
+            var result = GetData<SavableTransform>(id);
+
+            if (result == null)
+            {
+                return defaultValue;
+            }
+
+            return result;
         }
 
         /// <summary>

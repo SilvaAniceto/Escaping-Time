@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterSpawningState : CharacterAbstractState
@@ -13,20 +11,20 @@ public class CharacterSpawningState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Kinematic;
+        //
 
-        CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.VerticalSpeed = 0.00f;
-        CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
+        //
+        //
+        //
 
-        _spawningWaitTime = 0.84f;
+        //
 
-        CharacterAnimationManager.SetDisabledAnimation();
-        CharacterContextManager.CharacterCollider.enabled = false;
+        //
+        //
     }
     public override void UpdateState()
     {
-        CharacterContextManager.transform.position = Vector3.MoveTowards(CharacterContextManager.transform.position, CharacterContextManager.SpawningPosition, 20f * Time.deltaTime);
+        //CharacterContextManager.transform.position = Vector3.MoveTowards(CharacterContextManager.transform.position, CharacterContextManager.SpawningPosition, 20f * Time.deltaTime);
     }
     public override void FixedUpdateState()
     {
@@ -39,31 +37,31 @@ public class CharacterSpawningState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.VerticalSpeed = 0.00f;
-        CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
+        //CharacterContextManager.HorizontalSpeed = 0.00f;
+        //CharacterContextManager.VerticalSpeed = 0.00f;
+        //CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
 
-        CharacterContextManager.SpawningCharacter = false;
-        CharacterContextManager.CharacterCollider.enabled = true;
+        //CharacterContextManager.SpawningCharacter = false;
+        //CharacterContextManager.CharacterCollider.enabled = true;
         
-        CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        //CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
 
-        CharacterContextManager.DispatchPowerUpInteractableRecharge();
+        //CharacterContextManager.DispatchPowerUpInteractableRecharge();
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.transform.position == CharacterContextManager.SpawningPosition)
-        {
-            CharacterAnimationManager.SetSpawningAnimation();
+        //if (CharacterContextManager.transform.position == CharacterContextManager.SpawningPosition)
+        //{
+        //    CharacterAnimationManager.SetSpawningAnimation();
 
-            _spawningWaitTime -= Time.deltaTime;
-            _spawningWaitTime = Mathf.Clamp01(_spawningWaitTime);
+        //    _spawningWaitTime -= Time.deltaTime;
+        //    _spawningWaitTime = Mathf.Clamp01(_spawningWaitTime);
 
-            if (_spawningWaitTime <= 0)
-            {
-                SwitchState(CharacterStateFactory.GroundedState());
-            }
-        }
+        //    if (_spawningWaitTime <= 0)
+        //    {
+        //        SwitchState(CharacterStateFactory.GroundedState());
+        //    }
+        //}
     }
     public override void CheckSwitchSubStates()
     {

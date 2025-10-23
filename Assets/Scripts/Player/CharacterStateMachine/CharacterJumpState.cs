@@ -12,7 +12,7 @@ public class CharacterJumpState : CharacterAbstractState
         CharacterContextManager.HorizontalStartSpeed = CharacterContextManager.HorizontalSpeed * PlayerInputManager.MoveInput;
         CharacterContextManager.HorizontalTopSpeed = 7.86f;
 
-        CharacterContextManager.RemoveFixedJoint2D();
+        CharacterContextManager.DisableFixedJoint2D();
 
         CharacterContextManager.CeilingChecker.enabled = true;
 
@@ -22,6 +22,9 @@ public class CharacterJumpState : CharacterAbstractState
         {
             CharacterContextManager.AirJumpIsAllowed = true;
         }
+
+        GameAudioManager.Instance.StopCharacterSFX();
+        GameAudioManager.Instance.PlayCharacterSFX("Jump");
     }
     public override void UpdateState()
     {

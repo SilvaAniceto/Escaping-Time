@@ -1,21 +1,21 @@
 public abstract class GameManagerAbstractState
 {
-    public GameManagerAbstractState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager)
+    public GameManagerAbstractState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager)
     {
-        _gameManagerContext = gameManagerContext;
+        _gameContextManager = gameContextManager;
         _gameManagerStateFactory = gameManagerStateFactory;
         _gameUIInputsManager = gameUIInputsManager;
     }
 
     private bool _isRootState = false;
-    private GameManagerContext _gameManagerContext;
+    private GameContextManager _gameContextManager;
     private GameManagerStateFactory _gameManagerStateFactory;
     private GameUIInputsManager _gameUIInputsManager;
     private GameManagerAbstractState _currentSuperState;
     private GameManagerAbstractState _currentSubState;
 
     protected bool IsRootState { set { _isRootState = value; } }
-    protected GameManagerContext GameManagerContext { get { return _gameManagerContext; } }
+    protected GameContextManager GameContextManager { get { return _gameContextManager; } }
     public GameManagerStateFactory GameManagerStateFactory { get { return _gameManagerStateFactory; } }
     public GameUIInputsManager GameUIInputsManager { get { return _gameUIInputsManager; } }
     protected GameManagerAbstractState CurrentSuperState { get { return _currentSuperState; } }
@@ -34,6 +34,16 @@ public abstract class GameManagerAbstractState
         CheckSwitchStates();
         CheckSwitchSubStates();
 
+        if (GameUIInputsManager.Navigating)
+        {
+            if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject != null)
+            {
+                GameAudioManager.Instance.PlaySFX("Menu_Select");
+
+                GameContextManager.WaitSeconds(null, GameAudioManager.Instance.AudioClipLength("Menu_Select"));
+            }
+        }
+
         if (_currentSubState != null)
         {
             _currentSubState.UpdateStates();
@@ -46,8 +56,8 @@ public abstract class GameManagerAbstractState
 
         if (_isRootState)
         {
-            _gameManagerContext.CurrentState = newState;
-            _gameManagerContext.CurrentState.EnterState();
+            _gameContextManager.CurrentState = newState;
+            _gameContextManager.CurrentState.EnterState();
         }
         else if (_currentSuperState != null)
         {

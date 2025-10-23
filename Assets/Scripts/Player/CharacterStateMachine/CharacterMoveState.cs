@@ -9,7 +9,7 @@ public class CharacterMoveState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.RemoveFixedJoint2D();
+        CharacterContextManager.DisableFixedJoint2D();
     }
     public override void UpdateState()
     {
@@ -22,7 +22,7 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void FixedUpdateState()
     {
-                
+
     }
     
     public override void LateUpdateState()
@@ -30,6 +30,7 @@ public class CharacterMoveState : CharacterAbstractState
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState() || CharacterContextManager.CurrentState == CharacterStateFactory.InteractionState())
         {
             CharacterAnimationManager.SetRunAnimation();
+            GameAudioManager.Instance.PlayCharacterSFX("Walk", 0.192f);
         }
     }
     public override void ExitState()

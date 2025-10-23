@@ -12,7 +12,10 @@ public class CharacterWallJumpState : CharacterAbstractState
         CharacterContextManager.CeilingChecker.enabled = true;
 
         CharacterContextManager.GravityUpwardSpeedOvertime = 0;
-        CharacterContextManager.HorizontalSpeedOvertime = 0; 
+        CharacterContextManager.HorizontalSpeedOvertime = 0;
+
+        GameAudioManager.Instance.StopCharacterSFX();
+        GameAudioManager.Instance.PlayCharacterSFX("Jump");
     }
     public override void UpdateState()
     {

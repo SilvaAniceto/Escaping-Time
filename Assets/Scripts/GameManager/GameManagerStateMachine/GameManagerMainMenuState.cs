@@ -1,45 +1,76 @@
 public class GameManagerMainMenuState : GameManagerAbstractState
 {
-    public GameManagerMainMenuState(GameManagerContext gameManagerContext, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameManagerContext, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerMainMenuState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        GameManagerContext.MainMenu.SetActive(true);
+        GameContextManager.GameContextAudioListener.enabled = true;
 
-        GameManagerContext.StartButton.onClick.RemoveAllListeners();
-        GameManagerContext.StartButton.onClick.AddListener(() =>
+        GameContextManager.OnRunOrPauseStateChanged.RemoveAllListeners();
+
+        GameContextManager.MainMenu.SetActive(true);
+
+        GameContextManager.StartButton.gameObject.SetActive(true);
+        GameContextManager.QuitButton.gameObject.SetActive(true);
+
+        GameContextManager.StartButton.onClick.RemoveAllListeners();
+        GameContextManager.StartButton.onClick.AddListener(() =>
         {
-            GameManagerContext.TargetScene = "Level_Hub";
-            SwitchState(GameManagerStateFactory.GameSaveMenuState());
+            GameContextManager.TargetScene = "Level_Hub";
+
+            GameAudioManager.Instance.StopSFX();
+            GameAudioManager.Instance.PlaySFX("Menu_Click");
+
+            GameContextManager.StartButton.onClick.RemoveAllListeners();
+            GameContextManager.QuitButton.gameObject.SetActive(false);
+
+            System.Action action = () =>
+            {
+                SwitchState(GameManagerStateFactory.GameSaveMenuState());
+            };
+
+            GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+
         });
 
-        GameManagerContext.QuitButton.onClick.RemoveAllListeners();
-        GameManagerContext.QuitButton.onClick.AddListener(GameManagerContext.QuitGame);
+        GameContextManager.QuitButton.onClick.RemoveAllListeners();
+        GameContextManager.QuitButton.onClick.AddListener(() =>
+        {
+            GameAudioManager.Instance.PlaySFX("Menu_Click");
 
-        GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.StartButton.gameObject);
+            GameContextManager.QuitButton.onClick.RemoveAllListeners();
+            GameContextManager.StartButton.gameObject.SetActive(false);
 
-        GameManagerContext.ExitState = null;
+            GameContextManager.WaitFrameEnd(() =>
+            {
+                GameContextManager.QuitGame();
+            });
+        });
 
-        GameManagerContext.CharacterStartPosition = UnityEngine.Vector2.zero;
+        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.StartButton.gameObject);
+
+        GameContextManager.ExitState = null;
+
+        GameAudioManager.Instance.PlayFadedBGM("Main_Menu", 2.0f);
     }
 
     public override void UpdateState()
     {
-        if (GameManagerContext.GameManagerEventSystem.currentSelectedGameObject == null)
+        if (GameUIInputsManager.Navigating)
         {
-            if (GameUIInputsManager.Navigating)
+            if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
             {
-                GameManagerContext.GameManagerEventSystem.SetSelectedGameObject(GameManagerContext.StartButton.gameObject);
+                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.StartButton.gameObject);
             }
         }
     }
 
     public override void ExitState()
     {
-        GameManagerContext.MainMenu.SetActive(false);
+        GameContextManager.MainMenu.SetActive(false);
     }
 
     public override void CheckSwitchStates()
