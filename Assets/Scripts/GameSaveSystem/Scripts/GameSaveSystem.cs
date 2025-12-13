@@ -1,5 +1,5 @@
 using Esper.ESave;
-using System.Threading.Tasks;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -352,7 +352,7 @@ public class GameSaveSystem : MonoBehaviour
     {
         foreach (GameLevelManager level in GameContextManager.Instance.GameLevelManager)
         {
-            level.State = GameLevelManager.EState.Closed;
+            //level.State = GameLevelManager.EState.Closed;
             level.ClassficationTierReached = EClassficationTier.None;
             level.CurrentGemScore = 0;
             level.CurrentHourglassScore = 0;
@@ -371,7 +371,7 @@ public class GameSaveSystem : MonoBehaviour
 
         UpdateLoadedProfileData(data);
 
-        OnLaunchGame?.Invoke();            
+        OnLaunchGame?.Invoke();
     }
     private void LoadAndLaunch()
     {
@@ -409,9 +409,9 @@ public class GameSaveSystem : MonoBehaviour
     }
     public void SaveGame()
     {
-        SaveGameAsync();
+        StartCoroutine(SaveGameAsync());
     }
-    private async void SaveGameAsync()
+    private IEnumerator SaveGameAsync()
     {
         _savingScreen.SetActive(true);
 
@@ -423,7 +423,7 @@ public class GameSaveSystem : MonoBehaviour
 
         _currentSaveFile.Save();
 
-        await Task.Delay(3000);
+        yield return new WaitForSeconds(3);
 
         _savingScreen.SetActive(false);
     }

@@ -106,6 +106,17 @@
                 },
                 {
                     "name": "",
+                    "id": "0a185bbe-9171-493d-8c3e-2275efc2e7b0",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse/Keyboard",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "ce212164-b5f0-442b-b34d-993a6c2d2c65",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
@@ -250,7 +261,7 @@
                 {
                     "name": "",
                     "id": "f5dd214e-89f4-4aa7-a411-8f75d19abcac",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Mouse/Keyboard",

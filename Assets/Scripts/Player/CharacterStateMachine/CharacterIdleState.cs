@@ -39,6 +39,7 @@ public class CharacterIdleState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
+        return;
         if (PlayerInputManager.MoveInput != 0 && !IsWallColliding)
         {
             if (!CharacterContextManager.DamageOnCoolDown)

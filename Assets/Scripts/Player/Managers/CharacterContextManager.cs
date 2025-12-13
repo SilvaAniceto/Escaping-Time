@@ -406,10 +406,8 @@ public class CharacterContextManager : MonoBehaviour
         FixedJoint2D.enabled = false;
         FixedJoint2D.connectedBody = null;
     }
-    public void ApplyDamage(float damageDirection, int damage)
+    public void ApplyDamage(float damageDirection)
     {
-        GameContextManager.Instance.ScoreManager.AddGemScore(-damage);
-
         DamageHitDirection = damageDirection;
 
         _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).DamagedState();
@@ -514,7 +512,7 @@ public class CharacterContextManager : MonoBehaviour
     }
     #endregion
 
-    #region DELTA TIME   
+    #region DELTA TIME
     void Update()
     {
         _currentState.UpdateStates();
