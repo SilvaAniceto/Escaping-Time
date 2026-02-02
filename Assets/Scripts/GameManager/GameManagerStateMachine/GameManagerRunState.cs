@@ -3,7 +3,7 @@ using UnityEngine.TextCore.Text;
 
 public class GameManagerRunState : GameManagerAbstractState
 {
-    public GameManagerRunState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerRunState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -12,11 +12,11 @@ public class GameManagerRunState : GameManagerAbstractState
     {
         GameContextManager.ExitState = null;
 
-        GameContextManager.CharacterUI.SetLevelUIObjects();
+        GameContextManager.GameUIManager.CharacterUIManager.SetLevelUIObjects();
 
-        GameContextManager.CharacterUI.gameObject.SetActive(true);
+        GameContextManager.GameUIManager.CharacterUIManager.gameObject.SetActive(true);
 
-        GameContextManager.CharacterUI.SetScoreDisplay(GameContextManager.ScoreManager.CurrentScore);
+        GameContextManager.GameUIManager.CharacterUIManager.SetScoreDisplay(GameContextManager.ScoreManager.CurrentScore);
 
         GameContextManager.GameManagerEventSystem.SetSelectedGameObject(null);
     }
@@ -28,7 +28,7 @@ public class GameManagerRunState : GameManagerAbstractState
 
     public override void ExitState()
     {
-        GameContextManager.CharacterUI.gameObject.SetActive(false);
+        GameContextManager.GameUIManager.CharacterUIManager.gameObject.SetActive(false);
 
         GameContextManager.SetLevelScore = false;
     }
@@ -39,26 +39,26 @@ public class GameManagerRunState : GameManagerAbstractState
         {
             GameContextManager.ExitState = GameManagerStateFactory.GameRunState();
 
-            GameContextManager.ExitLevelButtonText.text = "Back to Hub";
-            GameContextManager.ConfirmPanelText.text = "Quit to Hub?";
+            GameContextManager.GameUIManager.ExitLevelButtonText.text = "Back to Hub";
+            GameContextManager.GameUIManager.ConfirmPanelText.text = "Quit to Hub?";
 
-            GameContextManager.ExitLevelButton.onClick.RemoveAllListeners();
-            GameContextManager.ExitLevelButton.onClick.AddListener(() =>
+            GameContextManager.GameUIManager.ExitLevelButton.onClick.RemoveAllListeners();
+            GameContextManager.GameUIManager.ExitLevelButton.onClick.AddListener(() =>
             {
-                GameAudioManager.Instance.PlaySFX("Menu_Click");
+                GameContextManager.GameAudioManager.PlaySFX("Menu_Click");
 
                 System.Action action = () =>
                 {
-                    GameContextManager.ConfirmPanel.SetActive(true);
-                    GameContextManager.PauseMenu.SetActive(false);
-                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.ConfirmMainMenuButton.gameObject);
+                    GameContextManager.GameUIManager.ConfirmPanel.SetActive(true);
+                    GameContextManager.GameUIManager.PauseMenu.SetActive(false);
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.GameUIManager.ConfirmMainMenuButton.gameObject);
                 };
 
-                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+                GameContextManager.WaitSeconds(action, GameContextManager.GameAudioManager.AudioClipLength("Menu_Click"));
             });
 
-            GameContextManager.ConfirmMainMenuButton.onClick.RemoveAllListeners();
-            GameContextManager.ConfirmMainMenuButton.onClick.AddListener(() =>
+            GameContextManager.GameUIManager.ConfirmMainMenuButton.onClick.RemoveAllListeners();
+            GameContextManager.GameUIManager.ConfirmMainMenuButton.onClick.AddListener(() =>
             {
                 GameContextManager.CharacterContextManager.enabled = true;
                 GameContextManager.CharacterContextManager.DisableCharacterContext();
@@ -71,21 +71,21 @@ public class GameManagerRunState : GameManagerAbstractState
                 GameStateTransitionManager.OnFadeInStart.AddListener(() =>
                 {
                     GameContextManager.CharacterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
-                    GameContextManager.CharacterContextManager.transform.position = GameContextManager.Instance.CharacterHubStartPosition;
+                    GameContextManager.CharacterContextManager.transform.position = GameContextManager.CharacterHubStartPosition;
                 });
 
-                GameAudioManager.Instance.PlaySFX("Menu_Start");
+                GameContextManager.GameAudioManager.PlaySFX("Menu_Start");
                 GameContextManager.TargetScene = "Level_Hub";
 
                 System.Action action = () =>
                 {
                     GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
-                    GameContextManager.ConfirmPanel.SetActive(false);
+                    GameContextManager.GameUIManager.ConfirmPanel.SetActive(false);
                     SwitchState(GameManagerStateFactory.GameLoadingState());
                 };
 
-                GameAudioManager.Instance.StopFadedBGM(0.00f, 1.00f);
-                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+                GameContextManager.GameAudioManager.StopFadedBGM(0.00f, 1.00f);
+                GameContextManager.WaitSeconds(action, GameContextManager.GameAudioManager.AudioClipLength("Menu_Start"));
             });
 
             SwitchState(GameManagerStateFactory.GamePauseState());

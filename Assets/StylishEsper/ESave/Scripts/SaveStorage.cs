@@ -32,7 +32,7 @@ namespace Esper.ESave
             if (!instance)
             {
                 instance = this;
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(gameObject);
                 var saveFileSetup = GetComponent<SaveFileSetup>();
                 savePathsFile = saveFileSetup.GetSaveFile();
 

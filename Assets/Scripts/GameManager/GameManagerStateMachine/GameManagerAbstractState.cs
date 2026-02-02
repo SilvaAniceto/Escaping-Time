@@ -1,6 +1,6 @@
 public abstract class GameManagerAbstractState
 {
-    public GameManagerAbstractState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager)
+    public GameManagerAbstractState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIManager gameUIInputsManager)
     {
         _gameContextManager = gameContextManager;
         _gameManagerStateFactory = gameManagerStateFactory;
@@ -10,14 +10,14 @@ public abstract class GameManagerAbstractState
     private bool _isRootState = false;
     private GameContextManager _gameContextManager;
     private GameManagerStateFactory _gameManagerStateFactory;
-    private GameUIInputsManager _gameUIInputsManager;
+    private GameUIManager _gameUIInputsManager;
     private GameManagerAbstractState _currentSuperState;
     private GameManagerAbstractState _currentSubState;
 
     protected bool IsRootState { set { _isRootState = value; } }
     protected GameContextManager GameContextManager { get { return _gameContextManager; } }
     public GameManagerStateFactory GameManagerStateFactory { get { return _gameManagerStateFactory; } }
-    public GameUIInputsManager GameUIInputsManager { get { return _gameUIInputsManager; } }
+    public GameUIManager GameUIManager { get { return _gameUIInputsManager; } }
     protected GameManagerAbstractState CurrentSuperState { get { return _currentSuperState; } }
     protected GameManagerAbstractState CurrentSubState { get { return _currentSubState; } }
 
@@ -34,13 +34,13 @@ public abstract class GameManagerAbstractState
         CheckSwitchStates();
         CheckSwitchSubStates();
 
-        if (GameUIInputsManager.Navigating)
+        if (GameUIManager.Navigating)
         {
             if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject != null)
             {
-                GameAudioManager.Instance.PlaySFX("Menu_Select");
+                GameContextManager.GameAudioManager.PlaySFX("Menu_Select");
 
-                GameContextManager.WaitSeconds(null, GameAudioManager.Instance.AudioClipLength("Menu_Select"));
+                GameContextManager.WaitSeconds(null, GameContextManager.GameAudioManager.AudioClipLength("Menu_Select"));
             }
         }
 

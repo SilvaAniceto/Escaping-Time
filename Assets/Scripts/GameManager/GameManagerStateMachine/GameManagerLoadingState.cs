@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 public class GameManagerLoadingState : GameManagerAbstractState
 {
-    public GameManagerLoadingState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerLoadingState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -11,8 +11,8 @@ public class GameManagerLoadingState : GameManagerAbstractState
     {
         GameStateTransitionManager.FadeOff();
 
-        GameContextManager.CharacterUI.gameObject.SetActive(false);
-        GameContextManager.LoadingScreen.SetActive(true);
+        GameContextManager.GameUIManager.CharacterUIManager.gameObject.SetActive(false);
+        GameContextManager.GameUIManager.LoadingScreen.SetActive(true);
 
         UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GameContextManager.TargetScene);
 
@@ -38,7 +38,7 @@ public class GameManagerLoadingState : GameManagerAbstractState
     public override void ExitState()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= GameContextManager.AfterLoadSceneEnd;
-        GameContextManager.LoadingScreen.SetActive(false);
+        GameContextManager.GameUIManager.LoadingScreen.SetActive(false);
         GameStateTransitionManager.FadeIn();
     }
 

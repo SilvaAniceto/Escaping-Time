@@ -1,6 +1,6 @@
 public class GameManagerPauseState : GameManagerAbstractState
 {
-    public GameManagerPauseState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerPauseState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -9,12 +9,12 @@ public class GameManagerPauseState : GameManagerAbstractState
     {
         GameContextManager.OnRunOrPauseStateChanged?.Invoke(false);
 
-        GameContextManager.PauseMenu.SetActive(true);
+        GameContextManager.GameUIManager.PauseMenu.SetActive(true);
 
-        GameContextManager.ContinueButton.onClick.RemoveAllListeners();
-        GameContextManager.ContinueButton.onClick.AddListener(() =>
+        GameContextManager.GameUIManager.ContinueButton.onClick.RemoveAllListeners();
+        GameContextManager.GameUIManager.ContinueButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Start");
+            GameContextManager.GameAudioManager.PlaySFX("Menu_Start");
 
             System.Action action = () =>
             {
@@ -24,27 +24,27 @@ public class GameManagerPauseState : GameManagerAbstractState
             GameContextManager.WaitFrameEnd(action);
         });
 
-        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.ContinueButton.gameObject);
+        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.GameUIManager.ContinueButton.gameObject);
     }
 
     public override void UpdateState()
     {
-        if (GameUIInputsManager.Navigating && GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
+        if (GameUIManager.Navigating && GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
         {
-            if (GameContextManager.PauseMenu.activeInHierarchy)
+            if (GameContextManager.GameUIManager.PauseMenu.activeInHierarchy)
             {
-                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.ContinueButton.gameObject);
+                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.GameUIManager.ContinueButton.gameObject);
             }
             else
             {
-                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.ConfirmMainMenuButton.gameObject);
+                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.GameUIManager.ConfirmMainMenuButton.gameObject);
             }
         }
     }
 
     public override void ExitState()
     {
-        GameContextManager.PauseMenu.SetActive(false);
+        GameContextManager.GameUIManager.PauseMenu.SetActive(false);
         GameContextManager.OnRunOrPauseStateChanged?.Invoke(true);
     }
 

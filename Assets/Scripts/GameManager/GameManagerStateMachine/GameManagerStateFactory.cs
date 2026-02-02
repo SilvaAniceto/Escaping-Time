@@ -14,10 +14,10 @@ public enum EGameState
 public class GameManagerStateFactory
 {
     GameContextManager _gameContextManager;
-    GameUIInputsManager _gameUIInputsManager;
+    GameUIManager _gameUIInputsManager;
     Dictionary<EGameState, GameManagerAbstractState> _states = new Dictionary<EGameState, GameManagerAbstractState>();
 
-    public GameManagerStateFactory(GameContextManager currentContextManager, GameUIInputsManager gameUIInputsManager)
+    public GameManagerStateFactory(GameContextManager currentContextManager, GameUIManager gameUIInputsManager)
     {
         _gameContextManager = currentContextManager;
         _gameUIInputsManager = gameUIInputsManager;

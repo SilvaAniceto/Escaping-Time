@@ -31,27 +31,6 @@ public class GameSaveSystem : MonoBehaviour
 
     #region INTERNAL CLASSES
     [System.Serializable]
-    public class GameSaveSlot 
-    { 
-        public Button slotButton;
-        public Text slotLabel;
-
-        private int slotIndex;
-
-        public void SetLabelText(string text)
-        {
-            this.slotLabel.text = text;
-        }
-        public void SetSlotIndex(int slotIndex)
-        {
-            this.slotIndex = slotIndex;
-        }
-        public int GetSlotIndex()
-        {
-            return this.slotIndex;
-        }
-    }
-    [System.Serializable]
     public class PlayerProfileData
     {
         public string ProfileName;
@@ -79,17 +58,13 @@ public class GameSaveSystem : MonoBehaviour
     [Header("Save File Setup")]
     [SerializeField] private SaveFileSetup _saveFileSetup;
 
-    [Header("Save Slot Object")]
-    [SerializeField] private GameSaveSlot[] _saveSlots;
 
-    [Header("Save Options Objects")]
-    [SerializeField] private GameObject _savingScreen;
-    [SerializeField] private GameObject _optionsParent;
-    [SerializeField] private Button _selectSaveButton;
-    [SerializeField] private Button _deleteButton;
     #endregion
 
     #region PRIVATE FIELDS
+    private GameContextManager _gameContextManager;
+    private GameUIManager _gameUIManager;
+
     private int _currentSlotIndex;
     private string _currentProfile;
     private SaveFile _currentSaveFile;
@@ -99,8 +74,7 @@ public class GameSaveSystem : MonoBehaviour
 
     #region PROPERTIES
     public bool SlotIsSelected { get; private set; }
-    public Button SelectSaveButton { get => _selectSaveButton; }
-    public GameSaveSlot[] SaveSlots { get => _saveSlots; }
+    
     #endregion
 
     #region CALLBACKS
@@ -108,44 +82,44 @@ public class GameSaveSystem : MonoBehaviour
     #endregion
 
     #region UNITY DEFAULT METHODS
-    private void Awake()
+    public void Initialize(GameUIManager gameUIManager, GameContextManager gameContextManager)
     {
-        for (int i = 0; i < _saveSlots.Length; i++)
+        _gameContextManager = gameContextManager;
+        _gameUIManager = gameUIManager;
+
+        for (int i = 0; i < _gameUIManager.SaveSlots.Length; i++)
         {
-            _saveSlots[i].SetSlotIndex(i);
+            _gameUIManager.SaveSlots[i].SetSlotIndex(i);
         }
 
         if (SaveStorage.instance.saveCount == 0)
         {
             SetSaveSlots();
         }
-    }
-    private void Start ()
-    {
-        _deleteButton.onClick.AddListener(() =>
+
+        _gameUIManager.DeleteButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Back");
+            _gameContextManager.GameAudioManager.PlaySFX("Menu_Back");
 
             System.Action action = () =>
             {
                 DeleteSaveGame();
                 HideOptions();
-                GameContextManager.Instance.GameManagerEventSystem.SetSelectedGameObject(_saveSlots[0].slotButton.gameObject);
+                _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.SaveSlots[0].slotButton.gameObject);
                 _currentProfile = null;
             };
 
-            GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Back"));
+            _gameContextManager.WaitSeconds(action, _gameContextManager.GameAudioManager.AudioClipLength("Menu_Back"));
         });
-    }
-    private void OnEnable()
-    {
-        CheckSaveSlots(false);
     }
     private void OnDestroy()
     {
-        _selectSaveButton.onClick.RemoveAllListeners();
-        _deleteButton.onClick.RemoveAllListeners();
-        foreach (var item in _saveSlots)
+        if (!_gameUIManager)
+        {
+            return;
+        }
+
+        foreach (var item in _gameUIManager.SaveSlots)
         {
             item.slotButton.onClick.RemoveAllListeners();
         }
@@ -157,7 +131,7 @@ public class GameSaveSystem : MonoBehaviour
     {
         _saveFileSetup.GenerateAESTokens();
 
-        for (int i = 0; i < _saveSlots.Length; i++)
+        for (int i = 0; i < _gameUIManager.SaveSlots.Length; i++)
         {
             SaveFileSetupData saveFileSetupData = new SaveFileSetupData
             {
@@ -179,11 +153,11 @@ public class GameSaveSystem : MonoBehaviour
             SaveFile saveFile = new SaveFile(saveFileSetupData);
         }
     }
-    private void CheckSaveSlots(bool selectObject = true)
+    public void CheckSaveSlots(bool selectObject = true)
     {
-        for (int i = 0; i < _saveSlots.Length; i++)
+        for (int i = 0; i < _gameUIManager.SaveSlots.Length; i++)
         {
-            GameSaveSlot slot = _saveSlots[i];
+            GameUIManager.GameSaveSlot slot = _gameUIManager.SaveSlots[i];
 
             SaveFile save = SaveStorage.instance.GetSaveAtIndex(slot.GetSlotIndex());
 
@@ -198,44 +172,44 @@ public class GameSaveSystem : MonoBehaviour
                     slot.slotButton.onClick.RemoveAllListeners();
                     slot.slotButton.onClick.AddListener(() => 
                     {
-                        GameAudioManager.Instance.PlaySFX("Menu_Click");
+                        _gameContextManager.GameAudioManager.PlaySFX("Menu_Click");
 
                         _currentSlotIndex = slot.GetSlotIndex();
-                        _selectSaveButton.GetComponentInChildren<Text>().text = "Continue";
+                        _gameUIManager.SelectSaveButton.GetComponentInChildren<Text>().text = "Continue";
 
                         _currentProfile = data.ProfileName;
 
-                        GameContextManager.Instance.GameManagerEventSystem.SetSelectedGameObject(_selectSaveButton.gameObject);
+                        _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.SelectSaveButton.gameObject);
 
                         System.Action action = () =>
                         {
                             ShowOptions();
                             slot.slotButton.gameObject.SetActive(true);
                             slot.slotButton.interactable = false;
-                            _deleteButton.gameObject.SetActive(true);
+                            _gameUIManager.DeleteButton.gameObject.SetActive(true);
                         };
 
-                        GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+                        _gameContextManager.WaitSeconds(action, _gameContextManager.GameAudioManager.AudioClipLength("Menu_Click"));
 
-                        _selectSaveButton.onClick.RemoveAllListeners();
-                        _selectSaveButton.onClick.AddListener(() =>
+                        _gameUIManager.SelectSaveButton.onClick.RemoveAllListeners();
+                        _gameUIManager.SelectSaveButton.onClick.AddListener(() =>
                         {
                             HideOptions(true);
 
-                            GameContextManager.Instance.BackButton.gameObject.SetActive(false);
+                            _gameContextManager.GameUIManager.BackButton.gameObject.SetActive(false);
 
-                            GameAudioManager.Instance.PlaySFX("Menu_Start");
+                            _gameContextManager.GameAudioManager.PlaySFX("Menu_Start");
 
-                            GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
+                            _gameContextManager.GameAudioManager.StopFadedBGM(0.0f, 1.5f);
 
                             System.Action action = () =>
                             {
                                 LoadAndLaunch();
                             };
 
-                            GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
+                            _gameContextManager.GameAudioManager.StopFadedBGM(0.0f, 1.5f);
 
-                            GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+                            _gameContextManager.WaitSeconds(action, _gameContextManager.GameAudioManager.AudioClipLength("Menu_Start"));
                         });
                     });
                 }
@@ -252,22 +226,22 @@ public class GameSaveSystem : MonoBehaviour
 
         if (selectObject) 
         {
-            _saveSlots[_currentSlotIndex].slotButton.gameObject.SetActive(selectObject);
-            _saveSlots[_currentSlotIndex].SetLabelText(_currentProfile);
+            _gameUIManager.SaveSlots[_currentSlotIndex].slotButton.gameObject.SetActive(selectObject);
+            _gameUIManager.SaveSlots[_currentSlotIndex].SetLabelText(_currentProfile);
         }
     }
-    private void SetNewGameSlot(GameSaveSlot slot)
+    private void SetNewGameSlot(GameUIManager.GameSaveSlot slot)
     {
         slot.SetLabelText("New Game");
 
         slot.slotButton.onClick.RemoveAllListeners();
         slot.slotButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Click");
+            _gameContextManager.GameAudioManager.PlaySFX("Menu_Click");
 
             _currentSlotIndex = slot.GetSlotIndex();
-            _selectSaveButton.GetComponentInChildren<Text>().text = "Start";
-            _deleteButton.gameObject.SetActive(false);
+            _gameUIManager.SelectSaveButton.GetComponentInChildren<Text>().text = "Start";
+            _gameUIManager.DeleteButton.gameObject.SetActive(false);
 
             System.Action action = () =>
             {
@@ -276,18 +250,18 @@ public class GameSaveSystem : MonoBehaviour
                 slot.slotButton.interactable = false;
                 slot.SetLabelText($"Profile 0{_currentSlotIndex + 1}");
                 _currentProfile = $"Profile 0{_currentSlotIndex + 1}";
-                GameContextManager.Instance.GameManagerEventSystem.SetSelectedGameObject(_selectSaveButton.gameObject);
+                _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.SelectSaveButton.gameObject);
             };
 
-            GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+            _gameContextManager.WaitSeconds(action, _gameContextManager.GameAudioManager.AudioClipLength("Menu_Click"));
 
-            _selectSaveButton.onClick.RemoveAllListeners();
-            _selectSaveButton.onClick.AddListener(() =>
+            _gameUIManager.SelectSaveButton.onClick.RemoveAllListeners();
+            _gameUIManager.SelectSaveButton.onClick.AddListener(() =>
             {
-                GameAudioManager.Instance.PlaySFX("Menu_Start");
-                GameContextManager.Instance.BackButton.gameObject.SetActive(false);
+                _gameContextManager.GameAudioManager.PlaySFX("Menu_Start");
+                _gameContextManager.GameUIManager.BackButton.gameObject.SetActive(false);
 
-                GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
+                _gameContextManager.GameAudioManager.StopFadedBGM(0.0f, 1.5f);
 
                 if (string.IsNullOrEmpty(_currentProfile))
                 {
@@ -301,7 +275,7 @@ public class GameSaveSystem : MonoBehaviour
                     CreateSaveGame();
                 };
 
-                GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+                _gameContextManager.WaitSeconds(action, _gameContextManager.GameAudioManager.AudioClipLength("Menu_Start"));
             });
         });
     }
@@ -310,37 +284,39 @@ public class GameSaveSystem : MonoBehaviour
     #region OPTIONS METHODS
     public void ShowSlots()
     {
-        for (int i = 0; i < _saveSlots.Length; i++)
+        for (int i = 0; i < _gameUIManager.SaveSlots.Length; i++)
         {
-            _saveSlots[i].slotButton.gameObject.SetActive(true);
+            _gameUIManager.SaveSlots[i].slotButton.gameObject.SetActive(true);
         }
+
+        CheckSaveSlots(false);
     }
     public void ShowOptions()
     {
         SlotIsSelected = true;
 
-        _optionsParent.gameObject.SetActive(true);
+        _gameUIManager.OptionsParent.gameObject.SetActive(true);
 
-        for (int i = 0; i < _saveSlots.Length; i++)
+        for (int i = 0; i < _gameUIManager.SaveSlots.Length; i++)
         {
-            _saveSlots[i].slotButton.gameObject.SetActive(false);
+            _gameUIManager.SaveSlots[i].slotButton.gameObject.SetActive(false);
         }
     }
     public void HideOptions(bool selectObject = false)
     {
         SlotIsSelected = false;
 
-        _optionsParent.gameObject.SetActive(false);
+        _gameUIManager.OptionsParent.gameObject.SetActive(false);
 
         if (!selectObject)
         {
             _currentProfile = null;
         }
 
-        for (int i = 0; i < _saveSlots.Length; i++)
+        for (int i = 0; i < _gameUIManager.SaveSlots.Length; i++)
         {
-            _saveSlots[i].slotButton.gameObject.SetActive(!selectObject);
-            _saveSlots[i].slotButton.interactable = true;
+            _gameUIManager.SaveSlots[i].slotButton.gameObject.SetActive(!selectObject);
+            _gameUIManager.SaveSlots[i].slotButton.interactable = true;
         }
 
         CheckSaveSlots(selectObject);
@@ -350,17 +326,6 @@ public class GameSaveSystem : MonoBehaviour
     #region SAVES METHODS
     private void CreateSaveGame()
     {
-        foreach (GameLevelManager level in GameContextManager.Instance.GameLevelManager)
-        {
-            //level.State = GameLevelManager.EState.Closed;
-            level.ClassficationTierReached = EClassficationTier.None;
-            level.CurrentGemScore = 0;
-            level.CurrentHourglassScore = 0;
-            level.MaxGemScoreReached = 0;
-            level.MaxHourglassScoreReached = 0;
-            level.MaxLevelScoreReached = 0;
-        }
-
         _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
         _currentSaveFile.AddOrUpdateData(PLAYER_PROFILE, CreateProfileData(_currentProfile));
@@ -389,22 +354,22 @@ public class GameSaveSystem : MonoBehaviour
 
         UpdateLoadedProfileData(data);
     }
-    public void LoadProfileDataToContext()
+    public void LoadProfileDataToContext(GameContextManager gameContextManager)
     {
-        GameContextManager.Instance.CharacterContextManager.HasInfinityAirJump = ProfileData.CharacterHasAirJump;
-        GameContextManager.Instance.CharacterContextManager.HasInfinityDash = ProfileData.CharacterHasDash;
-        GameContextManager.Instance.CharacterContextManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
-        GameContextManager.Instance.ScoreManager.MasterScore = ProfileData.MasterScore;
+        gameContextManager.CharacterContextManager.HasInfinityAirJump = ProfileData.CharacterHasAirJump;
+        gameContextManager.CharacterContextManager.HasInfinityDash = ProfileData.CharacterHasDash;
+        gameContextManager.CharacterContextManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
+        gameContextManager.ScoreManager.MasterScore = ProfileData.MasterScore;
 
-        for (int i = 0; i < GameContextManager.Instance.GameLevelManager.Length; i++)
+        for (int i = 0; i < gameContextManager.GameLevelManagers.Count; i++)
         {
-            GameContextManager.Instance.GameLevelManager[i].State = ProfileData.GameLevelManager[i].State;
-            GameContextManager.Instance.GameLevelManager[i].CurrentGemScore = ProfileData.GameLevelManager[i].CurrentGemScore;
-            GameContextManager.Instance.GameLevelManager[i].CurrentHourglassScore = ProfileData.GameLevelManager[i].CurrentHourglassScore;
-            GameContextManager.Instance.GameLevelManager[i].MaxGemScoreReached = ProfileData.GameLevelManager[i].MaxGemScoreReached;
-            GameContextManager.Instance.GameLevelManager[i].MaxHourglassScoreReached = ProfileData.GameLevelManager[i].MaxHourglassScoreReached;
-            GameContextManager.Instance.GameLevelManager[i].MaxLevelScoreReached = ProfileData.GameLevelManager[i].MaxLevelScoreReached;
-            GameContextManager.Instance.GameLevelManager[i].ClassficationTierReached = ProfileData.GameLevelManager[i].ClassficationTierReached;
+            gameContextManager.GameLevelManagers[i].State = ProfileData.GameLevelManager[i].State;
+            gameContextManager.GameLevelManagers[i].CurrentGemScore = ProfileData.GameLevelManager[i].CurrentGemScore;
+            gameContextManager.GameLevelManagers[i].CurrentHourglassScore = ProfileData.GameLevelManager[i].CurrentHourglassScore;
+            gameContextManager.GameLevelManagers[i].MaxGemScoreReached = ProfileData.GameLevelManager[i].MaxGemScoreReached;
+            gameContextManager.GameLevelManagers[i].MaxHourglassScoreReached = ProfileData.GameLevelManager[i].MaxHourglassScoreReached;
+            gameContextManager.GameLevelManagers[i].MaxLevelScoreReached = ProfileData.GameLevelManager[i].MaxLevelScoreReached;
+            gameContextManager.GameLevelManagers[i].ClassficationTierReached = ProfileData.GameLevelManager[i].ClassficationTierReached;
         }
     }
     public void SaveGame()
@@ -413,9 +378,9 @@ public class GameSaveSystem : MonoBehaviour
     }
     private IEnumerator SaveGameAsync()
     {
-        _savingScreen.SetActive(true);
+        _gameUIManager.SavingScreen.SetActive(true);
 
-        PrepareProfileDataToSave(_currentProfile, GameContextManager.Instance.CharacterContextManager, GameContextManager.Instance.ScoreManager);
+        PrepareProfileDataToSave(_currentProfile, _gameContextManager.CharacterContextManager, _gameContextManager.ScoreManager);
 
         _currentSaveFile = SaveStorage.instance.GetSaveAtIndex(_currentSlotIndex);
 
@@ -425,7 +390,7 @@ public class GameSaveSystem : MonoBehaviour
 
         yield return new WaitForSeconds(3);
 
-        _savingScreen.SetActive(false);
+        _gameUIManager.SavingScreen.SetActive(false);
     }
     public void DeleteSaveGame()
     {
@@ -445,7 +410,7 @@ public class GameSaveSystem : MonoBehaviour
         ProfileData.CharacterHasDash = characterContextManager.HasInfinityDash;
         ProfileData.CharacterHasWallMove = characterContextManager.HasInfinityWallMove;
         ProfileData.MasterScore = scoreManager.MasterScore;
-        ProfileData.GameLevelManager = GameContextManager.Instance.GameLevelManager;
+        ProfileData.GameLevelManager = _gameContextManager.GameLevelManagers.ToArray();
     }
     private void UpdateLoadedProfileData(PlayerProfileData data)
     {
@@ -458,7 +423,7 @@ public class GameSaveSystem : MonoBehaviour
     }
     private PlayerProfileData CreateProfileData(string profileName)
     {
-        ProfileData = new PlayerProfileData(profileName, false, false, false, 0, GameContextManager.Instance.GameLevelManager);
+        ProfileData = new PlayerProfileData(profileName, false, false, false, 0, _gameContextManager.GameLevelManagers.ToArray());
 
         return ProfileData;
     }

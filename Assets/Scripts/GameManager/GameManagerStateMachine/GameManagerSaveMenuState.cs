@@ -1,6 +1,6 @@
 public class GameManagerSaveMenuState : GameManagerAbstractState
 {
-    public GameManagerSaveMenuState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIInputsManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerSaveMenuState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
     {
         IsRootState = true;
     }
@@ -9,9 +9,9 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
     {
         GameContextManager.SaveSystem.ShowSlots();
 
-        GameContextManager.SaveMenu.SetActive(true);
+        GameContextManager.GameUIManager.SaveMenu.SetActive(true);
 
-        GameContextManager.BackButton.gameObject.SetActive(true);
+        GameContextManager.GameUIManager.BackButton.gameObject.SetActive(true);
 
         GameContextManager.SaveSystem.OnLaunchGame.RemoveAllListeners();
         GameContextManager.SaveSystem.OnLaunchGame.AddListener(() =>
@@ -23,7 +23,7 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
                     SwitchState(GameManagerStateFactory.GameLoadingState());
                 };
 
-                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+                GameContextManager.WaitSeconds(action, GameContextManager.GameAudioManager.AudioClipLength("Menu_Start"));
             });
 
             GameStateTransitionManager.FadeOut();
@@ -31,27 +31,27 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
 
         GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
 
-        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SaveSlots[0].slotButton.gameObject);
+        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.SaveSlots[0].slotButton.gameObject);
     }
 
     public override void UpdateState()
     {
-        if (GameContextManager.CurrentState.GameUIInputsManager.Start)
+        if (GameContextManager.CurrentState.GameUIManager.Start)
         {
-            GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SelectSaveButton.gameObject);
+            GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.SelectSaveButton.gameObject);
         }
 
-        if (GameUIInputsManager.Navigating)
+        if (GameUIManager.Navigating)
         {
             if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
             {
                 if (GameContextManager.SaveSystem.SlotIsSelected)
                 {
-                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SelectSaveButton.gameObject);
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.SelectSaveButton.gameObject);
                 }
                 else
                 {
-                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.SaveSystem.SaveSlots[0].slotButton.gameObject);
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.SaveSlots[0].slotButton.gameObject);
                 }
             }
         }
@@ -59,9 +59,9 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
 
     public override void ExitState()
     {
-        GameContextManager.SaveMenu.SetActive(false);
+        GameContextManager.GameUIManager.SaveMenu.SetActive(false);
 
-        GameContextManager.BackButton.gameObject.SetActive(false);
+        GameContextManager.GameUIManager.BackButton.gameObject.SetActive(false);
 
         GameContextManager.GameManagerEventSystem.SetSelectedGameObject(null);
     }
@@ -70,34 +70,34 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
     {
         if (GameContextManager.SaveSystem.SlotIsSelected)
         {
-            GameContextManager.BackButton.onClick.RemoveAllListeners();
-            GameContextManager.BackButton.onClick.AddListener(() =>
+            GameContextManager.GameUIManager.BackButton.onClick.RemoveAllListeners();
+            GameContextManager.GameUIManager.BackButton.onClick.AddListener(() =>
             {
-                GameUIInputsManager.enabled = false;
+                GameUIManager.enabled = false;
 
-                GameAudioManager.Instance.PlaySFX("Menu_Back");
+                GameContextManager.GameAudioManager.PlaySFX("Menu_Back");
 
                 System.Action action = () =>
                 {
                     GameContextManager.SaveSystem.HideOptions();
                 };
 
-                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Back"));
+                GameContextManager.WaitSeconds(action, GameContextManager.GameAudioManager.AudioClipLength("Menu_Back"));
             });
         }
         else
         {
-            GameContextManager.BackButton.onClick.RemoveAllListeners();
-            GameContextManager.BackButton.onClick.AddListener(() =>
+            GameContextManager.GameUIManager.BackButton.onClick.RemoveAllListeners();
+            GameContextManager.GameUIManager.BackButton.onClick.AddListener(() =>
             {
-                GameAudioManager.Instance.PlaySFX("Menu_Back");
+                GameContextManager.GameAudioManager.PlaySFX("Menu_Back");
 
                 System.Action action = () =>
                 {
                     SwitchState(GameManagerStateFactory.GameMainMenuState());
                 };
 
-                GameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Back"));
+                GameContextManager.WaitSeconds(action, GameContextManager.GameAudioManager.AudioClipLength("Menu_Back"));
             });
         }
     }

@@ -16,6 +16,7 @@ public interface IInteractable
     public bool Activated { get; set; }
     public void InteractablePauseState(bool value);
     public void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType);
+    public void SetCharacterReset(CharacterContextManager characterContextManager);
     public void ConfirmInteraction();
     public Animator GetAnimator();
     public Collider2D GetCollider2D();
