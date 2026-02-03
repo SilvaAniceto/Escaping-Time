@@ -3153,6 +3153,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2246657659668160933, guid: 3e563cb32ee2b5548a02094a00cf8782, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 46.676025
+      objectReference: {fileID: 0}
     - target: {fileID: 2813568291318724979, guid: 3e563cb32ee2b5548a02094a00cf8782, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -3207,7 +3211,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6547977640084269230, guid: 3e563cb32ee2b5548a02094a00cf8782, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6547977640084269231, guid: 3e563cb32ee2b5548a02094a00cf8782, type: 3}
       propertyPath: m_Pivot.x
@@ -15583,21 +15587,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2176057719628083661, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2176057719628083661, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6770176651829635003, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
       propertyPath: m_Name
       value: CharacterContextManager
       objectReference: {fileID: 0}
     - target: {fileID: 6770176651829635003, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
       propertyPath: _hasAirJump
@@ -15609,6 +15605,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
       propertyPath: _hasInfinityAirJump
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
+      propertyPath: _hasInfinityWallMove
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6770176651829635007, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
@@ -91983,7 +91983,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 875133302763745453, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5044880141907532210, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
       propertyPath: Target.TrackingTarget

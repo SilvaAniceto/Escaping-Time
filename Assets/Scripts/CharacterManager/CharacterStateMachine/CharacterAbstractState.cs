@@ -25,7 +25,7 @@ public abstract class CharacterAbstractState
     public CharacterStateFactory CharacterStateFactory { get { return _characterStateFactory; } }
     public CharacterAbstractState CurrentSuperState { get { return _currentSuperState; } }
     public CharacterAbstractState CurrentSubState { get { return _currentSubState; } }
-    protected bool IsWallColliding 
+    public bool IsWallColliding 
     {
         get
         {

@@ -87,8 +87,53 @@ public class CharacterDashCommand : ICharacterActionCommand
 
 public class CharacterInteractCommand : ICharacterActionCommand
 {
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterInteractCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
     public void ExecuteCommand()
     {
 
+    }
+}
+
+public class CharacterWallMoveCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterWallMoveCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        if (_characterContextManager.DamageOnCoolDown) return;
+
+        if (_characterContextManager.HasWallMove && _characterContextManager.CurrentState.IsWallColliding)
+        {
+            if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState())
+            {
+                _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.OnWallState());
+            }
+        }
+    }
+}
+
+public class CharacterCancelWallMoveCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterCancelWallMoveCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState())
+        {
+            _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.FallState());
+        }
     }
 }

@@ -32,6 +32,7 @@ public class CharacterWallJumpState : CharacterAbstractState
     }
     public override void ExitState()
     {
+        CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.VerticalSpeed = 0.00f;
         CharacterContextManager.FallStartSpeed = 1.00f;
         CharacterContextManager.HorizontalStartSpeed = 15.0f;
@@ -43,7 +44,7 @@ public class CharacterWallJumpState : CharacterAbstractState
             SwitchState(CharacterStateFactory.FallState());
         }
 
-        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= 7.50f && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput != CharacterForwardDirection)
+        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput != CharacterForwardDirection)
         {
             SwitchState(CharacterStateFactory.FallState());
         }

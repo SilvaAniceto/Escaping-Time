@@ -58,28 +58,6 @@ public class CharacterFallState : CharacterAbstractState
         {
             SwitchState(CharacterStateFactory.GroundedState());
         }
-
-        if (CharacterContextManager.DamageOnCoolDown) return;
-
-        if (CharacterContextManager.HasWallMove)
-        {
-            if (IsWallColliding && PlayerInputManager.WallMoveInput)
-            {
-                SwitchState(CharacterStateFactory.OnWallState());
-            }
-        }
-
-        //if (PlayerInputManager.StartJumpInput && CharacterContextManager.CoyoteTime)
-        //{
-        //    SwitchState(CharacterStateFactory.JumpState());
-        //}
-        //else if (CharacterContextManager.HasAirJump)
-        //{
-        //    if (PlayerInputManager.StartJumpInput && CharacterContextManager.AirJumpIsAllowed)
-        //    {
-        //        SwitchState(CharacterStateFactory.AirJumpState()); 
-        //    }
-        //}
     }
     public override void CheckSwitchSubStates()
     {

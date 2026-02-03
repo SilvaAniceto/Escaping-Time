@@ -13,6 +13,7 @@ public class PlayerInputManager : MonoBehaviour
 
     private float _jumpCommandBufferTimer;
     private float _dashCommandBufferTimer;
+    private float _wallMoveCommandBufferTimer;
     private float _interactCommandBufferTimer;
 
     private CharacterActionCommandInvoker _characterActionCommandInvoker;
@@ -20,6 +21,7 @@ public class PlayerInputManager : MonoBehaviour
     private Queue<ICharacterActionCommand> _jumpCommandBuffer = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _airJumpCommandCombo = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _dashCommandBuffer = new Queue<ICharacterActionCommand>();
+    private Queue<ICharacterActionCommand> _wallMoveCommandBuffer = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _interactCommandBuffer = new Queue<ICharacterActionCommand>();
 
     private List<ICharacterComboCommand> _characterComboRules;
@@ -98,6 +100,10 @@ public class PlayerInputManager : MonoBehaviour
 
         PlayerInputActions.PlayerActionMap.Jump.started += ctx => HandleJumpCommand();
         PlayerInputActions.PlayerActionMap.Jump.canceled += ctx => HandleCancelJumpCommand();
+
+        PlayerInputActions.PlayerActionMap.WallMove.started += ctx => HandleWallMoveCommand();
+        PlayerInputActions.PlayerActionMap.WallMove.canceled += ctx => HandleCancelWallMoveCommand();
+
         PlayerInputActions.PlayerActionMap.Dash.started += ctx => HandleDashCommand();
         PlayerInputActions.PlayerActionMap.Interact.performed += ctx => HandleInteractCommand();
     }
@@ -105,6 +111,7 @@ public class PlayerInputManager : MonoBehaviour
     {
         ProcessJumpCommandBuffer(deltaTime);
         ProcessDashCommandBuffer(deltaTime);
+        ProcessWallMoveCommandBuffer(deltaTime);
         ProcessInteractCommandBuffer(deltaTime);
     }
     private void ClearCommandBuffer(Queue<ICharacterActionCommand> commandBuffer)
@@ -193,10 +200,49 @@ public class PlayerInputManager : MonoBehaviour
     }
     #endregion
 
+    #region WALL MOVE COMMAND
+    private void HandleWallMoveCommand()
+    {
+        var wallMoveCommand = new CharacterWallMoveCommand(_characterContextManager);
+
+        if (_wallMoveCommandBuffer.Count > _maxBufferLength)
+        {
+            ClearCommandBuffer(_wallMoveCommandBuffer);
+        }
+
+        _wallMoveCommandBuffer.Enqueue(wallMoveCommand);
+
+        _characterActionCommandInvoker.ExecuteActionCommand(wallMoveCommand);
+    }
+    private void HandleCancelWallMoveCommand()
+    {
+        var cancelWallMoveCommand = new CharacterCancelWallMoveCommand(_characterContextManager);
+
+        _characterActionCommandInvoker.ExecuteActionCommand(cancelWallMoveCommand);
+    }
+    private void ProcessWallMoveCommandBuffer(float deltaTime)
+    {
+        if (_wallMoveCommandBuffer.Count == 0)
+        {
+            return;
+        }
+
+        _wallMoveCommandBufferTimer += deltaTime;
+
+        if (_wallMoveCommandBufferTimer > _maxTimeForClearBuffer)
+        {
+            _wallMoveCommandBufferTimer = 0;
+
+            _characterActionCommandInvoker.ExecuteActionCommand(_wallMoveCommandBuffer.Peek());
+            ClearCommandBuffer(_wallMoveCommandBuffer);
+        }
+    }
+    #endregion
+
     #region INTERACT COMMAND
     private void HandleInteractCommand()
     {
-        var interactCommand = new CharacterInteractCommand();
+        var interactCommand = new CharacterInteractCommand(_characterContextManager);
 
         if (_interactCommandBuffer.Count > _maxBufferLength)
         {

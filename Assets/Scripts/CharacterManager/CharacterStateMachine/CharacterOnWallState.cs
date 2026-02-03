@@ -11,6 +11,8 @@ public class CharacterOnWallState : CharacterAbstractState
     {
         CharacterContextManager.WallChecker.enabled = true;
 
+        PlayerInputManager.ClearAirJumpCommandCombo();
+
         if (CharacterContextManager.HasAirJump)
         {
             CharacterContextManager.AirJumpIsAllowed = true;
@@ -56,11 +58,6 @@ public class CharacterOnWallState : CharacterAbstractState
         if (Grounded)
         {
             SwitchState(CharacterStateFactory.GroundedState());
-        }
-
-        if (!PlayerInputManager.WallMoveInput)
-        {
-            SwitchState(CharacterStateFactory.FallState());
         }
     }
 
