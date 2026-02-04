@@ -18,7 +18,7 @@ public class CharacterMoveState : CharacterAbstractState
             CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
         }
 
-        CharacterContextManager.HorizontalSpeed = PlayerInputManager.MoveInput * Mathf.Lerp(CharacterContextManager.HorizontalStartSpeed, CharacterContextManager.HorizontalTopSpeed, CharacterContextManager.HorizontalSpeedLerpOvertime);
+        CharacterContextManager.HorizontalSpeed = CharacterContextManager.MoveDirection * Mathf.Lerp(CharacterContextManager.HorizontalStartSpeed, CharacterContextManager.HorizontalTopSpeed, CharacterContextManager.HorizontalSpeedLerpOvertime);
     }
     public override void FixedUpdateState()
     {
@@ -39,7 +39,7 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (PlayerInputManager.MoveInput == 0 || IsWallColliding)
+        if (IsWallColliding)
         {
             SwitchState(CharacterStateFactory.IdleState());
         }
@@ -50,7 +50,7 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override Quaternion CurrentLookRotation()
     {
-        float angle = Mathf.Atan2(0, PlayerInputManager.MoveInput) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(0, CharacterContextManager.MoveDirection) * Mathf.Rad2Deg;
         return Quaternion.AngleAxis(angle, Vector3.up);
     }
     public override void OnCollisionEnter2D(Collision2D collision) { }

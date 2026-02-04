@@ -17,6 +17,15 @@ public class CharacterAirJumpState : CharacterAbstractState
 
         CharacterContextManager.GameContextManager.GameAudioManager.StopCharacterSFX();
         CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Air_Jump");
+
+        if (CharacterContextManager.MoveDirection != 0)
+        {
+            SetSubState(CharacterStateFactory.MoveState());
+        }
+        else if (CharacterContextManager.MoveDirection == 0)
+        {
+            SetSubState(CharacterStateFactory.IdleState());
+        }
     }
     public override void UpdateState()
     {
@@ -43,28 +52,7 @@ public class CharacterAirJumpState : CharacterAbstractState
     }
     public override void CheckSwitchSubStates()
     {
-        if (CurrentSubState == null)
-        {
-            if (PlayerInputManager.MoveInput != 0)
-            {
-                SetSubState(CharacterStateFactory.MoveState());
-            }
-            else if (PlayerInputManager.MoveInput == 0)
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
-        else
-        {
-            if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState())
-            {
-                SetSubState(CharacterStateFactory.MoveState());
-            }
-            else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
+        
     }
     public override Quaternion CurrentLookRotation()
     {

@@ -9,7 +9,7 @@ public class CharacterJumpState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.HorizontalStartSpeed = CharacterContextManager.HorizontalSpeed * PlayerInputManager.MoveInput;
+        CharacterContextManager.HorizontalStartSpeed = CharacterContextManager.HorizontalSpeed * CharacterContextManager.MoveDirection;
         CharacterContextManager.HorizontalTopSpeed = 7.86f;
 
         CharacterContextManager.DisableFixedJoint2D();
@@ -25,6 +25,15 @@ public class CharacterJumpState : CharacterAbstractState
 
         CharacterContextManager.GameContextManager.GameAudioManager.StopCharacterSFX();
         CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Jump");
+
+        if (CharacterContextManager.MoveDirection != 0)
+        {
+            SetSubState(CharacterStateFactory.MoveState());
+        }
+        else if (CharacterContextManager.MoveDirection == 0)
+        {
+            SetSubState(CharacterStateFactory.IdleState());
+        }
     }
     public override void UpdateState()
     {
@@ -51,28 +60,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void CheckSwitchSubStates()
     {
-        if (CurrentSubState == null)
-        {
-            if (PlayerInputManager.MoveInput != 0 && !IsWallColliding)
-            {
-                SetSubState(CharacterStateFactory.MoveState());
-            }
-            else if (PlayerInputManager.MoveInput == 0)
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
-        else
-        {
-            if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState() && !IsWallColliding)
-            {
-                SetSubState(CharacterStateFactory.MoveState());
-            }
-            else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
+        
     }
     public override Quaternion CurrentLookRotation()
     {

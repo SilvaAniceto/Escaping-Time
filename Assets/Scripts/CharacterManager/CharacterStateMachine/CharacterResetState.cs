@@ -11,6 +11,7 @@ public class CharacterResetState : CharacterAbstractState
     {
         CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Kinematic;
         CharacterAnimationManager.SetDisabledAnimation();
+        PlayerInputManager.PlayerInputActions.Disable();
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.VerticalSpeed = 0.00f;

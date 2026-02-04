@@ -57,6 +57,15 @@ public class CharacterGroundedState : CharacterAbstractState
 
             CharacterContextManager.WaitSeconds(damagedAction, 0.66f);
         }
+
+        if (CharacterContextManager.MoveDirection != 0)
+        {
+            SetSubState(CharacterStateFactory.MoveState());
+        }
+        else if (CharacterContextManager.MoveDirection == 0)
+        {
+            SetSubState(CharacterStateFactory.IdleState());
+        }
     }
 
     public override void UpdateState()
@@ -93,29 +102,6 @@ public class CharacterGroundedState : CharacterAbstractState
     public override void CheckSwitchSubStates()
     {
         if (CharacterContextManager.DamageOnCoolDown) return;
-
-        if (CurrentSubState == null)
-        {
-            if (PlayerInputManager.MoveInput != 0)
-            {
-                SetSubState(CharacterStateFactory.MoveState());
-            }
-            else if (PlayerInputManager.MoveInput == 0)
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
-        else
-        {
-            if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState())
-            {
-                SetSubState(CharacterStateFactory.MoveState());
-            }
-            else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
     }
     public override Quaternion CurrentLookRotation()
     {
@@ -140,6 +126,8 @@ public class CharacterGroundedState : CharacterAbstractState
             {
                 if (interactable.Interactions.Contains(EInteractionType.Stay))
                 {
+                    CharacterContextManager.Interactable = interactable;
+
                     SwitchState(CharacterStateFactory.InteractionState());
                 }
             }

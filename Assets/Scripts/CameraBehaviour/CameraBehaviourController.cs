@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class CameraBehaviourController : MonoBehaviour
 {
-    public static CameraBehaviourController Instance;
-
     [SerializeField] private CinemachineCamera _cinemachineCamera;
     [SerializeField] private CinemachinePositionComposer _cameraPositionComposer;
     [SerializeField] private CinemachineConfiner2D _confiner2D;
@@ -23,26 +21,12 @@ public class CameraBehaviourController : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-
         GameContextManager.OnRunOrPauseStateChanged.AddListener((value) => { this.enabled = value; });
-    }
-
-    private void Update()
-    {
-        CameraVerticalOffset(PlayerInputManager.PlayerInputInstance.CameraTiltInput);
-    }
-
-    private void OnDestroy()
-    {
-        
     }
 
     public void CameraVerticalOffset(float input)
     {
+        Debug.Log(input);
         _cameraVerticalOffset += Time.deltaTime * input;
 
         if (input == 0)

@@ -2,21 +2,34 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum ECharacterDirection
+{
+    Left = -1,
+    None = 0,
+    Right = 1
+}
+
+public enum ECameraTiltDirection
+{
+    Up = 1,
+    None = 0,
+    Down = -1
+}
+
 public class PlayerInputManager : MonoBehaviour
 {
     private CharacterContextManager _characterContextManager;
 
-    public static PlayerInputManager PlayerInputInstance;
-
     private const float _maxTimeForClearBuffer = 0.05f;
     private const int _maxBufferLength = 5;
+
+    private ECharacterDirection _characterDirection = ECharacterDirection.None;
+    private ECameraTiltDirection _cameraTiltDirection = ECameraTiltDirection.None;
 
     private float _jumpCommandBufferTimer;
     private float _dashCommandBufferTimer;
     private float _wallMoveCommandBufferTimer;
     private float _interactCommandBufferTimer;
-
-    private CharacterActionCommandInvoker _characterActionCommandInvoker;
 
     private Queue<ICharacterActionCommand> _jumpCommandBuffer = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _airJumpCommandCombo = new Queue<ICharacterActionCommand>();
@@ -26,24 +39,16 @@ public class PlayerInputManager : MonoBehaviour
 
     private List<ICharacterComboCommand> _characterComboRules;
 
+    private CharacterActionCommandInvoker _characterActionCommandInvoker;
+
     public PlayerInputActions PlayerInputActions { get; private set; }
 
     public bool Cancel { get => PlayerInputActions.PlayerActionMap.Cancel.triggered; }
-    public float MoveInput
-    {
-        get
-        {
-            Vector2 move = new Vector2(PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(), 0.00f);
-            move = move.normalized;
-            return move.x;
-        }
-    }
-    public bool InteractionInput { get => PlayerInputActions.PlayerActionMap.Interact.WasPressedThisFrame(); }
-    public float CameraTiltInput { get => PlayerInputActions.PlayerActionMap.CameraTilt.ReadValue<float>(); }
-    public bool WallMoveInput { get => PlayerInputActions.PlayerActionMap.WallMove.IsPressed(); }
 
     private void Update()
     {
+        ProcessMoveInput();
+        ProcessCameraTiltInput();
         ProcessCommandBuffer(Time.deltaTime);
     }
     private void OnEnable()
@@ -74,17 +79,9 @@ public class PlayerInputManager : MonoBehaviour
         PlayerInputActions.Disable();
     }
 
+    #region CLASS METHODS
     public void Initialize(CharacterContextManager characterContextManager)
     {
-        if (PlayerInputInstance == null)
-        {
-            PlayerInputInstance = this;
-        }
-        else
-        {
-            Destroy(PlayerInputInstance);
-        }
-
         if (PlayerInputActions == null)
         {
             PlayerInputActions = new PlayerInputActions();
@@ -105,7 +102,8 @@ public class PlayerInputManager : MonoBehaviour
         PlayerInputActions.PlayerActionMap.WallMove.canceled += ctx => HandleCancelWallMoveCommand();
 
         PlayerInputActions.PlayerActionMap.Dash.started += ctx => HandleDashCommand();
-        PlayerInputActions.PlayerActionMap.Interact.performed += ctx => HandleInteractCommand();
+
+        PlayerInputActions.PlayerActionMap.Interact.started += ctx => HandleInteractCommand();
     }
     private void ProcessCommandBuffer(float deltaTime)
     {
@@ -118,6 +116,55 @@ public class PlayerInputManager : MonoBehaviour
     {
         commandBuffer.Clear();
     }
+    #endregion
+
+    #region MOVE COMMAND
+    private void ProcessMoveInput()
+    {
+        Vector2 move = new Vector2(PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(), 0.00f);
+        move = move.normalized;
+
+        ECharacterDirection direction =  ProcessCharacterDirection(move.x);
+
+        ProcessDirectionChange(direction);
+    }
+    private ECharacterDirection ProcessCharacterDirection(float inputValue)
+    {
+        if (inputValue < -0.25f) return ECharacterDirection.Left;
+        if (inputValue > 0.25f) return ECharacterDirection.Right;
+
+        return ECharacterDirection.None;
+    }
+    private void ProcessDirectionChange(ECharacterDirection direction)
+    {
+        if (_characterDirection != direction)
+        {
+            _characterDirection = direction;
+            HandleDirectionCommand();
+        }
+    }
+    private void HandleDirectionCommand()
+    {
+        switch (_characterDirection)
+        {
+            case ECharacterDirection.Left:
+                var leftCommand = new CharacterLeftDirectionCommand(_characterContextManager);
+
+                _characterActionCommandInvoker.ExecuteActionCommand(leftCommand);
+                break;
+            case ECharacterDirection.None:
+                var noneCommand = new CharacterNoneDirectionCommand(_characterContextManager);
+
+                _characterActionCommandInvoker.ExecuteActionCommand(noneCommand);
+                break;
+            case ECharacterDirection.Right:
+                var rightCommand = new CharacterRightDirectionCommand(_characterContextManager);
+
+                _characterActionCommandInvoker.ExecuteActionCommand(rightCommand);
+                break;
+        }
+    }
+    #endregion
 
     #region JUMP COMMAND
     private void HandleJumpCommand()
@@ -249,7 +296,9 @@ public class PlayerInputManager : MonoBehaviour
             ClearCommandBuffer(_interactCommandBuffer);
         }
 
-        _jumpCommandBuffer.Enqueue(interactCommand);
+        _interactCommandBuffer.Enqueue(interactCommand);
+
+        _characterActionCommandInvoker.ExecuteActionCommand(interactCommand);
     }
     private void ProcessInteractCommandBuffer(float deltaTime)
     {
@@ -262,8 +311,57 @@ public class PlayerInputManager : MonoBehaviour
 
         if (_interactCommandBufferTimer > _maxTimeForClearBuffer)
         {
-            ClearCommandBuffer(_interactCommandBuffer);
             _interactCommandBufferTimer = 0;
+
+            _characterActionCommandInvoker.ExecuteActionCommand(_interactCommandBuffer.Peek());
+            ClearCommandBuffer(_interactCommandBuffer);
+        }
+    }
+    #endregion
+
+    #region MOVE COMMAND
+    private void ProcessCameraTiltInput()
+    {
+        float cameraTilt = PlayerInputActions.PlayerActionMap.CameraTilt.ReadValue<float>();
+
+        ECameraTiltDirection direction = ProcessCameraTiltDirection(cameraTilt);
+
+        ProcessCameraTiltDirectionChange(direction);
+    }
+    private ECameraTiltDirection ProcessCameraTiltDirection(float inputValue)
+    {
+        if (inputValue < -0.25f) return ECameraTiltDirection.Down;
+        if (inputValue > 0.25f) return ECameraTiltDirection.Up;
+
+        return ECameraTiltDirection.None;
+    }
+    private void ProcessCameraTiltDirectionChange(ECameraTiltDirection direction)
+    {
+        if (_cameraTiltDirection != direction)
+        {
+            _cameraTiltDirection = direction;
+            HandleCameraTiltDirectionCommand();
+        }
+    }
+    private void HandleCameraTiltDirectionCommand()
+    {
+        switch (_cameraTiltDirection)
+        {
+            case ECameraTiltDirection.Up:
+                var UpCommand = new CharacterCameraTiltUpDirectionCommand(_characterContextManager);
+
+                _characterActionCommandInvoker.ExecuteActionCommand(UpCommand);
+                break;
+            case ECameraTiltDirection.None:
+                var noneCommand = new CharacterCameraTiltNoneDirectionCommand(_characterContextManager);
+
+                _characterActionCommandInvoker.ExecuteActionCommand(noneCommand);
+                break;
+            case ECameraTiltDirection.Down:
+                var downCommand = new CharacterCameraTiltDownDirectionCommand(_characterContextManager);
+
+                _characterActionCommandInvoker.ExecuteActionCommand(downCommand);
+                break;
         }
     }
     #endregion

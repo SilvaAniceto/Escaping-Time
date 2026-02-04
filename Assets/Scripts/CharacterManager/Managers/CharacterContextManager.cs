@@ -30,14 +30,19 @@ public class CharacterContextManager : MonoBehaviour
     private CharacterAbstractState _currentState;
 
     private CharacterUIManager _characterUIManager;
+    private CameraBehaviourController _cameraBehaviourController;
     private GameContextManager _gameContextManager;
 
-    public Transform CameraTarget { get => _cameraTarget; }
     public CharacterAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
 
-    public CharacterUIManager CharacterUIManager { get => _characterUIManager; }
+    public Transform CameraTarget { get => _cameraTarget; }
+    public int CameraTilt { get; set; }
+    public CameraBehaviourController CameraBehaviourController { get => _cameraBehaviourController; }
+
     public GameContextManager GameContextManager { get => _gameContextManager; }
+
+    public IInteractable Interactable { get; set; }
 
     #region STATE CALLBACK
     [HideInInspector] public UnityEvent OnResetState = new UnityEvent();
@@ -316,6 +321,7 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region PHYSICS MOVEMENT PROPERTIES
+    public int MoveDirection { get; set; }
     public Vector2 MovePosition
     {
         get
@@ -335,8 +341,9 @@ public class CharacterContextManager : MonoBehaviour
         get
         {
             HorizontalSpeedOvertime += Time.deltaTime / 0.62f;
+            HorizontalSpeedOvertime = Mathf.Clamp01(HorizontalSpeedOvertime);
 
-            return _accelerationCurve.Evaluate(Mathf.Clamp01(HorizontalSpeedOvertime));
+            return _accelerationCurve.Evaluate(HorizontalSpeedOvertime);
         }
     }
     public float GravityUpwardSpeedOvertime { get; set; }
@@ -345,8 +352,9 @@ public class CharacterContextManager : MonoBehaviour
         get
         {
             GravityUpwardSpeedOvertime += Time.deltaTime / 0.36f;
+            GravityUpwardSpeedOvertime = Mathf.Clamp01(GravityUpwardSpeedOvertime);
 
-            return _jumpForceCurve.Evaluate(Mathf.Clamp01(GravityUpwardSpeedOvertime));
+            return _jumpForceCurve.Evaluate(GravityUpwardSpeedOvertime);
         }
     }
     public float GravityDownwardSpeedOvertime { get; set; }
@@ -355,8 +363,9 @@ public class CharacterContextManager : MonoBehaviour
         get
         {
             GravityDownwardSpeedOvertime += Time.deltaTime / 0.48f;
+            GravityDownwardSpeedOvertime = Mathf.Clamp01(GravityDownwardSpeedOvertime);
 
-            return _fallCurve.Evaluate(Mathf.Clamp01(GravityDownwardSpeedOvertime));
+            return _fallCurve.Evaluate(GravityDownwardSpeedOvertime);
         }
     }
     public float DashSpeedOvertime { get; set; }
@@ -365,8 +374,9 @@ public class CharacterContextManager : MonoBehaviour
         get
         {
             DashSpeedOvertime += Time.deltaTime / 0.62f;
+            DashSpeedOvertime = Mathf.Clamp01(DashSpeedOvertime);
 
-            return _dashCurve.Evaluate(Mathf.Clamp01(DashSpeedOvertime));
+            return _dashCurve.Evaluate(DashSpeedOvertime);
         }
     }
     public float DamageSpeedOvertime { get; set; }
@@ -375,8 +385,9 @@ public class CharacterContextManager : MonoBehaviour
         get
         {
             DamageSpeedOvertime += Time.deltaTime / 0.62f;
+            DamageSpeedOvertime = Mathf.Clamp01(DamageSpeedOvertime);
 
-            return _damageCurve.Evaluate(Mathf.Clamp01(DamageSpeedOvertime));
+            return _damageCurve.Evaluate(DamageSpeedOvertime);
         }
     }
     public bool DamageOnCoolDown { get; set; } = false;
@@ -393,8 +404,9 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region INITIALIZATION
-    public void InitializeCharacterContextManager(GameContextManager gameContextManager, bool isGameContext = true)
+    public void InitializeCharacterContextManager(GameContextManager gameContextManager, CameraBehaviourController cameraBehaviourController, bool isGameContext = true)
     {
+        _cameraBehaviourController = cameraBehaviourController;
         _gameContextManager = gameContextManager;
         _characterUIManager = _gameContextManager.GameUIManager.CharacterUIManager;
 
@@ -480,9 +492,9 @@ public class CharacterContextManager : MonoBehaviour
 
         _currentState.EnterState();
 
-        if (CameraBehaviourController.Instance)
+        if (_cameraBehaviourController)
         {
-            CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
+            _cameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
         }
     }
     public void DisableCharacterContext()
@@ -491,9 +503,9 @@ public class CharacterContextManager : MonoBehaviour
 
         _currentState.EnterState();
 
-        if (CameraBehaviourController.Instance)
+        if (_cameraBehaviourController)
         {
-            CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
+            _cameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
         }
     }
     public void EnableCharacterContext()
@@ -502,9 +514,9 @@ public class CharacterContextManager : MonoBehaviour
 
         _currentState.EnterState();
 
-        if (CameraBehaviourController.Instance)
+        if (_cameraBehaviourController)
         {
-            CameraBehaviourController.Instance.CinemachinePositionComposer.Damping = new Vector3(1.00f, 0.80f, 0.00f);
+            _cameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(1.00f, 0.80f, 0.00f);
         }
     }
     #endregion
@@ -576,6 +588,8 @@ public class CharacterContextManager : MonoBehaviour
     void Update()
     {
         _currentState.UpdateStates();
+
+        _cameraBehaviourController.CameraVerticalOffset(CameraTilt);
     }
     void LateUpdate()
     {
@@ -595,12 +609,9 @@ public class CharacterContextManager : MonoBehaviour
     void OnGUI()
     {
         GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label("");
-        //GUILayout.Label("Dash Is Allowed:" + DashIsAllowed);
-        //GUILayout.Label("Dash On Cool Down:" + DashOnCoolDown);
-        //GUILayout.Label("Dash Is Waiting Grounded State:" + DashIsWaitingGroundedState);
+        //GUILayout.Label("");
+        //GUILayout.Label("");
+        //GUILayout.Label("");
         GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
         GUILayout.Label("Current State: " + CurrentState.ToString());
         GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));

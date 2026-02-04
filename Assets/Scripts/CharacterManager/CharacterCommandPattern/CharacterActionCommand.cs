@@ -1,3 +1,51 @@
+public class CharacterLeftDirectionCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterLeftDirectionCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        _characterContextManager.MoveDirection = (int)ECharacterDirection.Left;
+
+        _characterContextManager.CurrentState.SetSubState(_characterContextManager.CurrentState.CharacterStateFactory.MoveState());
+    }
+}
+
+public class CharacterRightDirectionCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterRightDirectionCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        _characterContextManager.MoveDirection = (int)ECharacterDirection.Right;
+
+        _characterContextManager.CurrentState.SetSubState(_characterContextManager.CurrentState.CharacterStateFactory.MoveState());
+    }
+}
+
+public class CharacterNoneDirectionCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterNoneDirectionCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        _characterContextManager.MoveDirection = (int)ECharacterDirection.None;
+
+        _characterContextManager.CurrentState.SetSubState(_characterContextManager.CurrentState.CharacterStateFactory.IdleState());
+    }
+}
+
 public class CharacterJumpCommand : ICharacterActionCommand
 {
     private CharacterContextManager _characterContextManager;
@@ -95,7 +143,10 @@ public class CharacterInteractCommand : ICharacterActionCommand
     }
     public void ExecuteCommand()
     {
-
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.InteractionState())
+        {
+            _characterContextManager.Interactable.ConfirmInteraction();
+        }
     }
 }
 
@@ -135,5 +186,47 @@ public class CharacterCancelWallMoveCommand : ICharacterActionCommand
         {
             _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.FallState());
         }
+    }
+}
+
+public class CharacterCameraTiltUpDirectionCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterCameraTiltUpDirectionCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        _characterContextManager.CameraTilt = (int)ECameraTiltDirection.Up;
+    }
+}
+
+public class CharacterCameraTiltDownDirectionCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterCameraTiltDownDirectionCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        _characterContextManager.CameraTilt = (int)ECameraTiltDirection.Down;
+    }
+}
+
+public class CharacterCameraTiltNoneDirectionCommand : ICharacterActionCommand
+{
+    private CharacterContextManager _characterContextManager;
+
+    public CharacterCameraTiltNoneDirectionCommand(CharacterContextManager characterContextManager)
+    {
+        _characterContextManager = characterContextManager;
+    }
+    public void ExecuteCommand()
+    {
+        _characterContextManager.CameraTilt = (int)ECameraTiltDirection.None;
     }
 }

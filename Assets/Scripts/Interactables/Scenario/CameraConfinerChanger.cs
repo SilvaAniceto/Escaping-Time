@@ -25,7 +25,7 @@ public class CameraConfinerChanger : InteractableItem
 
     public override void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {
-        CameraBehaviourController.Instance.SetCameraConfiner2D(_confinerCollider);
+        characterContextManager.CameraBehaviourController.SetCameraConfiner2D(_confinerCollider);
 
         OnConfinerChanged?.Invoke();
     }

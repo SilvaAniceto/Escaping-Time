@@ -32,6 +32,15 @@ public class CharacterFallState : CharacterAbstractState
         {
             CharacterContextManager.AirJumpIsAllowed = true;
         }
+
+        if (CharacterContextManager.MoveDirection != 0)
+        {
+            SetSubState(CharacterStateFactory.MoveState());
+        }
+        else if (CharacterContextManager.MoveDirection == 0)
+        {
+            SetSubState(CharacterStateFactory.IdleState());
+        }
     }
     public override void UpdateState()
     {
@@ -61,34 +70,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void CheckSwitchSubStates()
     {
-        if (CurrentSubState == null)
-        {
-            if (PlayerInputManager.MoveInput != 0)
-            {
-                if (!CharacterContextManager.DamageOnCoolDown)
-                {
-                    SetSubState(CharacterStateFactory.MoveState());
-                }
-            }
-            else if (PlayerInputManager.MoveInput == 0)
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
-        else
-        {
-            if (PlayerInputManager.MoveInput != 0 && CurrentSubState == CharacterStateFactory.IdleState())
-            {
-                if (!CharacterContextManager.DamageOnCoolDown)
-                {
-                    SetSubState(CharacterStateFactory.MoveState());
-                }
-            }
-            else if (PlayerInputManager.MoveInput == 0 && CurrentSubState == CharacterStateFactory.MoveState())
-            {
-                SetSubState(CharacterStateFactory.IdleState());
-            }
-        }
+        
     }
     public override Quaternion CurrentLookRotation()
     {

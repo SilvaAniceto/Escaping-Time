@@ -106,11 +106,7 @@ public abstract class CharacterAbstractState
             _currentSuperState.SetSubState(newState);
         }
     }
-    protected void SetSuperState(CharacterAbstractState newSuperState)
-    {
-        _currentSuperState = newSuperState;
-    }
-    protected void SetSubState(CharacterAbstractState newSubState)
+    public void SetSubState(CharacterAbstractState newSubState)
     {
         if (_currentSubState != null)
         {
@@ -120,6 +116,10 @@ public abstract class CharacterAbstractState
         _currentSubState = newSubState;
         newSubState.SetSuperState(this);
         _currentSubState.EnterState();
+    }
+    protected void SetSuperState(CharacterAbstractState newSuperState)
+    {
+        _currentSuperState = newSuperState;
     }
     
     public abstract void OnCollisionEnter2D(Collision2D collision);

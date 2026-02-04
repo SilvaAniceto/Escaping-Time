@@ -44,7 +44,7 @@ public class CharacterWallJumpState : CharacterAbstractState
             SwitchState(CharacterStateFactory.FallState());
         }
 
-        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && PlayerInputManager.MoveInput != 0 && PlayerInputManager.MoveInput != CharacterForwardDirection)
+        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && CharacterContextManager.MoveDirection != 0 && CharacterContextManager.MoveDirection != CharacterForwardDirection)
         {
             SwitchState(CharacterStateFactory.FallState());
         }

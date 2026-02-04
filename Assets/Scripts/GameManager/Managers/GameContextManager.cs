@@ -131,7 +131,9 @@ public class GameContextManager : MonoBehaviour
         {
             CharacterContextManager = FindAnyObjectByType<CharacterContextManager>();
 
-            CharacterContextManager?.InitializeCharacterContextManager(this, false);
+            CameraBehaviourController = FindAnyObjectByType<CameraBehaviourController>();
+
+            CharacterContextManager?.InitializeCharacterContextManager(this, CameraBehaviourController, false);
 
             ScoreManager.Initialize(this, false);
 
@@ -211,8 +213,6 @@ public class GameContextManager : MonoBehaviour
     {
         CharacterContextManager = Instantiate(PlayeableCharacterSet.CharacterContextManager, Vector3.zero, Quaternion.identity);
 
-        CharacterContextManager.InitializeCharacterContextManager(this);
-
         GameContextAudioListener.enabled = false;
 
         DontDestroyOnLoad(CharacterContextManager.gameObject);
@@ -223,6 +223,8 @@ public class GameContextManager : MonoBehaviour
             CameraBehaviourController.SetCinemachineTarget(CharacterContextManager.CameraTarget);
             DontDestroyOnLoad(CameraBehaviourController.gameObject);
         }
+
+        CharacterContextManager.InitializeCharacterContextManager(this, CameraBehaviourController);
 
         CharacterHubStartPosition = Vector2.zero;
 
