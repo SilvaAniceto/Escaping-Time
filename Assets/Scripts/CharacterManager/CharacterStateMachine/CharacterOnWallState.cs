@@ -68,8 +68,7 @@ public class CharacterOnWallState : CharacterAbstractState
 
     public override Quaternion CurrentLookRotation()
     {
-        float angle = Mathf.Atan2(0, CharacterContextManager.MoveDirection) * Mathf.Rad2Deg;
-        return Quaternion.AngleAxis(angle, Vector3.up);
+        return new Quaternion();
     }
 
     public override void OnCollisionEnter2D(Collision2D collision) { }

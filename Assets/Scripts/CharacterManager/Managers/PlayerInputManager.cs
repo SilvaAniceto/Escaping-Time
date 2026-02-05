@@ -20,7 +20,7 @@ public class PlayerInputManager : MonoBehaviour
 {
     private CharacterContextManager _characterContextManager;
 
-    private const float _maxTimeForClearBuffer = 0.05f;
+    private const float _maxTimeForClearBuffer = 0.1f;
     private const int _maxBufferLength = 5;
 
     private ECharacterDirection _characterDirection = ECharacterDirection.None;
@@ -140,8 +140,8 @@ public class PlayerInputManager : MonoBehaviour
         if (_characterDirection != direction)
         {
             _characterDirection = direction;
-            HandleDirectionCommand();
         }
+        HandleDirectionCommand();
     }
     private void HandleDirectionCommand()
     {
@@ -266,6 +266,7 @@ public class PlayerInputManager : MonoBehaviour
         var cancelWallMoveCommand = new CharacterCancelWallMoveCommand(_characterContextManager);
 
         _characterActionCommandInvoker.ExecuteActionCommand(cancelWallMoveCommand);
+        ClearCommandBuffer(_wallMoveCommandBuffer);
     }
     private void ProcessWallMoveCommandBuffer(float deltaTime)
     {
@@ -281,7 +282,6 @@ public class PlayerInputManager : MonoBehaviour
             _wallMoveCommandBufferTimer = 0;
 
             _characterActionCommandInvoker.ExecuteActionCommand(_wallMoveCommandBuffer.Peek());
-            ClearCommandBuffer(_wallMoveCommandBuffer);
         }
     }
     #endregion
@@ -319,7 +319,7 @@ public class PlayerInputManager : MonoBehaviour
     }
     #endregion
 
-    #region MOVE COMMAND
+    #region CAMERA TILT COMMAND
     private void ProcessCameraTiltInput()
     {
         float cameraTilt = PlayerInputActions.PlayerActionMap.CameraTilt.ReadValue<float>();

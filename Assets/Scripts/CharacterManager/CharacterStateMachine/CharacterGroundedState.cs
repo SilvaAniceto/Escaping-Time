@@ -57,15 +57,6 @@ public class CharacterGroundedState : CharacterAbstractState
 
             CharacterContextManager.WaitSeconds(damagedAction, 0.66f);
         }
-
-        if (CharacterContextManager.MoveDirection != 0)
-        {
-            SetSubState(CharacterStateFactory.MoveState());
-        }
-        else if (CharacterContextManager.MoveDirection == 0)
-        {
-            SetSubState(CharacterStateFactory.IdleState());
-        }
     }
 
     public override void UpdateState()
@@ -87,6 +78,13 @@ public class CharacterGroundedState : CharacterAbstractState
     {
         CharacterContextManager.Rigidbody.gravityScale = 0.00f;
         CharacterContextManager.FallStartSpeed = 0.00f;
+
+        if (CharacterContextManager.HasAirJump)
+        {
+            CharacterContextManager.AirJumpIsAllowed = true;
+        }
+
+        SetSubState(null);
     }
 
     public override void CheckSwitchStates()
@@ -95,7 +93,16 @@ public class CharacterGroundedState : CharacterAbstractState
 
         if (!Grounded)
         {
+            CharacterContextManager.CoyoteTime = true;
+
+            System.Action action = () =>
+            {
+                CharacterContextManager.CoyoteTime = false;
+            };
+
             SwitchState(CharacterStateFactory.FallState());
+
+            CharacterContextManager.WaitSeconds(action, 0.084f);
         }
     }
 

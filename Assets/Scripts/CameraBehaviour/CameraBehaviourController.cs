@@ -9,14 +9,6 @@ public class CameraBehaviourController : MonoBehaviour
 
     private float _cameraVerticalOffset;
 
-    public Transform CameraTarget
-    {
-        get
-        {
-            return _cinemachineCamera.Target.TrackingTarget;
-        }
-    }
-
     public CinemachinePositionComposer CinemachinePositionComposer { get =>  _cameraPositionComposer; }
 
     private void Awake()
@@ -26,7 +18,6 @@ public class CameraBehaviourController : MonoBehaviour
 
     public void CameraVerticalOffset(float input)
     {
-        Debug.Log(input);
         _cameraVerticalOffset += Time.deltaTime * input;
 
         if (input == 0)

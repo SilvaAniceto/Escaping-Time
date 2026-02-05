@@ -16,31 +16,6 @@ public class CharacterFallState : CharacterAbstractState
 
         CharacterContextManager.GravityDownwardSpeedOvertime = 0;
 
-        if (CharacterContextManager.ExitState == CharacterStateFactory.GroundedState())
-        {
-            CharacterContextManager.CoyoteTime = true;
-
-            System.Action action = () =>
-            {
-                CharacterContextManager.CoyoteTime = false;
-            };
-
-            CharacterContextManager.WaitSeconds(action, 0.084f);
-        }
-
-        if (CharacterContextManager.HasAirJump && CharacterContextManager.ExitState == CharacterStateFactory.JumpState())
-        {
-            CharacterContextManager.AirJumpIsAllowed = true;
-        }
-
-        if (CharacterContextManager.MoveDirection != 0)
-        {
-            SetSubState(CharacterStateFactory.MoveState());
-        }
-        else if (CharacterContextManager.MoveDirection == 0)
-        {
-            SetSubState(CharacterStateFactory.IdleState());
-        }
     }
     public override void UpdateState()
     {
@@ -74,8 +49,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override Quaternion CurrentLookRotation()
     {
-        float angle = Mathf.Atan2(0, CharacterForwardDirection) * Mathf.Rad2Deg;
-        return Quaternion.AngleAxis(angle, Vector3.up);
+        return new Quaternion();
     }
     public override void OnCollisionEnter2D(Collision2D collision) { }
 

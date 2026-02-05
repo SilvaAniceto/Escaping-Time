@@ -20,7 +20,18 @@ public class CharacterWallJumpState : CharacterAbstractState
     public override void UpdateState()
     {
         CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GravityUpwardSpeedLerpOvertime);
-        CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.HorizontalSpeedLerpOvertime) * CharacterForwardDirection;
+
+        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && CharacterContextManager.MoveDirection != 0 && CharacterContextManager.MoveDirection != CharacterForwardDirection)
+        {
+            CharacterContextManager.AirJumpIsAllowed = false;
+            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.HorizontalSpeedLerpOvertime) * CharacterForwardDirection * CharacterContextManager.MoveDirection;
+        }
+        else
+        {
+            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.HorizontalSpeedLerpOvertime) * CharacterForwardDirection;
+        }
+
+        CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
     }
     public override void FixedUpdateState()
     {
@@ -35,16 +46,10 @@ public class CharacterWallJumpState : CharacterAbstractState
         CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.VerticalSpeed = 0.00f;
         CharacterContextManager.FallStartSpeed = 1.00f;
-        CharacterContextManager.HorizontalStartSpeed = 15.0f;
     }
     public override void CheckSwitchStates()
     {
         if (CharacterContextManager.VerticalSpeed <= 1.00f)
-        {
-            SwitchState(CharacterStateFactory.FallState());
-        }
-
-        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && CharacterContextManager.MoveDirection != 0 && CharacterContextManager.MoveDirection != CharacterForwardDirection)
         {
             SwitchState(CharacterStateFactory.FallState());
         }
@@ -56,7 +61,18 @@ public class CharacterWallJumpState : CharacterAbstractState
 
     public override Quaternion CurrentLookRotation()
     {
-        return new Quaternion();
+        float angle = 0;
+
+        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && CharacterContextManager.MoveDirection != 0 && CharacterContextManager.MoveDirection != CharacterForwardDirection)
+        {
+            angle = Mathf.Atan2(0, CharacterContextManager.MoveDirection) * Mathf.Rad2Deg;
+        }
+        else
+        {
+            angle = Mathf.Atan2(0, CharacterForwardDirection) * Mathf.Rad2Deg;
+        }
+
+        return Quaternion.AngleAxis(angle, Vector3.up);
     }
 
     public override void OnCollisionEnter2D(Collision2D collision)

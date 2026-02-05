@@ -33,7 +33,7 @@ public class CharacterContextManager : MonoBehaviour
     private CameraBehaviourController _cameraBehaviourController;
     private GameContextManager _gameContextManager;
 
-    public CharacterAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
+    //public CharacterAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
 
     public Transform CameraTarget { get => _cameraTarget; }
@@ -611,8 +611,7 @@ public class CharacterContextManager : MonoBehaviour
         GUILayout.Label("");
         //GUILayout.Label("");
         //GUILayout.Label("");
-        //GUILayout.Label("");
-        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
+        GUILayout.Label("Dash On Cool DOwn: " + DashOnCoolDown);
         GUILayout.Label("Current State: " + CurrentState.ToString());
         GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
     }

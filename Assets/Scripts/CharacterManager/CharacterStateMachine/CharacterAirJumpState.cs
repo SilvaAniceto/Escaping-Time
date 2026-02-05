@@ -17,15 +17,6 @@ public class CharacterAirJumpState : CharacterAbstractState
 
         CharacterContextManager.GameContextManager.GameAudioManager.StopCharacterSFX();
         CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Air_Jump");
-
-        if (CharacterContextManager.MoveDirection != 0)
-        {
-            SetSubState(CharacterStateFactory.MoveState());
-        }
-        else if (CharacterContextManager.MoveDirection == 0)
-        {
-            SetSubState(CharacterStateFactory.IdleState());
-        }
     }
     public override void UpdateState()
     {

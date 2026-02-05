@@ -12,6 +12,7 @@ public class CharacterIdleState : CharacterAbstractState
         CharacterContextManager.EnableFixedJoint2D();
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
+        CharacterContextManager.HorizontalStartSpeed = 0.00f;
 
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState())
         {
@@ -53,8 +54,7 @@ public class CharacterIdleState : CharacterAbstractState
     }
     public override Quaternion CurrentLookRotation()
     {
-        float angle = Mathf.Atan2(0, -CharacterContextManager.MoveDirection) * Mathf.Rad2Deg;
-        return Quaternion.AngleAxis(angle, Vector3.up);
+        return new Quaternion();
     }
     public override void OnCollisionEnter2D(Collision2D collision) { }
 

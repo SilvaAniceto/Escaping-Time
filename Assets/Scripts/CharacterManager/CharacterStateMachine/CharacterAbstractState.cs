@@ -42,7 +42,7 @@ public abstract class CharacterAbstractState
             return false;
         }
     }
-    protected bool Grounded { get => Physics2D.OverlapBox(CharacterContextManager.transform.position, new Vector2(0.40f, 0.2f), 0.00f, CharacterContextManager.GroundLayerTarget); }
+    public bool Grounded { get => Physics2D.OverlapBox(CharacterContextManager.transform.position, new Vector2(0.40f, 0.2f), 0.00f, CharacterContextManager.GroundLayerTarget); }
     public int CharacterForwardDirection { get => (int)Vector3.SignedAngle(Vector3.right, CharacterAnimationManager.CharacterAnimator.transform.right, Vector3.up) < 0 ? -1 : 1; }
     protected float DashSpeed { get; set; }
 
@@ -89,11 +89,6 @@ public abstract class CharacterAbstractState
     }
     public void SwitchState(CharacterAbstractState newState)
     {
-        if (_isRootState)
-        {
-            _characterContextManager.ExitState = _characterContextManager.CurrentState;
-        }
-
         ExitState();
 
         if (_isRootState)
@@ -114,8 +109,13 @@ public abstract class CharacterAbstractState
         }
 
         _currentSubState = newSubState;
-        newSubState.SetSuperState(this);
-        _currentSubState.EnterState();
+
+        if (newSubState != null)
+        {
+            newSubState.SetSuperState(this);
+            _currentSubState.EnterState();
+        }
+
     }
     protected void SetSuperState(CharacterAbstractState newSuperState)
     {

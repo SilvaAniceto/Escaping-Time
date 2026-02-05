@@ -10,6 +10,13 @@ public class CharacterLeftDirectionCommand : ICharacterActionCommand
     {
         _characterContextManager.MoveDirection = (int)ECharacterDirection.Left;
 
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState() ||
+             _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState() ||
+             _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.DashState())
+        {
+            return;
+        }
+
         _characterContextManager.CurrentState.SetSubState(_characterContextManager.CurrentState.CharacterStateFactory.MoveState());
     }
 }
@@ -26,6 +33,14 @@ public class CharacterRightDirectionCommand : ICharacterActionCommand
     {
         _characterContextManager.MoveDirection = (int)ECharacterDirection.Right;
 
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState() ||
+             _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState() ||
+             _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.DashState())
+        { 
+            return;
+        }
+
+
         _characterContextManager.CurrentState.SetSubState(_characterContextManager.CurrentState.CharacterStateFactory.MoveState());
     }
 }
@@ -41,6 +56,13 @@ public class CharacterNoneDirectionCommand : ICharacterActionCommand
     public void ExecuteCommand()
     {
         _characterContextManager.MoveDirection = (int)ECharacterDirection.None;
+
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState() ||
+             _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState() ||
+             _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.DashState())
+        {
+            return;
+        }
 
         _characterContextManager.CurrentState.SetSubState(_characterContextManager.CurrentState.CharacterStateFactory.IdleState());
     }
@@ -61,18 +83,21 @@ public class CharacterJumpCommand : ICharacterActionCommand
         {
             _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.JumpState());
         }
-        else if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState())
+        
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState())
         {
-            if (_characterContextManager.CoyoteTime)
+            if (_characterContextManager.CoyoteTime || _characterContextManager.DashOnCoolDown)
             {
                 _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.JumpState());
             }
         }
-        else if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState())
+        
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState())
         {
             _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.WallJumpState());
         }
-        else if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.InteractionState())
+        
+        if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.InteractionState())
         {
             _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.JumpState());
         }
@@ -164,7 +189,8 @@ public class CharacterWallMoveCommand : ICharacterActionCommand
 
         if (_characterContextManager.HasWallMove && _characterContextManager.CurrentState.IsWallColliding)
         {
-            if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState())
+            if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState() ||
+            _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState())
             {
                 _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.OnWallState());
             }

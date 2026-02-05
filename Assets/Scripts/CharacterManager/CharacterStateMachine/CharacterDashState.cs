@@ -13,7 +13,7 @@ public class CharacterDashState : CharacterAbstractState
 
         CharacterContextManager.DashSpeedOvertime = 0;
 
-        if (CharacterContextManager.ExitState == CharacterStateFactory.JumpState() || CharacterContextManager.ExitState == CharacterStateFactory.FallState())
+        if (!Grounded)
         {
             CharacterContextManager.DashIsWaitingGroundedState = true;
         }
