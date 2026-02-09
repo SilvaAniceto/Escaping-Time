@@ -12,11 +12,11 @@ public class GameManagerRunState : GameManagerAbstractState
     {
         GameContextManager.ExitState = null;
 
-        GameContextManager.GameUIManager.CharacterUIManager.SetLevelUIObjects();
+        GameContextManager.GameUIManager.SetLevelUIObjects();
 
         GameContextManager.GameUIManager.CharacterUIManager.gameObject.SetActive(true);
 
-        GameContextManager.GameUIManager.CharacterUIManager.SetScoreDisplay(GameContextManager.ScoreManager.CurrentScore);
+        GameContextManager.GameUIManager.SetScoreDisplay(GameContextManager.ScoreManager.CurrentScore);
 
         GameContextManager.GameManagerEventSystem.SetSelectedGameObject(null);
     }
@@ -35,7 +35,7 @@ public class GameManagerRunState : GameManagerAbstractState
 
     public override void CheckSwitchStates()
     {
-        if (GameContextManager.CharacterContextManager.CurrentState.PlayerInputManager.Cancel)
+        if (GameContextManager.PlayerInputManager.Cancel)
         {
             GameContextManager.ExitState = GameManagerStateFactory.GameRunState();
 

@@ -38,15 +38,15 @@ public class DamagingObject : InteractableItem
 
     public override void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {
-        if (characterContextManager.CurrentState == CharacterStateFactory.Instance.DamagedState() || characterContextManager.CurrentState == CharacterStateFactory.Instance.ResetState()) return;
+        if (characterContextManager.CurrentState == characterContextManager.CurrentState.CharacterStateFactory.DamagedState() || characterContextManager.CurrentState == characterContextManager.CurrentState.CharacterStateFactory.ResetState()) return;
 
         if (_ignoreDashState)
         {
             if (characterContextManager.CurrentState == characterContextManager.CurrentState.CharacterStateFactory.DashState()) return;
         }
 
-        characterContextManager.GameContextManager.GameAudioManager.StopCharacterSFX();
-        characterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Damage");
+        characterContextManager.GameAudioManager.StopCharacterSFX();
+        characterContextManager.GameAudioManager.PlayCharacterSFX("Damage");
 
         if (_targetPosition != null)
         {

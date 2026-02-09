@@ -1,10 +1,8 @@
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-using static GameAudioManager;
 
 public class GameAudioManager : MonoBehaviour
 {

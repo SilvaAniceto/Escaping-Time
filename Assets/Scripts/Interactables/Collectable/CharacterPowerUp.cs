@@ -94,8 +94,8 @@ public class CharacterPowerUp : InteractableItem, ICharacterPowerUp
         }
 
         Animator.Play("PowerUp_Unlit");
-        characterContextManager.GameContextManager.GameAudioManager.StopSFX();
-        characterContextManager.GameContextManager.GameAudioManager.PlaySFX("PwrUp_Collect");
+        characterContextManager.GameAudioManager.StopSFX();
+        characterContextManager.GameAudioManager.PlaySFX("PwrUp_Collect");
     }
     public void RechargePowerUpInteractable()
     {

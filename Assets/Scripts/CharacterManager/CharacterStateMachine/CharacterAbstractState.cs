@@ -2,16 +2,14 @@ using UnityEngine;
 
 public abstract class CharacterAbstractState
 {
-    public CharacterAbstractState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager)
+    public CharacterAbstractState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager)
     {
         _characterContextManager = currentContextManager;
         _characterStateFactory = stateFactory;
-        _playerInputManager = inputManager;
         _characterAnimationManager = animationManager;
     }
 
     private bool _isRootState = false;
-    private PlayerInputManager _playerInputManager;
     private CharacterContextManager _characterContextManager;
     private CharacterAnimationManager _characterAnimationManager;
     private CharacterStateFactory _characterStateFactory;
@@ -21,7 +19,6 @@ public abstract class CharacterAbstractState
     protected bool IsRootState { set { _isRootState = value; } }
     protected CharacterContextManager CharacterContextManager { get { return _characterContextManager; } }
     public CharacterAnimationManager CharacterAnimationManager { get { return _characterAnimationManager; } }
-    public PlayerInputManager PlayerInputManager { get { return _playerInputManager; } }
     public CharacterStateFactory CharacterStateFactory { get { return _characterStateFactory; } }
     public CharacterAbstractState CurrentSuperState { get { return _currentSuperState; } }
     public CharacterAbstractState CurrentSubState { get { return _currentSubState; } }

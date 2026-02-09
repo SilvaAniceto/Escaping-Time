@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterDashState : CharacterAbstractState
 {
-    public CharacterDashState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterDashState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }
@@ -20,8 +20,8 @@ public class CharacterDashState : CharacterAbstractState
 
         CharacterContextManager.DashOnCoolDown = true;
 
-        CharacterContextManager.GameContextManager.GameAudioManager.StopCharacterSFX();
-        CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Dash");
+        CharacterContextManager.GameAudioManager.StopCharacterSFX();
+        CharacterContextManager.GameAudioManager.PlayCharacterSFX("Dash");
     }
     public override void UpdateState()
     {

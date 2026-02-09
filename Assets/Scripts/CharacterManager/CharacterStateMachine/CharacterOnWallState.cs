@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterOnWallState : CharacterAbstractState
 {
-    public CharacterOnWallState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterOnWallState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }
@@ -11,7 +11,7 @@ public class CharacterOnWallState : CharacterAbstractState
     {
         CharacterContextManager.WallChecker.enabled = true;
 
-        PlayerInputManager.ClearAirJumpCommandCombo();
+        CharacterContextManager.PlayerInputManager.ClearAirJumpCommandCombo();
 
         if (CharacterContextManager.HasAirJump)
         {
@@ -44,7 +44,7 @@ public class CharacterOnWallState : CharacterAbstractState
     public override void LateUpdateState()
     {
         CharacterAnimationManager.SetOnWallAnimation();
-        CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("OnWall", 0.062f);
+        CharacterContextManager.GameAudioManager.PlayCharacterSFX("OnWall", 0.062f);
     }
 
     public override void ExitState()

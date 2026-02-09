@@ -6868,7 +6868,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6547977640084269231}
   - component: {fileID: 1003316471355286933}
-  - component: {fileID: 3460113865436993065}
   - component: {fileID: 7880100503982195351}
   - component: {fileID: 6547977640084269234}
   - component: {fileID: 6547977640084269229}
@@ -6932,28 +6931,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6b17632813e6c564c82df884cf92c6de, type: 2}
   - {fileID: 11400000, guid: 8a467166d16df254ca8ea28d2e73bc26, type: 2}
   _gameSaveSystem: {fileID: 2819620706967063627}
+  _gameUIManager: {fileID: 7880100503982195351}
   _gameAudioManager: {fileID: 782641668916674030}
-  _scoreManager: {fileID: 3460113865436993065}
---- !u!114 &3460113865436993065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6547977640084269230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b158ba01863f8e488d8ab381dcba6eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fill: {fileID: 8938812089936328832}
-  _brass: {fileID: 9036897147702811966}
-  _silver: {fileID: 1442941475557268451}
-  _gold: {fileID: 1159334058011062312}
-  _gemScore: {fileID: 2533202107919343319}
-  _hourglassScore: {fileID: 1944211731832245817}
-  _timeScore: {fileID: 7079598950034407076}
-  _masterScore: {fileID: 5689469530063494093}
 --- !u!114 &7880100503982195351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6993,7 +6972,27 @@ MonoBehaviour:
   _optionsParent: {fileID: 3369613307493559201}
   _selectSaveButton: {fileID: 5108536767432995628}
   _deleteButton: {fileID: 1251186905444468924}
-  _characterUIManager: {fileID: 3305032491786109993}
+  _characterUIManager: {fileID: 7593593118919900928}
+  _masterScoreIcon: {fileID: 1980393284251837083}
+  _levelScoreIcon: {fileID: 5070521177577631239}
+  _timer: {fileID: 8989341155977436357}
+  _fill: {fileID: 8938812089936328832}
+  _brass: {fileID: 9036897147702811966}
+  _silver: {fileID: 1442941475557268451}
+  _gold: {fileID: 1159334058011062312}
+  _gemScore: {fileID: 2533202107919343319}
+  _hourglassScore: {fileID: 1944211731832245817}
+  _timeScore: {fileID: 7079598950034407076}
+  _masterScore: {fileID: 5689469530063494093}
+  _timerDisplay: {fileID: 6547977641663246770}
+  _scoreDisplay: {fileID: 8719087845961688348}
+  _airJumpAnimatorPowerUp: {fileID: 3795444148913838924}
+  _airJumpUIpowerUp: {fileID: 7785733000914265408}
+  _dashAnimatorPowerUp: {fileID: 7912676801923008302}
+  _dashUIpowerUp: {fileID: 1131652655814068482}
+  _wallMoveAnimatorPowerUp: {fileID: 8669266439725489783}
+  _wallMoveUIpowerUp: {fileID: 3345855000163824089}
+  _hourglassParent: {fileID: 2039331290544515389}
 --- !u!223 &6547977640084269234
 Canvas:
   m_ObjectHideFlags: 0
@@ -8495,7 +8494,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1487027978680065383}
-  - component: {fileID: 3305032491786109993}
   m_Layer: 5
   m_Name: CharacterUI
   m_TagString: Untagged
@@ -8525,30 +8523,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3305032491786109993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7593593118919900928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0692e8a3b136607408a4176993a01f84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _masterScoreIcon: {fileID: 1980393284251837083}
-  _levelScoreIcon: {fileID: 5070521177577631239}
-  _timer: {fileID: 8989341155977436357}
-  _timerDisplay: {fileID: 6547977641663246770}
-  _scoreDisplay: {fileID: 8719087845961688348}
-  _airJumpAnimatorPowerUp: {fileID: 3795444148913838924}
-  _airJumpUIpowerUp: {fileID: 7785733000914265408}
-  _dashAnimatorPowerUp: {fileID: 7912676801923008302}
-  _dashUIpowerUp: {fileID: 1131652655814068482}
-  _wallMoveAnimatorPowerUp: {fileID: 8669266439725489783}
-  _wallMoveUIpowerUp: {fileID: 3345855000163824089}
-  _hourglassParent: {fileID: 2039331290544515389}
 --- !u!1 &7602294317093003371
 GameObject:
   m_ObjectHideFlags: 0

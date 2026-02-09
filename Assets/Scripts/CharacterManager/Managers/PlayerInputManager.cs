@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,9 +17,20 @@ public enum ECameraTiltDirection
     Down = -1
 }
 
-public class PlayerInputManager : MonoBehaviour
+public class PlayerInputManager
 {
+    public PlayerInputManager(CharacterContextManager characterContextManager, CameraBehaviourController cameraBehaviourController, PlayerInputActions playerInputActions)
+    {
+        _characterContextManager = characterContextManager;
+        _cameraBehaviourController = cameraBehaviourController;
+        _playerInputActions = playerInputActions;
+    }
+
+    private bool _initialized = false;
+
     private CharacterContextManager _characterContextManager;
+    private CameraBehaviourController _cameraBehaviourController;
+    private PlayerInputActions _playerInputActions;
 
     private const float _maxTimeForClearBuffer = 0.1f;
     private const int _maxBufferLength = 5;
@@ -41,69 +53,58 @@ public class PlayerInputManager : MonoBehaviour
 
     private CharacterActionCommandInvoker _characterActionCommandInvoker;
 
-    public PlayerInputActions PlayerInputActions { get; private set; }
+    public bool Cancel { get => _playerInputActions.PlayerActionMap.Cancel.triggered; }
 
-    public bool Cancel { get => PlayerInputActions.PlayerActionMap.Cancel.triggered; }
-
-    private void Update()
+    public void UpdatePlayerInputManager()
     {
+        if (!_initialized) return;
+
         ProcessMoveInput();
         ProcessCameraTiltInput();
         ProcessCommandBuffer(Time.deltaTime);
     }
-    private void OnEnable()
+    public void EnableInputAction()
     {
-        if (PlayerInputActions == null)
+        if (_playerInputActions == null)
         {
             return;
         }
 
-        PlayerInputActions.Enable();
+        _playerInputActions.Enable();
     }
-    private void OnDisable()
+    public void DisableInputAction()
     {
-        if (PlayerInputActions == null)
+        if (_playerInputActions == null)
         {
             return;
         }
 
-        PlayerInputActions.Disable();
-    }
-    private void OnDestroy()
-    {
-        if (PlayerInputActions == null)
-        {
-            return;
-        }
-
-        PlayerInputActions.Disable();
+        _playerInputActions.Disable();
     }
 
     #region CLASS METHODS
-    public void Initialize(CharacterContextManager characterContextManager)
+    public void Initialize()
     {
-        if (PlayerInputActions == null)
-        {
-            PlayerInputActions = new PlayerInputActions();
-        }
+        _initialized = false;
 
         _characterActionCommandInvoker = new CharacterActionCommandInvoker();
-        _characterContextManager = characterContextManager;
 
         _characterComboRules = new List<ICharacterComboCommand>
         {
             new ComboAirJump(_characterContextManager)
         };
 
-        PlayerInputActions.PlayerActionMap.Jump.started += ctx => HandleJumpCommand();
-        PlayerInputActions.PlayerActionMap.Jump.canceled += ctx => HandleCancelJumpCommand();
+        _playerInputActions.PlayerActionMap.Jump.started += ctx => HandleJumpCommand();
+        _playerInputActions.PlayerActionMap.Jump.canceled += ctx => HandleCancelJumpCommand();
 
-        PlayerInputActions.PlayerActionMap.WallMove.started += ctx => HandleWallMoveCommand();
-        PlayerInputActions.PlayerActionMap.WallMove.canceled += ctx => HandleCancelWallMoveCommand();
+        _playerInputActions.PlayerActionMap.WallMove.started += ctx => HandleWallMoveCommand();
+        _playerInputActions.PlayerActionMap.WallMove.canceled += ctx => HandleCancelWallMoveCommand();
 
-        PlayerInputActions.PlayerActionMap.Dash.started += ctx => HandleDashCommand();
+        _playerInputActions.PlayerActionMap.Dash.started += ctx => HandleDashCommand();
 
-        PlayerInputActions.PlayerActionMap.Interact.started += ctx => HandleInteractCommand();
+        _playerInputActions.PlayerActionMap.Interact.started += ctx => HandleInteractCommand();
+
+        _initialized = true;
     }
     private void ProcessCommandBuffer(float deltaTime)
     {
@@ -121,7 +122,7 @@ public class PlayerInputManager : MonoBehaviour
     #region MOVE COMMAND
     private void ProcessMoveInput()
     {
-        Vector2 move = new Vector2(PlayerInputActions.PlayerActionMap.Move.ReadValue<float>(), 0.00f);
+        Vector2 move = new Vector2(_playerInputActions.PlayerActionMap.Move.ReadValue<float>(), 0.00f);
         move = move.normalized;
 
         ECharacterDirection direction =  ProcessCharacterDirection(move.x);
@@ -322,7 +323,7 @@ public class PlayerInputManager : MonoBehaviour
     #region CAMERA TILT COMMAND
     private void ProcessCameraTiltInput()
     {
-        float cameraTilt = PlayerInputActions.PlayerActionMap.CameraTilt.ReadValue<float>();
+        float cameraTilt = _playerInputActions.PlayerActionMap.CameraTilt.ReadValue<float>();
 
         ECameraTiltDirection direction = ProcessCameraTiltDirection(cameraTilt);
 
@@ -348,17 +349,17 @@ public class PlayerInputManager : MonoBehaviour
         switch (_cameraTiltDirection)
         {
             case ECameraTiltDirection.Up:
-                var UpCommand = new CharacterCameraTiltUpDirectionCommand(_characterContextManager);
+                var UpCommand = new CharacterCameraTiltUpDirectionCommand(_cameraBehaviourController);
 
                 _characterActionCommandInvoker.ExecuteActionCommand(UpCommand);
                 break;
             case ECameraTiltDirection.None:
-                var noneCommand = new CharacterCameraTiltNoneDirectionCommand(_characterContextManager);
+                var noneCommand = new CharacterCameraTiltNoneDirectionCommand(_cameraBehaviourController);
 
                 _characterActionCommandInvoker.ExecuteActionCommand(noneCommand);
                 break;
             case ECameraTiltDirection.Down:
-                var downCommand = new CharacterCameraTiltDownDirectionCommand(_characterContextManager);
+                var downCommand = new CharacterCameraTiltDownDirectionCommand(_cameraBehaviourController);
 
                 _characterActionCommandInvoker.ExecuteActionCommand(downCommand);
                 break;

@@ -9,7 +9,7 @@
     {
         GameContextManager.GameUIManager.ScorePanel.SetActive(true);
 
-        GameContextManager.ScoreManager.SetScoreUITexts();
+        GameContextManager.ScoreManager.SetScoreManager();
 
         GameContextManager.TargetScene = "Level_Hub";
 

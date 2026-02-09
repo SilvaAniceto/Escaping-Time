@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterInteractionState : CharacterAbstractState
 {
-    public CharacterInteractionState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterInteractionState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }

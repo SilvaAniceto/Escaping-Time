@@ -20,22 +20,8 @@ public enum EClassficationTier
     Tier3 = 3
 }
 
-public class GameScoreManager : MonoBehaviour
+public class GameScoreManager
 {
-    #region INSPECTOR FIELDS
-    [Header("Image UI Objects")]
-    [SerializeField] private Image _fill;
-    [SerializeField] private Image _brass;
-    [SerializeField] private Image _silver;
-    [SerializeField] private Image _gold;
-
-    [Header("Score UI Texts")]
-    [SerializeField] private Text _gemScore;
-    [SerializeField] private Text _hourglassScore;
-    [SerializeField] private Text _timeScore;
-    [SerializeField] private Text _masterScore;
-    #endregion
-
     #region PUBLIC PROPERTIES
     public GameLevelManager LevelManager { get; set; }
     public int MasterScore { get; set; }
@@ -73,13 +59,13 @@ public class GameScoreManager : MonoBehaviour
     private float HourglassFinalScore { get; set; } = 0;
     private float TimeFinalScore { get; set; } = 0;
     private float LevelFinalScore { get; set; } = 0;
-    private float SilverScorePercentage { get; set; } = 0;
-    private float BrassScorePercentage { get; set; } = 0;
+    public float SilverScorePercentage { get; set; } = 0;
+    public float BrassScorePercentage { get; set; } = 0;
     private float FinalScorePercentage { get; set; } = 0; 
     #endregion
 
     #region PRIVATE CALLBACK
-    private UnityEvent OnLevelFinalScore = new UnityEvent();
+    public UnityEvent OnLevelFinalScore = new UnityEvent();
     #endregion
 
     #region DEFAULT METHODS
@@ -94,10 +80,6 @@ public class GameScoreManager : MonoBehaviour
         }
 
     }
-    private void Update()
-    {
-        OnLevelFinalScore?.Invoke();
-    }
     #endregion
 
     #region TIMER METHODS
@@ -105,7 +87,7 @@ public class GameScoreManager : MonoBehaviour
     {
         CurrentTimer -= Time.deltaTime;
         CurrentTimer = Mathf.Clamp(CurrentTimer, 0, 300);
-        GameContextManager.GameUIManager.CharacterUIManager.SetTimerDisplay(Mathf.Round(CurrentTimer).ToString());
+        GameContextManager.GameUIManager.SetTimerDisplay(Mathf.Round(CurrentTimer).ToString());
     }
     #endregion
 
@@ -117,12 +99,8 @@ public class GameScoreManager : MonoBehaviour
         LevelManager.CurrentGemScore = 0;
         LevelManager.CurrentHourglassScore = 0;
 
-        _brass.color = Color.black;
-        _silver.color = Color.black;
-        _gold.color = Color.black;
-        _fill.fillAmount = 0;
-
-        GameContextManager.GameUIManager.CharacterUIManager.SetHourglassDisplay(LevelManager.CurrentHourglassScore / 100);
+        GameContextManager.GameUIManager.ResetScoreUI();
+        GameContextManager.GameUIManager.SetHourglassDisplay(LevelManager.CurrentHourglassScore / 100);
     }
     public void AddGemScore(int value)
     {
@@ -136,17 +114,17 @@ public class GameScoreManager : MonoBehaviour
 
         AddScorePoints(100);
 
-        GameContextManager.GameUIManager.CharacterUIManager.SetHourglassDisplay(LevelManager.CurrentHourglassScore / 100);
+        GameContextManager.GameUIManager.SetHourglassDisplay(LevelManager.CurrentHourglassScore / 100);
     }
     public void AddScorePoints(int value)
     {
         CurrentScore += value;
 
-        GameContextManager.GameUIManager.CharacterUIManager.SetScoreDisplay(CurrentScore);
+        GameContextManager.GameUIManager.SetScoreDisplay(CurrentScore);
     }
     public void SetFinalScore()
     {
-        _masterScore.text = $"Master Score: {MasterScore}";
+        GameContextManager.GameUIManager.SetMasterScoreText($"Master Score: {MasterScore}");
 
         CurrentTimer = Mathf.RoundToInt(CurrentTimer);
 
@@ -179,25 +157,24 @@ public class GameScoreManager : MonoBehaviour
 
         GameContextManager.SetLevelScore = true;
     }
-    public void SetScoreUITexts()
+    public void SetScoreManager()
     {
-        SetTrophyPercentagePosition();
+        SetTrophyPercentage();
 
-        StartCoroutine(SetLevelFinalScoreUI());
+        GameContextManager.StartCoroutine(SetLevelFinalScoreCoroutine());
     }
-    private void SetTrophyPercentagePosition()
+    private void SetTrophyPercentage()
     {
         SilverScorePercentage = Mathf.Round(Mathf.InverseLerp(0, LevelManager.Tier3TargetScore, LevelManager.Tier2TargetScore) * 100) / 100;
         BrassScorePercentage = Mathf.Round(Mathf.InverseLerp(0, LevelManager.Tier3TargetScore, LevelManager.Tier1TargetScore) * 100) / 100;
 
-        _silver.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * SilverScorePercentage, _silver.rectTransform.anchoredPosition.y);
-        _brass.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * BrassScorePercentage, _brass.rectTransform.anchoredPosition.y);
+        GameContextManager.GameUIManager.SetTrophyUIPosition();
     }
-    IEnumerator SetLevelFinalScoreUI()
+    IEnumerator SetLevelFinalScoreCoroutine()
     {
         GameContextManager.FinishSetLevelScore = false;
 
-        _timeScore.text = $"x {TimeScoreMultiplier} = {0}";
+        GameContextManager.GameUIManager.SetTimeScoreText($"x {TimeScoreMultiplier} = {0}");
 
         GemFinalScore = 0;
         HourglassFinalScore = 0;
@@ -231,7 +208,7 @@ public class GameScoreManager : MonoBehaviour
         yield return new WaitUntil(() => LevelFinalScore >= FinalScorePercentage);
 
         OnLevelFinalScore.RemoveAllListeners();
-        _masterScore.text = $"Master Score: {MasterScore}";
+        GameContextManager.GameUIManager.SetMasterScoreText($"Master Score: {MasterScore}");
         GameContextManager.GameAudioManager.StopSFX();
         GameContextManager.GameAudioManager.PlaySFX("End_Score");
 
@@ -249,7 +226,7 @@ public class GameScoreManager : MonoBehaviour
 
         GemFinalScore = Mathf.Clamp(GemFinalScore, 0, LevelManager.CurrentGemScore);
 
-        _gemScore.text = $"= {GemFinalScore}";
+        GameContextManager.GameUIManager.SetGemScoreText($"= {GemFinalScore}");
     }
     private void SetHourglassFinalScore()
     {
@@ -261,7 +238,7 @@ public class GameScoreManager : MonoBehaviour
 
         HourglassFinalScore = Mathf.Clamp(HourglassFinalScore, 0, LevelManager.CurrentHourglassScore);
 
-        _hourglassScore.text = $"= {HourglassFinalScore}";
+        GameContextManager.GameUIManager.SetHourglassText($"= {HourglassFinalScore}");
     }
     private void SetTimeFinalScore()
     {
@@ -273,7 +250,7 @@ public class GameScoreManager : MonoBehaviour
 
         TimeFinalScore = Mathf.Clamp(TimeFinalScore, 0, TimeScore);
 
-        _timeScore.text = $"x {TimeScoreMultiplier} = {TimeFinalScore}";
+        GameContextManager.GameUIManager.SetTimeScoreText($"x {TimeScoreMultiplier} = {TimeFinalScore}");
     }
     private void SetLevelFinalScore()
     {
@@ -281,22 +258,22 @@ public class GameScoreManager : MonoBehaviour
 
         LevelFinalScore = Mathf.Clamp(LevelFinalScore, 0.00f, FinalScorePercentage);
 
-        _fill.fillAmount = LevelFinalScore;
+        GameContextManager.GameUIManager.SetFillAmount(LevelFinalScore);
 
         GameContextManager.GameAudioManager.PlaySFX("Final_Score");
         GameContextManager.GameAudioManager.LerpPitch("Final_Score", LevelFinalScore);
 
         if (LevelFinalScore >= BrassScorePercentage)
         {
-            _brass.color = Color.white;
+            GameContextManager.GameUIManager.ResetBrassTrophy();
         }
         if (LevelFinalScore >= SilverScorePercentage)
         {
-            _silver.color = Color.white;
+            GameContextManager.GameUIManager.ResetSilverTrophy();
         }
         if (LevelFinalScore >= 1)
         {
-            _gold.color = Color.white;
+            GameContextManager.GameUIManager.ResetGoldTrophy();
         }
     }
 }

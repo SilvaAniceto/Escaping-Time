@@ -3,7 +3,7 @@ using UnityEngine;
 public class CharacterDamagedState : CharacterAbstractState
 {
 
-    public CharacterDamagedState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterDamagedState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }

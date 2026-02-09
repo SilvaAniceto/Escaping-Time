@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(PlayerInputManager), typeof(CharacterAnimationManager))][System.Serializable]
+[RequireComponent(typeof(CharacterAnimationManager))][System.Serializable]
 public class CharacterContextManager : MonoBehaviour
 {
     [Header("Camera Target")]
@@ -26,22 +26,19 @@ public class CharacterContextManager : MonoBehaviour
     [Header("Graphics")]
     [SerializeField] private GameObject _characterGraphic;
 
-    private CharacterAbstractState _exitState;
     private CharacterAbstractState _currentState;
-
-    private CharacterUIManager _characterUIManager;
-    private CameraBehaviourController _cameraBehaviourController;
-    private GameContextManager _gameContextManager;
-
-    //public CharacterAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
 
+    public PlayerInputManager PlayerInputManager { get; private set; }
+
     public Transform CameraTarget { get => _cameraTarget; }
-    public int CameraTilt { get; set; }
-    public CameraBehaviourController CameraBehaviourController { get => _cameraBehaviourController; }
 
-    public GameContextManager GameContextManager { get => _gameContextManager; }
+    public CameraBehaviourController CameraBehaviourController { get; private set; }
 
+    public GameUIManager GameUIManager { get ; private set; }
+
+    public GameAudioManager GameAudioManager { get; private set; }
+    
     public IInteractable Interactable { get; set; }
 
     #region STATE CALLBACK
@@ -129,7 +126,7 @@ public class CharacterContextManager : MonoBehaviour
             };
 
             WaitSeconds(tempAirJumpAction, coolDown);
-            _characterUIManager.SetOvertimeDashPowerUpUI(coolDown, this);
+            GameUIManager.SetOvertimeDashPowerUpUI(coolDown, this);
         }
     }
     #endregion
@@ -206,7 +203,7 @@ public class CharacterContextManager : MonoBehaviour
             };
 
             WaitSeconds(tempAirJumpAction, coolDown);
-            _characterUIManager.SetOvertimeAirJumpPowerUpUI(coolDown, this);
+            GameUIManager.SetOvertimeAirJumpPowerUpUI(coolDown, this);
         }
     }
     #endregion
@@ -281,7 +278,7 @@ public class CharacterContextManager : MonoBehaviour
             };
 
             WaitSeconds(tempAirJumpAction, coolDown);
-            _characterUIManager.SetOvertimeWallMovePowerUpUI(coolDown, this);
+            GameUIManager.SetOvertimeWallMovePowerUpUI(coolDown, this);
         }
     }
     #endregion
@@ -293,14 +290,13 @@ public class CharacterContextManager : MonoBehaviour
     [HideInInspector] public UnityEvent<string> OnDashPowerStateChange = new UnityEvent<string>();
     [HideInInspector] public UnityEvent<string> OnWallMovePowerStateChange = new UnityEvent<string>();
 
-    private void SetPowerUpCallBack()
+    public void SetPowerUpCallBack(GameUIManager gameUIManager)
     {
-        if (_characterUIManager != null)
-        {
-            OnAirJumpPowerStateChange.AddListener(_characterUIManager.SetAirJumpPowerUpUI);
-            OnDashPowerStateChange.AddListener(_characterUIManager.SetDashPowerUpUI);
-            OnWallMovePowerStateChange.AddListener(_characterUIManager.SetWallMovePowerUpUI);
-        }
+        GameUIManager = gameUIManager;
+
+        OnAirJumpPowerStateChange.AddListener(gameUIManager.SetAirJumpPowerUpUI);
+        OnDashPowerStateChange.AddListener(gameUIManager.SetDashPowerUpUI);
+        OnWallMovePowerStateChange.AddListener(gameUIManager.SetWallMovePowerUpUI);
     }
     public void DispatchPowerUpInteractableRecharge()
     {
@@ -404,11 +400,11 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region INITIALIZATION
-    public void InitializeCharacterContextManager(GameContextManager gameContextManager, CameraBehaviourController cameraBehaviourController, bool isGameContext = true)
+    public void InitializeCharacterContextManager(PlayerInputManager playerInputManager, CameraBehaviourController cameraBehaviourController, GameAudioManager gameAudioManager, bool isGameContext = true)
     {
-        _cameraBehaviourController = cameraBehaviourController;
-        _gameContextManager = gameContextManager;
-        _characterUIManager = _gameContextManager.GameUIManager.CharacterUIManager;
+        PlayerInputManager = playerInputManager;
+        CameraBehaviourController = cameraBehaviourController;
+        GameAudioManager = gameAudioManager;
 
         Rigidbody = GetComponent<Rigidbody2D>();
         FixedJoint2D = GetComponent<FixedJoint2D>();
@@ -420,13 +416,9 @@ public class CharacterContextManager : MonoBehaviour
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("WallChecker"), LayerMask.NameToLayer("Default"));
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("WallChecker"), LayerMask.NameToLayer("Camera Objects"));
 
-        _currentState = isGameContext ? new CharacterStateFactory(this, GetComponent<PlayerInputManager>(), GetComponent<CharacterAnimationManager>()).DisabledState() : new CharacterStateFactory(this, GetComponent<PlayerInputManager>(), GetComponent<CharacterAnimationManager>()).GroundedState();
+        _currentState = isGameContext ? new CharacterStateFactory(this,  GetComponent<CharacterAnimationManager>()).DisabledState() : new CharacterStateFactory(this, /*GetComponent<PlayerInputManager>(),*/ GetComponent<CharacterAnimationManager>()).GroundedState();
 
         _currentState.CharacterAnimationManager.CharacterAnimator = _currentState.CharacterAnimationManager.GetComponentInChildren<Animator>();
-
-        _currentState.PlayerInputManager.Initialize(this);
-
-        SetPowerUpCallBack();
 
         _currentState.EnterState();
     }
@@ -459,7 +451,7 @@ public class CharacterContextManager : MonoBehaviour
     }
     public void EnableFixedJoint2D()
     {
-        if (FixedJoint2D.enabled || !FixedJointConnectedBody || CurrentState.CurrentSubState != CharacterStateFactory.Instance.IdleState() || CurrentState != CharacterStateFactory.Instance.GroundedState())
+        if (FixedJoint2D.enabled || !FixedJointConnectedBody || CurrentState.CurrentSubState != CurrentState.CharacterStateFactory.IdleState() || CurrentState != CurrentState.CharacterStateFactory.GroundedState())
         {
             return;
         }
@@ -475,48 +467,51 @@ public class CharacterContextManager : MonoBehaviour
     }
     public void ApplyDamage(float damageDirection)
     {
-        if (DamageOnCoolDown)
-        {
-            return;
-        }
+        PlayerInputManager.DisableInputAction();
 
         DamageHitDirection = damageDirection;
 
-        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).DamagedState();
+        _currentState = new CharacterStateFactory(this, CurrentState.CharacterAnimationManager).DamagedState();
 
         _currentState.EnterState();
     }
     public void ResetCharacter()
     {
-        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).ResetState();
+        PlayerInputManager.DisableInputAction();
+
+        _currentState = new CharacterStateFactory(this, CurrentState.CharacterAnimationManager).ResetState();
 
         _currentState.EnterState();
 
-        if (_cameraBehaviourController)
+        if (CameraBehaviourController)
         {
-            _cameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
+            CameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
         }
     }
     public void DisableCharacterContext()
     {
-        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).DisabledState();
+        PlayerInputManager.DisableInputAction();
+
+        _currentState = new CharacterStateFactory(this, CurrentState.CharacterAnimationManager).DisabledState();
 
         _currentState.EnterState();
 
-        if (_cameraBehaviourController)
+        if (CameraBehaviourController)
         {
-            _cameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
+            CameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
         }
     }
     public void EnableCharacterContext()
     {
-        _currentState = new CharacterStateFactory(this, CurrentState.PlayerInputManager, CurrentState.CharacterAnimationManager).GroundedState();
+        PlayerInputManager.EnableInputAction();
+
+        _currentState = new CharacterStateFactory(this, CurrentState.CharacterAnimationManager).GroundedState();
 
         _currentState.EnterState();
 
-        if (_cameraBehaviourController)
+        if (CameraBehaviourController)
         {
-            _cameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(1.00f, 0.80f, 0.00f);
+            CameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(1.00f, 0.80f, 0.00f);
         }
     }
     #endregion
@@ -588,8 +583,6 @@ public class CharacterContextManager : MonoBehaviour
     void Update()
     {
         _currentState.UpdateStates();
-
-        _cameraBehaviourController.CameraVerticalOffset(CameraTilt);
     }
     void LateUpdate()
     {
@@ -598,23 +591,23 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region RENDERING 
-    private void OnDrawGizmosSelected()
-    {
-#if UNITY_EDITOR
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(WallCheckerPoint.position, new Vector2(0.06f, 0.15f));
-        Gizmos.DrawWireCube(transform.position, new Vector2(0.40f, 0.04f));
-#endif
-    }
-    void OnGUI()
-    {
-        GUILayout.Label("");
-        //GUILayout.Label("");
-        //GUILayout.Label("");
-        GUILayout.Label("Dash On Cool DOwn: " + DashOnCoolDown);
-        GUILayout.Label("Current State: " + CurrentState.ToString());
-        GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
-    }
+//    private void OnDrawGizmosSelected()
+//    {
+//#if UNITY_EDITOR
+//        Gizmos.color = Color.red;
+//        Gizmos.DrawWireCube(WallCheckerPoint.position, new Vector2(0.06f, 0.15f));
+//        Gizmos.DrawWireCube(transform.position, new Vector2(0.40f, 0.04f));
+//#endif
+//    }
+    //void OnGUI()
+    //{
+    //    GUILayout.Label("");
+    //    GUILayout.Label("");
+    //    GUILayout.Label("");
+    //    GUILayout.Label("Dash On Cool DOwn: " + DashOnCoolDown);
+    //    GUILayout.Label("Current State: " + CurrentState.ToString());
+    //    GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
+    //}
     #endregion
 
     #region DECOMMISSIONING

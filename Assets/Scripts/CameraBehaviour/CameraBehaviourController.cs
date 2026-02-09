@@ -9,18 +9,14 @@ public class CameraBehaviourController : MonoBehaviour
 
     private float _cameraVerticalOffset;
 
+    public int CameraTilt { get; set; }
     public CinemachinePositionComposer CinemachinePositionComposer { get =>  _cameraPositionComposer; }
 
-    private void Awake()
+    public void CameraVerticalOffset()
     {
-        GameContextManager.OnRunOrPauseStateChanged.AddListener((value) => { this.enabled = value; });
-    }
+        _cameraVerticalOffset += Time.deltaTime * CameraTilt;
 
-    public void CameraVerticalOffset(float input)
-    {
-        _cameraVerticalOffset += Time.deltaTime * input;
-
-        if (input == 0)
+        if (CameraTilt == 0)
         {
             _cameraVerticalOffset = Mathf.Lerp(_cameraVerticalOffset, 0.00f, Time.deltaTime * 22.00f);
         }

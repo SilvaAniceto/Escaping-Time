@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterResetState : CharacterAbstractState
 {
-    public CharacterResetState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterResetState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }
@@ -11,7 +11,6 @@ public class CharacterResetState : CharacterAbstractState
     {
         CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Kinematic;
         CharacterAnimationManager.SetDisabledAnimation();
-        PlayerInputManager.PlayerInputActions.Disable();
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.VerticalSpeed = 0.00f;

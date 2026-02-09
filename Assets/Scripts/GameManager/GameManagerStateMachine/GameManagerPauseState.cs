@@ -50,7 +50,9 @@ public class GameManagerPauseState : GameManagerAbstractState
 
     public override void CheckSwitchStates()
     {
-        if (GameContextManager.CharacterContextManager.CurrentState.PlayerInputManager.Cancel)
+        if (GameContextManager.PlayerInputManager == null) return;
+
+        if (GameContextManager.PlayerInputManager.Cancel)
         {
             SwitchState(GameContextManager.ExitState);
         }

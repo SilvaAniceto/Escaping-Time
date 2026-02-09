@@ -39,7 +39,7 @@ public class TimedPlatform : InteractableItem
             return;
         }
 
-        StartCoroutine(SetTimedPlatformBehaviour(characterContextManager.GameContextManager));
+        StartCoroutine(SetTimedPlatformBehaviour(GameContextManager.Instance));
     }
 
     IEnumerator SetTimedPlatformBehaviour(GameContextManager gameContextManager)

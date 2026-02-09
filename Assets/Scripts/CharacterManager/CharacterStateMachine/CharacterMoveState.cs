@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterMoveState : CharacterAbstractState
 {
-    public CharacterMoveState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterMoveState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = false;
     }
@@ -30,7 +30,7 @@ public class CharacterMoveState : CharacterAbstractState
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState() || CharacterContextManager.CurrentState == CharacterStateFactory.InteractionState())
         {
             CharacterAnimationManager.SetRunAnimation();
-            CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Walk", 0.192f);
+            CharacterContextManager.GameAudioManager.PlayCharacterSFX("Walk", 0.192f);
         }
     }
     public override void ExitState()

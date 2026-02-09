@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterWallJumpState : CharacterAbstractState
 {
-    public CharacterWallJumpState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterWallJumpState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory,CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }
@@ -14,8 +14,8 @@ public class CharacterWallJumpState : CharacterAbstractState
         CharacterContextManager.GravityUpwardSpeedOvertime = 0;
         CharacterContextManager.HorizontalSpeedOvertime = 0;
 
-        CharacterContextManager.GameContextManager.GameAudioManager.StopCharacterSFX();
-        CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Jump");
+        CharacterContextManager.GameAudioManager.StopCharacterSFX();
+        CharacterContextManager.GameAudioManager.PlayCharacterSFX("Jump");
     }
     public override void UpdateState()
     {

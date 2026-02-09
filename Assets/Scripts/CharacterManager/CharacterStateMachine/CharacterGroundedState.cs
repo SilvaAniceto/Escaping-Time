@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterGroundedState : CharacterAbstractState
 {
-    public CharacterGroundedState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterGroundedState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }
@@ -14,9 +14,7 @@ public class CharacterGroundedState : CharacterAbstractState
             CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
         }
 
-        PlayerInputManager.PlayerInputActions.Enable();
-
-        PlayerInputManager.ClearAirJumpCommandCombo();
+        CharacterContextManager.PlayerInputManager.ClearAirJumpCommandCombo();
 
         CharacterContextManager.EnableFixedJoint2D();
 

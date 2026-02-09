@@ -86,9 +86,15 @@ public class CharacterJumpCommand : ICharacterActionCommand
         
         if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState())
         {
-            if (_characterContextManager.CoyoteTime || _characterContextManager.DashOnCoolDown)
+            if (_characterContextManager.CoyoteTime)
             {
                 _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.JumpState());
+                return;
+            }
+
+            if (_characterContextManager.HasAirJump && _characterContextManager.AirJumpIsAllowed)
+            {
+                _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.AirJumpState());
             }
         }
         
@@ -217,42 +223,42 @@ public class CharacterCancelWallMoveCommand : ICharacterActionCommand
 
 public class CharacterCameraTiltUpDirectionCommand : ICharacterActionCommand
 {
-    private CharacterContextManager _characterContextManager;
+    private CameraBehaviourController _cameraBehaviourController;
 
-    public CharacterCameraTiltUpDirectionCommand(CharacterContextManager characterContextManager)
+    public CharacterCameraTiltUpDirectionCommand(CameraBehaviourController cameraBehaviourController)
     {
-        _characterContextManager = characterContextManager;
+        _cameraBehaviourController = cameraBehaviourController;
     }
     public void ExecuteCommand()
     {
-        _characterContextManager.CameraTilt = (int)ECameraTiltDirection.Up;
+        _cameraBehaviourController.CameraTilt = (int)ECameraTiltDirection.Up;
     }
 }
 
 public class CharacterCameraTiltDownDirectionCommand : ICharacterActionCommand
 {
-    private CharacterContextManager _characterContextManager;
+    private CameraBehaviourController _cameraBehaviourController;
 
-    public CharacterCameraTiltDownDirectionCommand(CharacterContextManager characterContextManager)
+    public CharacterCameraTiltDownDirectionCommand(CameraBehaviourController cameraBehaviourController)
     {
-        _characterContextManager = characterContextManager;
+        _cameraBehaviourController = cameraBehaviourController;
     }
     public void ExecuteCommand()
     {
-        _characterContextManager.CameraTilt = (int)ECameraTiltDirection.Down;
+        _cameraBehaviourController.CameraTilt = (int)ECameraTiltDirection.Down;
     }
 }
 
 public class CharacterCameraTiltNoneDirectionCommand : ICharacterActionCommand
 {
-    private CharacterContextManager _characterContextManager;
+    private CameraBehaviourController _cameraBehaviourController;
 
-    public CharacterCameraTiltNoneDirectionCommand(CharacterContextManager characterContextManager)
+    public CharacterCameraTiltNoneDirectionCommand(CameraBehaviourController cameraBehaviourController)
     {
-        _characterContextManager = characterContextManager;
+        _cameraBehaviourController = cameraBehaviourController;
     }
     public void ExecuteCommand()
     {
-        _characterContextManager.CameraTilt = (int)ECameraTiltDirection.None;
+        _cameraBehaviourController.CameraTilt = (int)ECameraTiltDirection.None;
     }
 }

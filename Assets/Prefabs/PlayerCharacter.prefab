@@ -470,7 +470,6 @@ GameObject:
   - component: {fileID: 8726534418584270069}
   - component: {fileID: 2176057719628083661}
   - component: {fileID: 6770176651829635004}
-  - component: {fileID: 1718575400619697547}
   - component: {fileID: 6991579637883874698}
   - component: {fileID: 4057470492026846897}
   m_Layer: 3
@@ -755,6 +754,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _characterGraphic: {fileID: 8436611043188997096}
+  OnResetState:
+    m_PersistentCalls:
+      m_Calls: []
   _hasInfinityDash: 0
   _hasInfinityAirJump: 0
   _hasInfinityWallMove: 0
@@ -770,18 +772,6 @@ MonoBehaviour:
   OnWallMovePowerStateChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1718575400619697547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6770176651829635003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f8c6df1b48355e489ac13582b6ff8a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6991579637883874698
 MonoBehaviour:
   m_ObjectHideFlags: 0

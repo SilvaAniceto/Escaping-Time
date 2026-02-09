@@ -75,7 +75,7 @@ public class DamagingObjectShooter : InteractableItem
         switch (interactionType)
         {
             case EInteractionType.Enter:
-                OnShootProjectile?.Invoke(characterContextManager.GameContextManager);
+                OnShootProjectile?.Invoke(GameContextManager.Instance);
                 break;
             case EInteractionType.Stay:
                 break;

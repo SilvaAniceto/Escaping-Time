@@ -15,7 +15,7 @@ public class GameContextManager : MonoBehaviour
     }
 
     #region STATIC FIELDS
-    private static GameContextManager instance;
+    public static GameContextManager Instance { get; private set; }
      
     public static UnityEvent<bool> OnRunOrPauseStateChanged = new UnityEvent<bool>();
     public static UnityEvent OnLoadSceneEnd = new UnityEvent();
@@ -35,32 +35,32 @@ public class GameContextManager : MonoBehaviour
     [Header("Game Save System")]
     [SerializeField] private GameSaveSystem _gameSaveSystem;
 
-    [Header("Game Audio Manager")]
-    [SerializeField] private GameAudioManager _gameAudioManager;
+    [Header("Game UI Manager")]
+    [SerializeField] private GameUIManager _gameUIManager;
 
-    [Header("Game Score Manager")]
-    [SerializeField] private GameScoreManager _scoreManager;    
+    [Header("Game Audio Manager")]
+    [SerializeField] private GameAudioManager _gameAudioManager;  
     #endregion
 
     #region PRIVATE FIELDS
     private GameManagerAbstractState _exitState;
     private GameManagerAbstractState _currentState;
-    private CharacterContextManager _characterContextManager;
-    private CameraBehaviourController _cameraBehaviourController;
     #endregion
 
     #region PROPERTIES
     public PlayeableCharacterSet PlayeableCharacterSet { get => _playeableCharacterSet; }
     public GameManagerAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public GameManagerAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
-    public CharacterContextManager CharacterContextManager { get => _characterContextManager; private set => _characterContextManager = value; }
+    public CharacterContextManager CharacterContextManager { get; private set; }
     public Vector2 CharacterHubStartPosition { get; set; }
-    public CameraBehaviourController CameraBehaviourController { get => _cameraBehaviourController; private set => _cameraBehaviourController = value; }
+    public CameraBehaviourController CameraBehaviourController { get; private set ; }
+
+    public PlayerInputManager PlayerInputManager { get; private set; }
 
     public GameSaveSystem SaveSystem { get => _gameSaveSystem; }
+    public GameUIManager GameUIManager { get => _gameUIManager; }
     public GameAudioManager GameAudioManager { get => _gameAudioManager; }
-    public GameScoreManager ScoreManager { get => _scoreManager; private set => _scoreManager = value; }
-    public GameUIManager GameUIManager { get; private set; }
+    public GameScoreManager ScoreManager { get; private set; }
     public List<GameLevelManager> GameLevelManagers { get; private set; } = new List<GameLevelManager>();    
     public string TargetScene { get; set; }
 
@@ -77,9 +77,9 @@ public class GameContextManager : MonoBehaviour
     #region DEFAULT METHODS
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
         }
         else
         {
@@ -88,7 +88,6 @@ public class GameContextManager : MonoBehaviour
 #if !UNITY_EDITOR
         _environment = Environment.GameContext;
         Screen.SetResolution(1920, 1080, true);
-        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 #endif
 
@@ -123,9 +122,9 @@ public class GameContextManager : MonoBehaviour
 
         GameContextAudioListener = GetComponentInChildren<AudioListener>();
 
-        TryGetComponent(out GameUIManager gameUIManager);
+        ScoreManager = new GameScoreManager();
 
-        GameUIManager = gameUIManager;
+        GameUIManager.Initialize(this);
 
         if (_environment == Environment.Development)
         {
@@ -133,9 +132,15 @@ public class GameContextManager : MonoBehaviour
 
             CameraBehaviourController = FindAnyObjectByType<CameraBehaviourController>();
 
-            CharacterContextManager?.InitializeCharacterContextManager(this, CameraBehaviourController, false);
+            PlayerInputManager = new PlayerInputManager(CharacterContextManager, CameraBehaviourController, new PlayerInputActions());
+
+            CharacterContextManager?.InitializeCharacterContextManager(PlayerInputManager, CameraBehaviourController, GameAudioManager, false);
+
+            CharacterContextManager.SetPowerUpCallBack(GameUIManager);
 
             ScoreManager.Initialize(this, false);
+
+            PlayerInputManager.Initialize();
 
             return;
         }
@@ -152,6 +157,8 @@ public class GameContextManager : MonoBehaviour
             {
                 SetTimer = value; 
             }
+
+            CameraBehaviourController.enabled = value;
         });
 
         DontDestroyOnLoad(gameObject);
@@ -164,6 +171,9 @@ public class GameContextManager : MonoBehaviour
     }
     private void Update()
     {
+        CameraBehaviourController?.CameraVerticalOffset();
+        PlayerInputManager?.UpdatePlayerInputManager();
+
         if (_environment == Environment.GameContext)
         {
             _currentState.UpdateStates();
@@ -173,21 +183,22 @@ public class GameContextManager : MonoBehaviour
         {
             ScoreManager.SetCurrentTimer();
         }
+
+        ScoreManager.OnLevelFinalScore?.Invoke();
     }
     void OnGUI()
     {
         GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
-#if UNITY_EDITOR
-        //GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
-        //GUILayout.Label("Current State: " + CurrentState.ToString());
-        //GUILayout.Label("-----------------------------------------------");
-        //if (CharacterContextManager != null)
-        //{
-        //    GUILayout.Label("Exit State: " + (CharacterContextManager.ExitState == null ? "" : CharacterContextManager.ExitState.ToString()));
-        //    GUILayout.Label("Current State: " + CharacterContextManager.CurrentState.ToString());
-        //    GUILayout.Label("Current Sub State: " + (CharacterContextManager.CurrentState.CurrentSubState != null ? CharacterContextManager.CurrentState.CurrentSubState.ToString() : ""));
-        //}
-#endif
+//#if UNITY_EDITOR
+//        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
+//        GUILayout.Label("Current State: " + CurrentState.ToString());
+//        GUILayout.Label("-----------------------------------------------");
+//        if (CharacterContextManager != null)
+//        {
+//            GUILayout.Label("Current State: " + CharacterContextManager.CurrentState.ToString());
+//            GUILayout.Label("Current Sub State: " + (CharacterContextManager.CurrentState.CurrentSubState != null ? CharacterContextManager.CurrentState.CurrentSubState.ToString() : ""));
+//        }
+//#endif
     }
     #endregion
 
@@ -224,7 +235,11 @@ public class GameContextManager : MonoBehaviour
             DontDestroyOnLoad(CameraBehaviourController.gameObject);
         }
 
-        CharacterContextManager.InitializeCharacterContextManager(this, CameraBehaviourController);
+        PlayerInputManager = new PlayerInputManager(CharacterContextManager, CameraBehaviourController, new PlayerInputActions());
+
+        CharacterContextManager.InitializeCharacterContextManager(PlayerInputManager, CameraBehaviourController, GameAudioManager);
+
+        CharacterContextManager.SetPowerUpCallBack(GameUIManager);
 
         CharacterHubStartPosition = Vector2.zero;
 
@@ -241,6 +256,8 @@ public class GameContextManager : MonoBehaviour
         });
 
         yield return new WaitForEndOfFrame();
+
+        PlayerInputManager.Initialize();
     }
     public void WaitFrameEnd(Action action)
     {
@@ -265,6 +282,12 @@ public class GameContextManager : MonoBehaviour
         {
             action();
         }
+    }
+    public void OnQuitToMainMenu()
+    {
+        PlayerInputManager = null;
+        Destroy(CameraBehaviourController.gameObject);
+        Destroy(CharacterContextManager.gameObject);
     }
     public void QuitGame()
     {

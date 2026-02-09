@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterAirJumpState : CharacterAbstractState
 {
-    public CharacterAirJumpState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterAirJumpState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, animationManager)
     {
         IsRootState = true;
     }
@@ -15,8 +15,8 @@ public class CharacterAirJumpState : CharacterAbstractState
 
         CharacterContextManager.AirJumpIsAllowed = false;
 
-        CharacterContextManager.GameContextManager.GameAudioManager.StopCharacterSFX();
-        CharacterContextManager.GameContextManager.GameAudioManager.PlayCharacterSFX("Air_Jump");
+        CharacterContextManager.GameAudioManager.StopCharacterSFX();
+        CharacterContextManager.GameAudioManager.PlayCharacterSFX("Air_Jump");
     }
     public override void UpdateState()
     {

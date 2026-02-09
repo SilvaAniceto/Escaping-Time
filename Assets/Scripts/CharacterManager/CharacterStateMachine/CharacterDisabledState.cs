@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterDisabledState : CharacterAbstractState
 {
-    public CharacterDisabledState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, PlayerInputManager inputManager, CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, inputManager, animationManager)
+    public CharacterDisabledState(CharacterContextManager currentContextManager, CharacterStateFactory stateFactory, /*PlayerInputManager inputManager,*/ CharacterAnimationManager animationManager) : base(currentContextManager, stateFactory, /*inputManager,*/ animationManager)
     {
         IsRootState = true;
     }
@@ -15,7 +15,6 @@ public class CharacterDisabledState : CharacterAbstractState
         }
 
         CharacterAnimationManager.SetDisabledAnimation();
-        PlayerInputManager.PlayerInputActions.Disable();
 
         CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Kinematic;
 

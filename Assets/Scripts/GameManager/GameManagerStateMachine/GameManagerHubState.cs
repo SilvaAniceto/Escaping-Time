@@ -7,11 +7,11 @@ public class GameManagerHubState : GameManagerAbstractState
 
     public override void EnterState()
     {
-        GameContextManager.GameUIManager.CharacterUIManager.SetHubUIObjects();
+        GameContextManager.GameUIManager.SetHubUIObjects();
 
-        GameContextManager.GameUIManager.CharacterUIManager.SetScoreDisplay(GameContextManager.ScoreManager.MasterScore);
+        GameContextManager.GameUIManager.SetScoreDisplay(GameContextManager.ScoreManager.MasterScore);
 
-        GameContextManager.GameUIManager.CharacterUIManager.gameObject.SetActive(true);
+        GameContextManager.GameUIManager.CharacterUIManager.SetActive(true);
 
         GameContextManager.OnHubState?.Invoke(GameContextManager);
 
@@ -41,7 +41,7 @@ public class GameManagerHubState : GameManagerAbstractState
             GameContextManager.SaveSystem.SaveGame();
         }
 
-        if (GameContextManager.CharacterContextManager.CurrentState.PlayerInputManager.Cancel)
+        if (GameContextManager.PlayerInputManager.Cancel)
         {
             GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
 
@@ -73,8 +73,7 @@ public class GameManagerHubState : GameManagerAbstractState
 
                 GameStateTransitionManager.OnFadeOutEnd.AddListener(() => 
                 {
-                    UnityEngine.Object.Destroy(GameContextManager.CameraBehaviourController.gameObject);
-                    UnityEngine.Object.Destroy(GameContextManager.CharacterContextManager.gameObject);
+                    GameContextManager.OnQuitToMainMenu();
 
                     System.Action action = () =>
                     {
