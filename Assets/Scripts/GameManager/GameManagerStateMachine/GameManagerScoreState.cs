@@ -29,18 +29,7 @@
 
     public override void UpdateState()
     {
-        if (GameContextManager.FinishSetLevelScore)
-        {
-            GameContextManager.GameUIManager.ConfirmActionButton.gameObject.SetActive(true);
 
-            GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.GameUIManager.ConfirmActionButton.gameObject);
-
-            if (GameUIManager.Confirm)
-            {
-                GameContextManager.FinishSetLevelScore = false;
-                GameContextManager.LoadLevel = true;
-            }
-        }
     }
 
     public override void ExitState()
@@ -56,11 +45,14 @@
 
     public override void CheckSwitchStates()
     {
-        if (GameContextManager.LoadLevel)
+        if (GameContextManager.GameUIManager.ConfirmActionButton.gameObject.activeInHierarchy)
         {
-            GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
+            if (GameUIManager.Confirm)
+            {
+                GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
 
-            SwitchState(GameManagerStateFactory.GameLoadingState());
+                SwitchState(GameManagerStateFactory.GameLoadingState());
+            }
         }
     }
 

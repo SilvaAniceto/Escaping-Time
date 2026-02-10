@@ -29,8 +29,6 @@ public class GameManagerRunState : GameManagerAbstractState
     public override void ExitState()
     {
         GameContextManager.GameUIManager.CharacterUIManager.gameObject.SetActive(false);
-
-        GameContextManager.SetLevelScore = false;
     }
 
     public override void CheckSwitchStates()
@@ -89,13 +87,6 @@ public class GameManagerRunState : GameManagerAbstractState
             });
 
             SwitchState(GameManagerStateFactory.GamePauseState());
-        }
-
-        if (GameContextManager.SetLevelScore)
-        {
-            GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
-
-            SwitchState(GameManagerStateFactory.GameScoreState());
         }
     }
 

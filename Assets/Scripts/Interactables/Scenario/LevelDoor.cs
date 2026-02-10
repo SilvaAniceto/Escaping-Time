@@ -127,7 +127,7 @@ public class LevelDoor : InteractableItem
         {
             yield return new WaitForSeconds(1.5f);
 
-            _gameContextManager.ScoreManager.SetFinalScore();
+            _gameContextManager.StartScoreState();
         }
     }
 }

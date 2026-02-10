@@ -70,8 +70,6 @@ public class GameContextManager : MonoBehaviour
     public bool InstantiateCharacter { get => CharacterContextManager == null && TargetScene != "MainMenu"; }
     public bool SetTimer { get; set; } = false;
     public bool LoadLevel { get; set; } = false;
-    public bool SetLevelScore { get; set; } = false;
-    public bool FinishSetLevelScore { get; set; } = false;
     #endregion
 
     #region DEFAULT METHODS
@@ -178,17 +176,15 @@ public class GameContextManager : MonoBehaviour
         {
             _currentState.UpdateStates();
         }
-
+        _currentState.UpdateStates();
         if (SetTimer)
         {
             ScoreManager.SetCurrentTimer();
         }
-
-        ScoreManager.OnLevelFinalScore?.Invoke();
     }
-    void OnGUI()
-    {
-        GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
+//    void OnGUI()
+//    {
+//        GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
 //#if UNITY_EDITOR
 //        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
 //        GUILayout.Label("Current State: " + CurrentState.ToString());
@@ -199,7 +195,7 @@ public class GameContextManager : MonoBehaviour
 //            GUILayout.Label("Current Sub State: " + (CharacterContextManager.CurrentState.CurrentSubState != null ? CharacterContextManager.CurrentState.CurrentSubState.ToString() : ""));
 //        }
 //#endif
-    }
+//    }
     #endregion
 
     #region SCENE MANAGEMENT
@@ -294,4 +290,11 @@ public class GameContextManager : MonoBehaviour
         Application.Quit();
     }
     #endregion
+
+    public void StartScoreState()
+    {
+        _currentState = new GameManagerStateFactory(this, GameUIManager).GameScoreState();
+        _exitState = new GameManagerStateFactory(this, GameUIManager).GameHubState();
+        _currentState.EnterState();
+    }
 }
