@@ -43,31 +43,39 @@ public class GameContextManager : MonoBehaviour
     #endregion
 
     #region PRIVATE FIELDS
+    private AudioListener _gameContextAudiolistener;
+
+    private GameScoreManager _gameScoreManager;
+
     private GameManagerAbstractState _exitState;
     private GameManagerAbstractState _currentState;
+
+    private CharacterContextManager _characterContextManager;
+    private CameraBehaviourController _cameraBehaviourController;
+
+    private PlayerInputManager _playerInputManager;
     #endregion
 
     #region PROPERTIES
     public PlayeableCharacterSet PlayeableCharacterSet { get => _playeableCharacterSet; }
     public GameManagerAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public GameManagerAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
-    public CharacterContextManager CharacterContextManager { get; private set; }
+    public CharacterContextManager CharacterContextManager { get => _characterContextManager; }
     public Vector2 CharacterHubStartPosition { get; set; }
-    public CameraBehaviourController CameraBehaviourController { get; private set ; }
 
-    public PlayerInputManager PlayerInputManager { get; private set; }
+    public PlayerInputManager PlayerInputManager { get => _playerInputManager; }
 
     public GameSaveSystem SaveSystem { get => _gameSaveSystem; }
     public GameUIManager GameUIManager { get => _gameUIManager; }
     public GameAudioManager GameAudioManager { get => _gameAudioManager; }
-    public GameScoreManager ScoreManager { get; private set; }
+    public GameScoreManager ScoreManager { get => _gameScoreManager; }
     public List<GameLevelManager> GameLevelManagers { get; private set; } = new List<GameLevelManager>();    
     public string TargetScene { get; set; }
 
     public EventSystem GameManagerEventSystem {  get => EventSystem.current; }
-    public AudioListener GameContextAudioListener { get; private set; }
+    public AudioListener GameContextAudioListener { get => _gameContextAudiolistener; }
 
-    public bool InstantiateCharacter { get => CharacterContextManager == null && TargetScene != "MainMenu"; }
+    public bool InstantiateCharacter { get => _characterContextManager == null && TargetScene != "MainMenu"; }
     public bool SetTimer { get; set; } = false;
     public bool LoadLevel { get; set; } = false;
     #endregion
@@ -89,65 +97,38 @@ public class GameContextManager : MonoBehaviour
         Application.targetFrameRate = 60;
 #endif
 
-        foreach (GameLevelManager levelManager in _gameLevelManagers)
-        {
-            ScriptableObject level = ScriptableObject.CreateInstance(typeof(GameLevelManager));
+        InstantiateLevelManagers();
 
-            ((GameLevelManager)level).State = GameLevelManager.EState.Closed;
+        _gameContextAudiolistener = GetComponentInChildren<AudioListener>();
 
-            ((GameLevelManager)level).LevelSceneName = levelManager.LevelSceneName;
+        _gameScoreManager = new GameScoreManager();
 
-            ((GameLevelManager)level).LevelUnlockScore = levelManager.LevelUnlockScore;
-
-            ((GameLevelManager)level).Tier3TargetScore = levelManager.Tier3TargetScore;
-            ((GameLevelManager)level).Tier2TargetScore = levelManager.Tier2TargetScore;
-            ((GameLevelManager)level).Tier1TargetScore = levelManager.Tier1TargetScore;
-
-            ((GameLevelManager)level).ClassficationTierReached = EClassficationTier.None;
-
-            ((GameLevelManager)level).MaxGemScore = levelManager.MaxGemScore;
-            ((GameLevelManager)level).MaxHourglassScore = levelManager.MaxHourglassScore;
-
-            ((GameLevelManager)level).CurrentGemScore = 0;
-            ((GameLevelManager)level).CurrentHourglassScore = 0;
-
-            ((GameLevelManager)level).MaxGemScoreReached = 0;
-            ((GameLevelManager)level).MaxHourglassScoreReached = 0;
-            ((GameLevelManager)level).MaxLevelScoreReached = 0;
-
-            GameLevelManagers.Add((GameLevelManager)level);
-        }
-
-        GameContextAudioListener = GetComponentInChildren<AudioListener>();
-
-        ScoreManager = new GameScoreManager();
-
-        GameUIManager.Initialize(this);
+        _gameUIManager.Initialize(this);
 
         if (_environment == Environment.Development)
         {
-            CharacterContextManager = FindAnyObjectByType<CharacterContextManager>();
+            _characterContextManager = FindAnyObjectByType<CharacterContextManager>();
 
-            CameraBehaviourController = FindAnyObjectByType<CameraBehaviourController>();
+            _cameraBehaviourController = FindAnyObjectByType<CameraBehaviourController>();
 
-            PlayerInputManager = new PlayerInputManager(CharacterContextManager, CameraBehaviourController, new PlayerInputActions());
+            _playerInputManager = new PlayerInputManager(_characterContextManager, _cameraBehaviourController, new PlayerInputActions());
 
-            CharacterContextManager?.InitializeCharacterContextManager(PlayerInputManager, CameraBehaviourController, GameAudioManager, false);
+            _characterContextManager?.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController, _gameAudioManager, false);
 
-            CharacterContextManager.SetPowerUpCallBack(GameUIManager);
+            _characterContextManager.SetPowerUpCallBack(_gameUIManager);
 
-            ScoreManager.Initialize(this, false);
+            _gameScoreManager.Initialize(this, false);
 
-            PlayerInputManager.Initialize();
+            _playerInputManager.Initialize();
 
             return;
         }
 
-        ScoreManager.Initialize(this);
+        _gameScoreManager.Initialize(this);
 
-        _gameSaveSystem.Initialize(GameUIManager, this);
+        _gameSaveSystem.Initialize(_gameUIManager, this);
 
-        _currentState = new GameManagerStateFactory(this, GameUIManager).GameMainMenuState();
+        _currentState = new GameManagerStateFactory(this, _gameUIManager).GameMainMenuState();
 
         OnRunOrPauseStateChanged.AddListener((value) => 
         {
@@ -156,7 +137,7 @@ public class GameContextManager : MonoBehaviour
                 SetTimer = value; 
             }
 
-            CameraBehaviourController.enabled = value;
+            _cameraBehaviourController.enabled = value;
         });
 
         DontDestroyOnLoad(gameObject);
@@ -169,17 +150,17 @@ public class GameContextManager : MonoBehaviour
     }
     private void Update()
     {
-        CameraBehaviourController?.CameraVerticalOffset();
-        PlayerInputManager?.UpdatePlayerInputManager();
+        _cameraBehaviourController?.CameraVerticalOffset();
+        _playerInputManager?.UpdatePlayerInputManager();
 
         if (_environment == Environment.GameContext)
         {
             _currentState.UpdateStates();
         }
-        _currentState.UpdateStates();
+
         if (SetTimer)
         {
-            ScoreManager.SetCurrentTimer();
+            _gameScoreManager.SetCurrentTimer();
         }
     }
 //    void OnGUI()
@@ -212,48 +193,48 @@ public class GameContextManager : MonoBehaviour
 
         yield return new WaitForSeconds(5.00f);
 
-        SaveSystem.LoadProfileDataToContext(this);
+        _gameSaveSystem.LoadProfileDataToContext(this);
 
         OnLoadSceneEnd?.Invoke();
     }
     IEnumerator StartInstantiateCharacter()
     {
-        CharacterContextManager = Instantiate(PlayeableCharacterSet.CharacterContextManager, Vector3.zero, Quaternion.identity);
+        _characterContextManager = Instantiate(PlayeableCharacterSet.CharacterContextManager, Vector3.zero, Quaternion.identity);
 
-        GameContextAudioListener.enabled = false;
+        _gameContextAudiolistener.enabled = false;
 
-        DontDestroyOnLoad(CharacterContextManager.gameObject);
+        DontDestroyOnLoad(_characterContextManager.gameObject);
 
-        if (CameraBehaviourController == null)
+        if (_cameraBehaviourController == null)
         {
-            CameraBehaviourController = Instantiate(PlayeableCharacterSet.CameraBehaviourController);
-            CameraBehaviourController.SetCinemachineTarget(CharacterContextManager.CameraTarget);
-            DontDestroyOnLoad(CameraBehaviourController.gameObject);
+            _cameraBehaviourController = Instantiate(PlayeableCharacterSet.CameraBehaviourController);
+            _cameraBehaviourController.SetCinemachineTarget(_characterContextManager.CameraTarget);
+            DontDestroyOnLoad(_cameraBehaviourController.gameObject);
         }
 
-        PlayerInputManager = new PlayerInputManager(CharacterContextManager, CameraBehaviourController, new PlayerInputActions());
+        _playerInputManager = new PlayerInputManager(_characterContextManager, _cameraBehaviourController, new PlayerInputActions());
 
-        CharacterContextManager.InitializeCharacterContextManager(PlayerInputManager, CameraBehaviourController, GameAudioManager);
+        _characterContextManager.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController, _gameAudioManager);
 
-        CharacterContextManager.SetPowerUpCallBack(GameUIManager);
+        _characterContextManager.SetPowerUpCallBack(_gameUIManager);
 
         CharacterHubStartPosition = Vector2.zero;
 
         GameStateTransitionManager.OnFadeInStart.AddListener(() =>
         {
-            CharacterContextManager.EnableCharacterContext();
+            _characterContextManager.EnableCharacterContext();
         });
 
         OnRunOrPauseStateChanged.AddListener((value) =>
         {
-            CharacterContextManager.enabled = value;
-            CharacterContextManager.Rigidbody.bodyType = value ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
-            CharacterContextManager.CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = value;
+            _characterContextManager.enabled = value;
+            _characterContextManager.Rigidbody.bodyType = value ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
+            _characterContextManager.CurrentState.CharacterAnimationManager.CharacterAnimator.enabled = value;
         });
 
         yield return new WaitForEndOfFrame();
 
-        PlayerInputManager.Initialize();
+        _playerInputManager.Initialize();
     }
     public void WaitFrameEnd(Action action)
     {
@@ -281,20 +262,51 @@ public class GameContextManager : MonoBehaviour
     }
     public void OnQuitToMainMenu()
     {
-        PlayerInputManager = null;
-        Destroy(CameraBehaviourController.gameObject);
-        Destroy(CharacterContextManager.gameObject);
+        _playerInputManager = null;
+        Destroy(_cameraBehaviourController.gameObject);
+        Destroy(_characterContextManager.gameObject);
     }
     public void QuitGame()
     {
         Application.Quit();
     }
     #endregion
+    
+    public void InstantiateLevelManagers()
+    {
+        foreach (GameLevelManager levelManager in _gameLevelManagers)
+        {
+            ScriptableObject level = ScriptableObject.CreateInstance(typeof(GameLevelManager));
 
+            ((GameLevelManager)level).State = GameLevelManager.EState.Closed;
+
+            ((GameLevelManager)level).LevelSceneName = levelManager.LevelSceneName;
+
+            ((GameLevelManager)level).LevelUnlockScore = levelManager.LevelUnlockScore;
+
+            ((GameLevelManager)level).Tier3TargetScore = levelManager.Tier3TargetScore;
+            ((GameLevelManager)level).Tier2TargetScore = levelManager.Tier2TargetScore;
+            ((GameLevelManager)level).Tier1TargetScore = levelManager.Tier1TargetScore;
+
+            ((GameLevelManager)level).ClassficationTierReached = EClassficationTier.None;
+
+            ((GameLevelManager)level).MaxGemScore = levelManager.MaxGemScore;
+            ((GameLevelManager)level).MaxHourglassScore = levelManager.MaxHourglassScore;
+
+            ((GameLevelManager)level).CurrentGemScore = 0;
+            ((GameLevelManager)level).CurrentHourglassScore = 0;
+
+            ((GameLevelManager)level).MaxGemScoreReached = 0;
+            ((GameLevelManager)level).MaxHourglassScoreReached = 0;
+            ((GameLevelManager)level).MaxLevelScoreReached = 0;
+
+            GameLevelManagers.Add((GameLevelManager)level);
+        }
+    }
     public void StartScoreState()
     {
-        _currentState = new GameManagerStateFactory(this, GameUIManager).GameScoreState();
-        _exitState = new GameManagerStateFactory(this, GameUIManager).GameHubState();
+        _currentState = new GameManagerStateFactory(this, _gameUIManager).GameScoreState();
+        _exitState = new GameManagerStateFactory(this, _gameUIManager).GameHubState();
         _currentState.EnterState();
     }
 }
