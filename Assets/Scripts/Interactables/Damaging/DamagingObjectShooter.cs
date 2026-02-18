@@ -137,10 +137,10 @@ public class DamagingObjectShooter : InteractableItem
         DamagingObjects[_projectileIndex].transform.localScale = Vector3.one * 1.6f;
         DamagingObjects[_projectileIndex].gameObject.SetActive(true);
 
-        gameContextManager.GameAudioManager.StopSFX(AudioSource);
-        gameContextManager.GameAudioManager.PlaySFX("Fire_Shot", AudioSource);
+        GameAudioManager.Instance.StopSFX(AudioSource);
+        GameAudioManager.Instance.PlaySFX("Fire_Shot", AudioSource);
 
-        yield return new WaitForSeconds(gameContextManager.GameAudioManager.AudioClipLength("Fire_Shot") * 0.15f);
+        yield return new WaitForSeconds(GameAudioManager.Instance.AudioClipLength("Fire_Shot") * 0.15f);
 
         DamagingObjects[_projectileIndex].transform.localScale = Vector3.one * 2.0f;
         DamagingObjects[_projectileIndex].Enable = true;
@@ -171,10 +171,10 @@ public class DamagingObjectShooter : InteractableItem
             shooter.DamagingObjects[_projectileIndex].transform.localScale = Vector3.one * 1.6f;
             shooter.DamagingObjects[_projectileIndex].gameObject.SetActive(true);
 
-            gameContextManager.GameAudioManager.StopSFX(shooter.AudioSource);
-            gameContextManager.GameAudioManager.PlaySFX("Fire_Shot", shooter.AudioSource);
+            GameAudioManager.Instance.StopSFX(shooter.AudioSource);
+            GameAudioManager.Instance.PlaySFX("Fire_Shot", shooter.AudioSource);
 
-            yield return new WaitForSeconds(gameContextManager.GameAudioManager.AudioClipLength("Fire_Shot") * 0.15f);
+            yield return new WaitForSeconds(GameAudioManager.Instance.AudioClipLength("Fire_Shot") * 0.15f);
 
             shooter.DamagingObjects[_projectileIndex].transform.localScale = Vector3.one * 2.0f;
             shooter.DamagingObjects[_projectileIndex].Enable = true;

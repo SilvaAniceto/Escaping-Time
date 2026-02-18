@@ -14,20 +14,18 @@ public enum EGameState
 public class GameManagerStateFactory
 {
     GameContextManager _gameContextManager;
-    GameUIManager _gameUIInputsManager;
     Dictionary<EGameState, GameManagerAbstractState> _states = new Dictionary<EGameState, GameManagerAbstractState>();
 
-    public GameManagerStateFactory(GameContextManager currentContextManager, GameUIManager gameUIInputsManager)
+    public GameManagerStateFactory(GameContextManager currentContextManager)
     {
         _gameContextManager = currentContextManager;
-        _gameUIInputsManager = gameUIInputsManager;
-        _states[EGameState.MainMenu] = new GameManagerMainMenuState(_gameContextManager, this, _gameUIInputsManager);
-        _states[EGameState.SaveMenu] = new GameManagerSaveMenuState(_gameContextManager, this, _gameUIInputsManager);
-        _states[EGameState.Loading] = new GameManagerLoadingState(_gameContextManager, this, _gameUIInputsManager);
-        _states[EGameState.Running] = new GameManagerRunState(_gameContextManager, this, _gameUIInputsManager);
-        _states[EGameState.Paused] = new GameManagerPauseState(_gameContextManager, this, _gameUIInputsManager);
-        _states[EGameState.Hub] = new GameManagerHubState(_gameContextManager, this, _gameUIInputsManager);
-        _states[EGameState.ScoreMenu] = new GameManagerScoreState(_gameContextManager, this, _gameUIInputsManager);
+        _states[EGameState.MainMenu] = new GameManagerMainMenuState(_gameContextManager, this);
+        _states[EGameState.SaveMenu] = new GameManagerSaveMenuState(_gameContextManager, this);
+        _states[EGameState.Loading] = new GameManagerLoadingState(_gameContextManager, this);
+        _states[EGameState.Running] = new GameManagerRunState(_gameContextManager, this);
+        _states[EGameState.Paused] = new GameManagerPauseState(_gameContextManager, this);
+        _states[EGameState.Hub] = new GameManagerHubState(_gameContextManager, this);
+        _states[EGameState.ScoreMenu] = new GameManagerScoreState(_gameContextManager, this);
     }
 
     public GameManagerMainMenuState GameMainMenuState()

@@ -35,10 +35,6 @@ public class CharacterContextManager : MonoBehaviour
 
     public CameraBehaviourController CameraBehaviourController { get; private set; }
 
-    public GameUIManager GameUIManager { get ; private set; }
-
-    public GameAudioManager GameAudioManager { get; private set; }
-    
     public IInteractable Interactable { get; set; }
 
     #region STATE CALLBACK
@@ -126,7 +122,7 @@ public class CharacterContextManager : MonoBehaviour
             };
 
             WaitSeconds(tempAirJumpAction, coolDown);
-            GameUIManager.SetOvertimeDashPowerUpUI(coolDown, this);
+            GameUIManager.Instance.SetOvertimeDashPowerUpUI(coolDown, this);
         }
     }
     #endregion
@@ -203,7 +199,7 @@ public class CharacterContextManager : MonoBehaviour
             };
 
             WaitSeconds(tempAirJumpAction, coolDown);
-            GameUIManager.SetOvertimeAirJumpPowerUpUI(coolDown, this);
+            GameUIManager.Instance.SetOvertimeAirJumpPowerUpUI(coolDown, this);
         }
     }
     #endregion
@@ -278,7 +274,7 @@ public class CharacterContextManager : MonoBehaviour
             };
 
             WaitSeconds(tempAirJumpAction, coolDown);
-            GameUIManager.SetOvertimeWallMovePowerUpUI(coolDown, this);
+            GameUIManager.Instance.SetOvertimeWallMovePowerUpUI(coolDown, this);
         }
     }
     #endregion
@@ -290,13 +286,11 @@ public class CharacterContextManager : MonoBehaviour
     [HideInInspector] public UnityEvent<string> OnDashPowerStateChange = new UnityEvent<string>();
     [HideInInspector] public UnityEvent<string> OnWallMovePowerStateChange = new UnityEvent<string>();
 
-    public void SetPowerUpCallBack(GameUIManager gameUIManager)
+    public void SetPowerUpCallBack()
     {
-        GameUIManager = gameUIManager;
-
-        OnAirJumpPowerStateChange.AddListener(gameUIManager.SetAirJumpPowerUpUI);
-        OnDashPowerStateChange.AddListener(gameUIManager.SetDashPowerUpUI);
-        OnWallMovePowerStateChange.AddListener(gameUIManager.SetWallMovePowerUpUI);
+        OnAirJumpPowerStateChange.AddListener(GameUIManager.Instance.SetAirJumpPowerUpUI);
+        OnDashPowerStateChange.AddListener(GameUIManager.Instance.SetDashPowerUpUI);
+        OnWallMovePowerStateChange.AddListener(GameUIManager.Instance.SetWallMovePowerUpUI);
     }
     public void DispatchPowerUpInteractableRecharge()
     {
@@ -400,11 +394,10 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region INITIALIZATION
-    public void InitializeCharacterContextManager(PlayerInputManager playerInputManager, CameraBehaviourController cameraBehaviourController, GameAudioManager gameAudioManager, bool isGameContext = true)
+    public void InitializeCharacterContextManager(PlayerInputManager playerInputManager, CameraBehaviourController cameraBehaviourController, bool isGameContext = true)
     {
         PlayerInputManager = playerInputManager;
         CameraBehaviourController = cameraBehaviourController;
-        GameAudioManager = gameAudioManager;
 
         Rigidbody = GetComponent<Rigidbody2D>();
         FixedJoint2D = GetComponent<FixedJoint2D>();

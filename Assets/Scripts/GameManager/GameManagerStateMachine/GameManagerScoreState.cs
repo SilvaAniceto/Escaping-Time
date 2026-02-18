@@ -1,30 +1,13 @@
 ﻿public class GameManagerScoreState : GameManagerAbstractState
 {
-    public GameManagerScoreState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory, GameUIManager gameUIInputsManager) : base(gameContextManager, gameManagerStateFactory, gameUIInputsManager)
+    public GameManagerScoreState(GameContextManager gameContextManager, GameManagerStateFactory gameManagerStateFactory) : base(gameContextManager, gameManagerStateFactory)
     {
         IsRootState = true;
     }
 
     public override void EnterState()
     {
-        GameContextManager.GameUIManager.ScorePanel.SetActive(true);
-
-        GameContextManager.ScoreManager.SetScoreManager();
-
-        GameContextManager.TargetScene = "Level_Hub";
-
-        GameContextManager.GameUIManager.ConfirmActionButton.onClick.RemoveAllListeners();
-        GameContextManager.GameUIManager.ConfirmActionButton.onClick.AddListener(() =>
-        {
-            GameContextManager.GameAudioManager.PlaySFX("Menu_Click");
-
-            System.Action action = () =>
-            {
-                GameUIManager.SetConfirmAction();
-            };
-
-            GameContextManager.WaitSeconds(action, GameContextManager.GameAudioManager.AudioClipLength("Menu_Click"));
-        });
+        GameContextManager.OnEnterScoreState();
     }
 
     public override void UpdateState()
@@ -34,20 +17,14 @@
 
     public override void ExitState()
     {
-        GameContextManager.GameUIManager.ScorePanel.SetActive(false);
-        GameContextManager.LoadLevel = false;
-        GameContextManager.GameUIManager.ConfirmActionButton.onClick.RemoveAllListeners();
-        GameContextManager.GameUIManager.ConfirmActionButton.gameObject.SetActive(false);
-        GameUIManager.SetConfirmAction();
-        GameContextManager.SaveSystem.SaveGame();
-        GameContextManager.ScoreManager.ResetPlayerScorePoints();
+        GameContextManager.OnExitScoreState();
     }
 
     public override void CheckSwitchStates()
     {
-        if (GameContextManager.GameUIManager.ConfirmActionButton.gameObject.activeInHierarchy)
+        if (GameUIManager.Instance.ConfirmActionButton.gameObject.activeInHierarchy)
         {
-            if (GameUIManager.Confirm)
+            if (GameUIManager.Instance.Confirm)
             {
                 GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
 

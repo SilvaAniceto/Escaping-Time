@@ -6,6 +6,8 @@ using UnityEngine.Audio;
 
 public class GameAudioManager : MonoBehaviour
 {
+    public static GameAudioManager Instance;
+
     #region INTERNAL CLASSES
     [System.Serializable]
     public class GameSounds
@@ -49,6 +51,14 @@ public class GameAudioManager : MonoBehaviour
     [SerializeField] private GameSounds[] _gameSounds;
 
     private List<PowerUPCounterSFX> _powerUpCounterSFX = new List<PowerUPCounterSFX>();
+
+    public void Initialize()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
 
     #region ENQUEUEMENT SOUND MANAGEMENT
     public void CreateEnqueuedPowerUpSFX(string name, float duration, UnityEngine.UI.Image powerUpImage, bool lerpPitch = false)

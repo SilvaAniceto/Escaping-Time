@@ -21,9 +21,9 @@ public class Hourglass : InteractableItem
     {
         gameObject.SetActive(false);
 
-        GameContextManager.Instance.ScoreManager.AddCollectedHourglass();
+        GameScoreManager.Instance.AddCollectedHourglass();
 
-        characterContextManager.GameAudioManager.StopSFX();
-        characterContextManager.GameAudioManager.PlaySFX("Hourglass_Collect");
+        GameAudioManager.Instance.StopSFX();
+        GameAudioManager.Instance.PlaySFX("Hourglass_Collect");
     }
 }

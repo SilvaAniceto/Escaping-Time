@@ -20,8 +20,8 @@ public class CharacterDashState : CharacterAbstractState
 
         CharacterContextManager.DashOnCoolDown = true;
 
-        CharacterContextManager.GameAudioManager.StopCharacterSFX();
-        CharacterContextManager.GameAudioManager.PlayCharacterSFX("Dash");
+        GameAudioManager.Instance.StopCharacterSFX();
+        GameAudioManager.Instance.PlayCharacterSFX("Dash");
     }
     public override void UpdateState()
     {

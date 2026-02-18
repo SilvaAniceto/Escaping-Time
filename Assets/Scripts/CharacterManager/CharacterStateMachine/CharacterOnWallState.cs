@@ -44,7 +44,7 @@ public class CharacterOnWallState : CharacterAbstractState
     public override void LateUpdateState()
     {
         CharacterAnimationManager.SetOnWallAnimation();
-        CharacterContextManager.GameAudioManager.PlayCharacterSFX("OnWall", 0.062f);
+        GameAudioManager.Instance.PlayCharacterSFX("OnWall", 0.062f);
     }
 
     public override void ExitState()

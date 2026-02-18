@@ -18,7 +18,6 @@ public class HubDoor : InteractableItem
     [SerializeField] private Sprite _brassTrophy;
 
     public GameLevelManager LevelManager { get; private set; }
-    public GameContextManager GameContextManager { get; private set; }
 
     public override void Awake()
     {
@@ -29,11 +28,9 @@ public class HubDoor : InteractableItem
 
         GameContextManager.OnHubState.AddListener(SetHubDoor);
     }
-    private void SetHubDoor(GameContextManager gameContextManager)
+    private void SetHubDoor()
     {
-        GameContextManager = gameContextManager;
-
-        LevelManager = GameContextManager.GameLevelManagers.Find(x => x.LevelSceneName == _levelSceneName);
+        LevelManager = GameContextManager.Instance.GameLevelManagers.Find(x => x.LevelSceneName == _levelSceneName);
 
         _trophy.transform.parent.gameObject.SetActive(false);
         _gemScoreText.transform.parent.gameObject.SetActive(false);
@@ -79,30 +76,30 @@ public class HubDoor : InteractableItem
     {
         if (LevelManager.State == GameLevelManager.EState.Open || LevelManager.State == GameLevelManager.EState.Finished)
         {
-            GameContextManager.CharacterContextManager.DisableCharacterContext();
-            GameContextManager.TargetScene = LevelManager.LevelSceneName;
-            GameContextManager.ScoreManager.LevelManager = LevelManager;
-            GameContextManager.CharacterHubStartPosition = transform.position;
-            GameContextManager.ScoreManager.ResetPlayerScorePoints();
+            GameContextManager.Instance.CharacterContextManager.DisableCharacterContext();
+            GameContextManager.Instance.TargetScene = LevelManager.LevelSceneName;
+            GameScoreManager.Instance.LevelManager = LevelManager;
+            GameContextManager.Instance.CharacterHubStartPosition = transform.position;
+            GameScoreManager.Instance.ResetPlayerScorePoints();
 
             GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
             {
-                GameContextManager.CharacterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
+                GameContextManager.Instance.CharacterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
             });
 
             GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
             {
-                GameContextManager.LoadLevel = true;
-                GameContextManager.CharacterContextManager.transform.position = Vector2.zero;
+                GameContextManager.Instance.LoadLevel = true;
+                GameContextManager.Instance.CharacterContextManager.transform.position = Vector2.zero;
             });
 
             GameStateTransitionManager.FadeOut();
 
-            GameContextManager.GameAudioManager.StopFadedBGM(0.0f, 1.5f);
+            GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
         }
         else
         {
-            if (GameContextManager.ScoreManager.MasterScore >= LevelManager.LevelUnlockScore)
+            if (GameScoreManager.Instance.MasterScore >= LevelManager.LevelUnlockScore)
             {
                 Animator.Play("Opening");
             }
@@ -163,6 +160,6 @@ public class HubDoor : InteractableItem
 
     public void SetDoorSFX()
     {
-        GameContextManager.GameAudioManager.PlaySFX("Door");
+        GameAudioManager.Instance.PlaySFX("Door");
     }
 }

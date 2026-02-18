@@ -26,8 +26,6 @@ public class MovingPlatform : InteractableItem
     #endregion
 
     #region PRIVATE FIELDS
-    private GameContextManager _gameContextManager;
-
     private Vector3 _startPosition;
     private Vector3 _currentTargetPosition;
     private Vector3 _targetDirection;
@@ -44,8 +42,6 @@ public class MovingPlatform : InteractableItem
     public override void Awake()
     {
         base.Awake();
-
-        _gameContextManager = FindAnyObjectByType<GameContextManager>();
 
         _startPosition = transform.position;
         _targetPoint.GetComponent<SpriteRenderer>().enabled = false;
@@ -67,7 +63,7 @@ public class MovingPlatform : InteractableItem
     }
     private void Start()
     {
-        _gameContextManager.CharacterContextManager.OnResetState.AddListener(ResetMovingPlatform);        
+        GameContextManager.Instance.CharacterContextManager.OnResetState.AddListener(ResetMovingPlatform);        
     }
     private void Update()
     {
@@ -174,10 +170,10 @@ public class MovingPlatform : InteractableItem
     }
     IEnumerator ScheduledStart()
     {
-        _gameContextManager.GameAudioManager.StopSFX(AudioSource);
-        _gameContextManager.GameAudioManager.PlaySFX("Enter_Platform", AudioSource);
+        GameAudioManager.Instance.StopSFX(AudioSource);
+        GameAudioManager.Instance.PlaySFX("Enter_Platform", AudioSource);
 
-        yield return new WaitForSeconds(_gameContextManager.GameAudioManager.AudioClipLength("Enter_Platform"));
+        yield return new WaitForSeconds(GameAudioManager.Instance.AudioClipLength("Enter_Platform"));
 
         Activated = true;
     }

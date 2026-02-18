@@ -19,7 +19,7 @@ public class GameContextManager : MonoBehaviour
      
     public static UnityEvent<bool> OnRunOrPauseStateChanged = new UnityEvent<bool>();
     public static UnityEvent OnLoadSceneEnd = new UnityEvent();
-    public static UnityEvent<GameContextManager> OnHubState = new UnityEvent<GameContextManager>();
+    public static UnityEvent OnHubState = new UnityEvent();
     #endregion
 
     #region INSPECTOR FIELDS
@@ -65,15 +65,10 @@ public class GameContextManager : MonoBehaviour
 
     public PlayerInputManager PlayerInputManager { get => _playerInputManager; }
 
-    public GameSaveSystem SaveSystem { get => _gameSaveSystem; }
-    public GameUIManager GameUIManager { get => _gameUIManager; }
-    public GameAudioManager GameAudioManager { get => _gameAudioManager; }
-    public GameScoreManager ScoreManager { get => _gameScoreManager; }
     public List<GameLevelManager> GameLevelManagers { get; private set; } = new List<GameLevelManager>();    
     public string TargetScene { get; set; }
 
     public EventSystem GameManagerEventSystem {  get => EventSystem.current; }
-    public AudioListener GameContextAudioListener { get => _gameContextAudiolistener; }
 
     public bool InstantiateCharacter { get => _characterContextManager == null && TargetScene != "MainMenu"; }
     public bool SetTimer { get; set; } = false;
@@ -91,56 +86,26 @@ public class GameContextManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
 #if !UNITY_EDITOR
         _environment = Environment.GameContext;
         Screen.SetResolution(1920, 1080, true);
         Application.targetFrameRate = 60;
 #endif
 
-        InstantiateLevelManagers();
-
         _gameContextAudiolistener = GetComponentInChildren<AudioListener>();
 
-        _gameScoreManager = new GameScoreManager();
+        InstantiateLevelManagers();
 
-        _gameUIManager.Initialize(this);
-
-        if (_environment == Environment.Development)
+        switch (_environment)
         {
-            _characterContextManager = FindAnyObjectByType<CharacterContextManager>();
-
-            _cameraBehaviourController = FindAnyObjectByType<CameraBehaviourController>();
-
-            _playerInputManager = new PlayerInputManager(_characterContextManager, _cameraBehaviourController, new PlayerInputActions());
-
-            _characterContextManager?.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController, _gameAudioManager, false);
-
-            _characterContextManager.SetPowerUpCallBack(_gameUIManager);
-
-            _gameScoreManager.Initialize(this, false);
-
-            _playerInputManager.Initialize();
-
-            return;
+            case Environment.Development:
+                StartDevelopmentEnvironment();
+                break;
+            case Environment.GameContext:
+                StartGameContextEnvironment();
+                break;
         }
-
-        _gameScoreManager.Initialize(this);
-
-        _gameSaveSystem.Initialize(_gameUIManager, this);
-
-        _currentState = new GameManagerStateFactory(this, _gameUIManager).GameMainMenuState();
-
-        OnRunOrPauseStateChanged.AddListener((value) => 
-        {
-            if (TargetScene != "Level_Hub")
-            {
-                SetTimer = value; 
-            }
-
-            _cameraBehaviourController.enabled = value;
-        });
-
-        DontDestroyOnLoad(gameObject);
     }
     private void Start()
     {
@@ -163,20 +128,20 @@ public class GameContextManager : MonoBehaviour
             _gameScoreManager.SetCurrentTimer();
         }
     }
-//    void OnGUI()
-//    {
-//        GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
-//#if UNITY_EDITOR
-//        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
-//        GUILayout.Label("Current State: " + CurrentState.ToString());
-//        GUILayout.Label("-----------------------------------------------");
-//        if (CharacterContextManager != null)
-//        {
-//            GUILayout.Label("Current State: " + CharacterContextManager.CurrentState.ToString());
-//            GUILayout.Label("Current Sub State: " + (CharacterContextManager.CurrentState.CurrentSubState != null ? CharacterContextManager.CurrentState.CurrentSubState.ToString() : ""));
-//        }
-//#endif
-//    }
+    //    void OnGUI()
+    //    {
+    //        GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
+    //#if UNITY_EDITOR
+    //        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
+    //        GUILayout.Label("Current State: " + CurrentState.ToString());
+    //        GUILayout.Label("-----------------------------------------------");
+    //        if (_characterContextManager != null)
+    //        {
+    //            GUILayout.Label("Current State: " + _characterContextManager.CurrentState.ToString());
+    //            GUILayout.Label("Current Sub State: " + (_characterContextManager.CurrentState.CurrentSubState != null ? _characterContextManager.CurrentState.CurrentSubState.ToString() : ""));
+    //        }
+    //#endif
+    //    }
     #endregion
 
     #region SCENE MANAGEMENT
@@ -214,9 +179,9 @@ public class GameContextManager : MonoBehaviour
 
         _playerInputManager = new PlayerInputManager(_characterContextManager, _cameraBehaviourController, new PlayerInputActions());
 
-        _characterContextManager.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController, _gameAudioManager);
+        _characterContextManager.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController);
 
-        _characterContextManager.SetPowerUpCallBack(_gameUIManager);
+        _characterContextManager.SetPowerUpCallBack();
 
         CharacterHubStartPosition = Vector2.zero;
 
@@ -271,8 +236,345 @@ public class GameContextManager : MonoBehaviour
         Application.Quit();
     }
     #endregion
-    
-    public void InstantiateLevelManagers()
+
+    #region MAIN MENU STATE
+    public void OnEnterMainMenuState()
+    {
+        _gameContextAudiolistener.enabled = true;
+
+        OnRunOrPauseStateChanged.RemoveAllListeners();
+
+        _gameUIManager.MainMenu.SetActive(true);
+
+        _gameUIManager.StartButton.gameObject.SetActive(true);
+        _gameUIManager.QuitButton.gameObject.SetActive(true);
+
+        _gameUIManager.StartButton.onClick.RemoveAllListeners();
+        _gameUIManager.StartButton.onClick.AddListener(() =>
+        {
+            TargetScene = "Level_Hub";
+
+            _gameAudioManager.StopSFX();
+            _gameAudioManager.PlaySFX("Menu_Click");
+
+            _gameUIManager.StartButton.onClick.RemoveAllListeners();
+            _gameUIManager.QuitButton.gameObject.SetActive(false);
+
+            Action action = () =>
+            {
+                _currentState.SwitchState(new GameManagerStateFactory(this).GameSaveMenuState());
+            };
+
+            WaitSeconds(action, _gameAudioManager.AudioClipLength("Menu_Click"));
+
+        });
+
+        _gameUIManager.QuitButton.onClick.RemoveAllListeners();
+        _gameUIManager.QuitButton.onClick.AddListener(() =>
+        {
+            _gameAudioManager.PlaySFX("Menu_Click");
+
+            _gameUIManager.QuitButton.onClick.RemoveAllListeners();
+            _gameUIManager.StartButton.gameObject.SetActive(false);
+
+            WaitFrameEnd(() =>
+            {
+                QuitGame();
+            });
+        });
+
+        GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.StartButton.gameObject);
+
+        _exitState = null;
+
+        _gameAudioManager.PlayFadedBGM("Main_Menu", 2.0f);
+    }
+    public void OnExitMainMenuState()
+    {
+        _gameUIManager.MainMenu.SetActive(false);
+    }
+    #endregion
+
+    #region SAVE MENU STATE
+    public void OnEnterSaveMenuState()
+    {
+        _gameSaveSystem.ShowSlots();
+
+        _gameUIManager.SaveMenu.SetActive(true);
+
+        _gameUIManager.BackButton.gameObject.SetActive(true);
+
+        _gameSaveSystem.OnLaunchGame.RemoveAllListeners();
+        _gameSaveSystem.OnLaunchGame.AddListener(() =>
+        {
+            GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
+            {
+                System.Action action = () =>
+                {
+                    _currentState.SwitchState(new GameManagerStateFactory(this).GameLoadingState());
+                };
+
+                WaitSeconds(action, _gameAudioManager.AudioClipLength("Menu_Start"));
+            });
+
+            GameStateTransitionManager.FadeOut();
+        });
+
+        _exitState = new GameManagerStateFactory(this).GameHubState();
+
+        GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.SaveSlots[0].slotButton.gameObject);
+    }
+    public void OnExitSaveMenuState()
+    {
+        _gameUIManager.SaveMenu.SetActive(false);
+
+        _gameUIManager.BackButton.gameObject.SetActive(false);
+
+        GameManagerEventSystem.SetSelectedGameObject(null);
+    }
+    #endregion
+
+    #region LOADING STATE
+    public void OnEnterLoadingState()
+    {
+        GameStateTransitionManager.FadeOff();
+
+        _gameUIManager.CharacterUIManager.gameObject.SetActive(false);
+        _gameUIManager.LoadingScreen.SetActive(true);
+
+        SceneManager.LoadSceneAsync(TargetScene);
+
+        OnLoadSceneEnd.RemoveAllListeners();
+        OnLoadSceneEnd.AddListener(() =>
+        {
+            WaitFrameEnd(() =>
+            {
+                _currentState.SwitchState(_exitState);
+            });
+        });
+
+        SceneManager.sceneLoaded += AfterLoadSceneEnd;
+
+        GameManagerEventSystem.SetSelectedGameObject(null);
+    }
+    public void OnExitLoadingState()
+    {
+        SceneManager.sceneLoaded -= AfterLoadSceneEnd;
+        _gameUIManager.LoadingScreen.SetActive(false);
+        GameStateTransitionManager.FadeIn();
+    }
+    #endregion
+
+    #region HUB STATE
+    public void OnEnterHubState()
+    {
+        _gameUIManager.SetHubUIObjects();
+
+        _gameUIManager.SetScoreDisplay(_gameScoreManager.MasterScore);
+
+        _gameUIManager.CharacterUIManager.SetActive(true);
+
+        OnHubState?.Invoke();
+
+        GameManagerEventSystem.SetSelectedGameObject(null);
+
+        _gameAudioManager.PlayFadedBGM("Hub_Loop", 1.6f);
+    }
+    #endregion
+
+    #region RUN STATE
+    public void OnEnterRunState()
+    {
+        _exitState = null;
+
+        _gameUIManager.SetLevelUIObjects();
+
+        _gameUIManager.CharacterUIManager.gameObject.SetActive(true);
+
+        _gameUIManager.SetScoreDisplay(_gameScoreManager.CurrentScore);
+
+        GameManagerEventSystem.SetSelectedGameObject(null);
+    }
+    public void OnExitRunState()
+    {
+        _gameUIManager.CharacterUIManager.gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region PAUSE STETA
+    public void OnEnterPauseState()
+    {
+        OnRunOrPauseStateChanged?.Invoke(false);
+
+        _gameUIManager.PauseMenu.SetActive(true);
+
+        _gameUIManager.ContinueButton.onClick.RemoveAllListeners();
+        _gameUIManager.ContinueButton.onClick.AddListener(() =>
+        {
+            _gameAudioManager.PlaySFX("Menu_Start");
+
+            Action action = () =>
+            {
+                _currentState.SwitchState(_exitState);
+            };
+
+            WaitFrameEnd(action);
+        });
+
+        GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.ContinueButton.gameObject);
+    }
+    public void OnExitPauseState()
+    {
+        _gameUIManager.PauseMenu.SetActive(false);
+        OnRunOrPauseStateChanged?.Invoke(true);
+    }
+    public void PauseGameOnHubState()
+    {
+        _exitState = new GameManagerStateFactory(this).GameHubState();
+
+        _gameUIManager.ExitLevelButtonText.text = "Back to Main Menu";
+        _gameUIManager.ConfirmPanelText.text = "Quit to Main Menu?";
+
+        _gameUIManager.ExitLevelButton.onClick.RemoveAllListeners();
+        _gameUIManager.ExitLevelButton.onClick.AddListener(() =>
+        {
+            _gameAudioManager.PlaySFX("Menu_Click");
+
+            System.Action action = () =>
+            {
+                _gameUIManager.ConfirmPanel.SetActive(true);
+                _gameUIManager.PauseMenu.SetActive(false);
+                GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.ConfirmMainMenuButton.gameObject);
+            };
+
+            WaitSeconds(action, _gameAudioManager.AudioClipLength("Menu_Click"));
+        });
+
+        _gameUIManager.ConfirmMainMenuButton.onClick.RemoveAllListeners();
+        _gameUIManager.ConfirmMainMenuButton.onClick.AddListener(() =>
+        {
+            _gameAudioManager.PlaySFX("Menu_Start");
+            _gameSaveSystem.SaveGame();
+            TargetScene = "MainMenu";
+            _exitState = new GameManagerStateFactory(this).GameMainMenuState();
+
+            GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
+            {
+                OnQuitToMainMenu();
+
+                Action action = () =>
+                {
+                    _currentState.SwitchState(new GameManagerStateFactory(this).GameLoadingState());
+                };
+                _gameUIManager.ConfirmPanel.SetActive(false);
+
+                WaitSeconds(action, _gameAudioManager.AudioClipLength("Menu_Start"));
+            });
+
+            _gameAudioManager.StopFadedBGM(0.00f, 1.00f);
+            GameStateTransitionManager.FadeOut();
+        });
+
+        _currentState.SwitchState(new GameManagerStateFactory(this).GamePauseState());
+    }
+    public void PauseOnRunState()
+    {
+        _exitState = new GameManagerStateFactory(this).GameRunState();
+
+        _gameUIManager.ExitLevelButtonText.text = "Back to Hub";
+        _gameUIManager.ConfirmPanelText.text = "Quit to Hub?";
+
+        _gameUIManager.ExitLevelButton.onClick.RemoveAllListeners();
+        _gameUIManager.ExitLevelButton.onClick.AddListener(() =>
+        {
+            _gameAudioManager.PlaySFX("Menu_Click");
+
+            System.Action action = () =>
+            {
+                _gameUIManager.ConfirmPanel.SetActive(true);
+                _gameUIManager.PauseMenu.SetActive(false);
+                GameManagerEventSystem.SetSelectedGameObject(_gameUIManager.ConfirmMainMenuButton.gameObject);
+            };
+
+            WaitSeconds(action, _gameAudioManager.AudioClipLength("Menu_Click"));
+        });
+
+        _gameUIManager.ConfirmMainMenuButton.onClick.RemoveAllListeners();
+        _gameUIManager.ConfirmMainMenuButton.onClick.AddListener(() =>
+        {
+            _characterContextManager.enabled = true;
+            _characterContextManager.DisableCharacterContext();
+
+            GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
+            {
+                _characterContextManager.EnableCharacterContext();
+            });
+
+            GameStateTransitionManager.OnFadeInStart.AddListener(() =>
+            {
+                _characterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
+                _characterContextManager.transform.position = CharacterHubStartPosition;
+            });
+
+            _gameAudioManager.PlaySFX("Menu_Start");
+            TargetScene = "Level_Hub";
+
+            System.Action action = () =>
+            {
+                _exitState = new GameManagerStateFactory(this).GameHubState();
+                _gameUIManager.ConfirmPanel.SetActive(false);
+                _currentState.SwitchState(new GameManagerStateFactory(this).GameLoadingState());
+            };
+
+            _gameAudioManager.StopFadedBGM(0.00f, 1.00f);
+            WaitSeconds(action, _gameAudioManager.AudioClipLength("Menu_Start"));
+        });
+
+        _currentState.SwitchState(new GameManagerStateFactory(this).GamePauseState());
+    }
+    #endregion
+
+    #region SCORE STATE
+    public void StartScoreState()
+    {
+        _currentState = new GameManagerStateFactory(this).GameScoreState();
+        _exitState = new GameManagerStateFactory(this).GameHubState();
+        _currentState.EnterState();
+    }
+    public void OnEnterScoreState()
+    {
+        _gameUIManager.ScorePanel.SetActive(true);
+
+        _gameScoreManager.SetScoreManager();
+
+        TargetScene = "Level_Hub";
+
+        _gameUIManager.ConfirmActionButton.onClick.RemoveAllListeners();
+        _gameUIManager.ConfirmActionButton.onClick.AddListener(() =>
+        {
+            _gameAudioManager.PlaySFX("Menu_Click");
+
+            System.Action action = () =>
+            {
+                _gameUIManager.SetConfirmAction();
+            };
+
+            WaitSeconds(action, _gameAudioManager.AudioClipLength("Menu_Click"));
+        });
+    }
+    public void OnExitScoreState()
+    {
+        _gameUIManager.ScorePanel.SetActive(false);
+        LoadLevel = false;
+        _gameUIManager.ConfirmActionButton.onClick.RemoveAllListeners();
+        _gameUIManager.ConfirmActionButton.gameObject.SetActive(false);
+        _gameUIManager.SetConfirmAction();
+        _gameSaveSystem.SaveGame();
+        _gameScoreManager.ResetPlayerScorePoints();
+    }
+    #endregion
+
+    private void InstantiateLevelManagers()
     {
         foreach (GameLevelManager levelManager in _gameLevelManagers)
         {
@@ -302,11 +604,53 @@ public class GameContextManager : MonoBehaviour
 
             GameLevelManagers.Add((GameLevelManager)level);
         }
-    }
-    public void StartScoreState()
+    }  
+    private void StartDevelopmentEnvironment()
     {
-        _currentState = new GameManagerStateFactory(this, _gameUIManager).GameScoreState();
-        _exitState = new GameManagerStateFactory(this, _gameUIManager).GameHubState();
-        _currentState.EnterState();
+        _gameScoreManager = new GameScoreManager();
+
+        _gameAudioManager.Initialize();
+
+        _gameUIManager.Initialize();
+
+        _characterContextManager = FindAnyObjectByType<CharacterContextManager>();
+
+        _cameraBehaviourController = FindAnyObjectByType<CameraBehaviourController>();
+
+        _playerInputManager = new PlayerInputManager(_characterContextManager, _cameraBehaviourController, new PlayerInputActions());
+
+        _characterContextManager?.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController, false);
+
+        _characterContextManager.SetPowerUpCallBack();
+
+        _gameScoreManager.Initialize(this, _gameScoreManager, false);
+
+        _playerInputManager.Initialize();
+    }
+    private void StartGameContextEnvironment()
+    {
+        _gameScoreManager = new GameScoreManager();
+
+        _gameAudioManager.Initialize();
+
+        _gameUIManager.Initialize();
+
+        _gameScoreManager.Initialize(this, _gameScoreManager);
+
+        _gameSaveSystem.Initialize(this);
+
+        _currentState = new GameManagerStateFactory(this).GameMainMenuState();
+
+        OnRunOrPauseStateChanged.AddListener((value) =>
+        {
+            if (TargetScene != "Level_Hub")
+            {
+                SetTimer = value;
+            }
+
+            _cameraBehaviourController.enabled = value;
+        });
+
+        DontDestroyOnLoad(gameObject);
     }
 }

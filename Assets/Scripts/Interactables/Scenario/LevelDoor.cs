@@ -12,13 +12,9 @@ public class LevelDoor : InteractableItem
 
     [SerializeField] private PointType _type;
 
-    private GameContextManager _gameContextManager;
-
     public override void Awake()
     {
         base.Awake();
-
-        _gameContextManager = FindAnyObjectByType<GameContextManager>();
 
         Interactions.Add(EInteractionType.Enter);
         Interactions.Add(EInteractionType.Exit);
@@ -44,7 +40,7 @@ public class LevelDoor : InteractableItem
             case PointType.None:
                 break;
             case PointType.Start:
-                if (interactionType == EInteractionType.Enter && _gameContextManager)
+                if (interactionType == EInteractionType.Enter && GameContextManager.Instance)
                 {
                     GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
                     {
@@ -53,9 +49,9 @@ public class LevelDoor : InteractableItem
                 }
                 break;
             case PointType.Finish:
-                if (interactionType == EInteractionType.Enter && _gameContextManager)
+                if (interactionType == EInteractionType.Enter && GameContextManager.Instance)
                 {
-                    _gameContextManager.SetTimer = false;
+                    GameContextManager.Instance.SetTimer = false;
                     characterContextManager.DisableCharacterContext();
                     SetClosingAnimation();
 
@@ -66,7 +62,7 @@ public class LevelDoor : InteractableItem
 
                     GameStateTransitionManager.OnFadeInStart.AddListener(() =>
                     {
-                        characterContextManager.transform.position = _gameContextManager.CharacterHubStartPosition;
+                        characterContextManager.transform.position = GameContextManager.Instance.CharacterHubStartPosition;
                     });
                 }
                 break;
@@ -93,30 +89,30 @@ public class LevelDoor : InteractableItem
     }
     public void StartClosing()
     {
-        _gameContextManager.GameAudioManager.PlaySFX("Door");
+        GameAudioManager.Instance.PlaySFX("Door");
     }
     public void EndClosing()
     {
-        _gameContextManager.GameAudioManager.StopSFX();
-        _gameContextManager.GameAudioManager.PlaySFX("Door_Close");
+        GameAudioManager.Instance.StopSFX();
+        GameAudioManager.Instance.PlaySFX("Door_Close");
 
         switch (_type)
         {
             case PointType.None:
                 break;
             case PointType.Start:
-                if (_gameContextManager)
+                if (GameContextManager.Instance)
                 {
-                    _gameContextManager.SetTimer = true;
-                    _gameContextManager.CharacterContextManager.EnableCharacterContext();
-                    _gameContextManager.GameAudioManager.PlayFadedBGM("Level_Loop", 1.6f);
+                    GameContextManager.Instance.SetTimer = true;
+                    GameContextManager.Instance.CharacterContextManager.EnableCharacterContext();
+                    GameAudioManager.Instance.PlayFadedBGM("Level_Loop", 1.6f);
                 }
                 break;
             case PointType.Finish:
-                if (_gameContextManager)
+                if (GameContextManager.Instance)
                 {
                     StartCoroutine(DelaySetFinalScore());
-                    _gameContextManager.GameAudioManager.StopFadedBGM(0.0f, 1.5f);
+                    GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
                 }
                 break;
             default:
@@ -127,7 +123,7 @@ public class LevelDoor : InteractableItem
         {
             yield return new WaitForSeconds(1.5f);
 
-            _gameContextManager.StartScoreState();
+            GameContextManager.Instance.StartScoreState();
         }
     }
 }

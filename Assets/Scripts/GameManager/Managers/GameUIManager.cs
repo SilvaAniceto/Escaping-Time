@@ -4,6 +4,9 @@ using System.Collections;
 
 public class GameUIManager : MonoBehaviour
 {
+    public static GameUIManager Instance;
+
+    #region INTERNAL CLASSES
     [System.Serializable]
     public class GameSaveSlot
     {
@@ -25,6 +28,7 @@ public class GameUIManager : MonoBehaviour
             return this.slotIndex;
         }
     }
+    #endregion
 
     #region INSPECTOR FIELDS
     [Header("Game Context Manager UI Objects")]
@@ -85,7 +89,6 @@ public class GameUIManager : MonoBehaviour
     #endregion
 
     #region PROPERTIES
-    public GameContextManager GameContextManager { get; private set; }
     public GameObject SavingScreen { get => _savingScreen; }
     public GameObject OptionsParent { get => _optionsParent; }
     public Button SelectSaveButton { get => _selectSaveButton; }
@@ -117,13 +120,6 @@ public class GameUIManager : MonoBehaviour
     public bool Confirm { get; private set; }
     public bool Start { get => GameManagerUIActions.UIActions.Start.triggered; }
 
-    private void Awake()
-    {
-        if (GameManagerUIActions == null)
-        {
-            GameManagerUIActions = new GameManagerUIActions();
-        }
-    }
     private void OnEnable()
     {
         GameManagerUIActions.Enable();
@@ -142,9 +138,17 @@ public class GameUIManager : MonoBehaviour
     {
         Confirm = !Confirm;
     }
-    public void Initialize(GameContextManager gameContextManager)
+    public void Initialize()
     {
-        GameContextManager = gameContextManager;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+
+        if (GameManagerUIActions == null)
+        {
+            GameManagerUIActions = new GameManagerUIActions();
+        }
     }
 
     #region CHARACTER UI 
@@ -224,7 +228,7 @@ public class GameUIManager : MonoBehaviour
     {
         float currentTime = value;
 
-        characterContextManager.GameAudioManager.CreateEnqueuedPowerUpSFX("TimeCount", value, sourceImage, true);
+        GameAudioManager.Instance.CreateEnqueuedPowerUpSFX("TimeCount", value, sourceImage, true);
 
         while (currentTime >= 0.00f)
         {
@@ -235,8 +239,8 @@ public class GameUIManager : MonoBehaviour
             yield return null;
         }
 
-        characterContextManager.GameAudioManager.StopEnqueuedPowerUpSFX();
-        characterContextManager.GameAudioManager.PlaySFX("EndTimeCount");
+        GameAudioManager.Instance.StopEnqueuedPowerUpSFX();
+        GameAudioManager.Instance.PlaySFX("EndTimeCount");
 
         System.Action action = () =>
         {
@@ -244,7 +248,7 @@ public class GameUIManager : MonoBehaviour
             characterContextManager.DispatchPowerUpInteractableRecharge();
         };
 
-        GameContextManager.Instance.WaitSeconds(action, characterContextManager.GameAudioManager.AudioClipLength("EndTimeCount"));
+        GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("EndTimeCount"));
     }
     #endregion
 
@@ -258,8 +262,8 @@ public class GameUIManager : MonoBehaviour
     }
     public void SetTrophyUIPosition()
     {
-        _silver.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * GameContextManager.ScoreManager.SilverScorePercentage, _silver.rectTransform.anchoredPosition.y);
-        _brass.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * GameContextManager.ScoreManager.BrassScorePercentage, _brass.rectTransform.anchoredPosition.y);
+        _silver.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * GameScoreManager.Instance.SilverScorePercentage, _silver.rectTransform.anchoredPosition.y);
+        _brass.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * GameScoreManager.Instance.BrassScorePercentage, _brass.rectTransform.anchoredPosition.y);
     }
     public void SetGemScoreText(string text)
     {

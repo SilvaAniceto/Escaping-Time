@@ -30,7 +30,7 @@ public class CharacterMoveState : CharacterAbstractState
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState() || CharacterContextManager.CurrentState == CharacterStateFactory.InteractionState())
         {
             CharacterAnimationManager.SetRunAnimation();
-            CharacterContextManager.GameAudioManager.PlayCharacterSFX("Walk", 0.192f);
+            GameAudioManager.Instance.PlayCharacterSFX("Walk", 0.192f);
         }
     }
     public override void ExitState()

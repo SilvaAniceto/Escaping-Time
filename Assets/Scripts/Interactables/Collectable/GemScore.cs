@@ -25,10 +25,10 @@ public class GemScore : InteractableItem
 
     public override void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {
-        characterContextManager.GameAudioManager.StopSFX();
-        characterContextManager.GameAudioManager.PlaySFX("Gem_Collect");
+        GameAudioManager.Instance.StopSFX();
+        GameAudioManager.Instance.PlaySFX("Gem_Collect");
 
-        GameContextManager.Instance.ScoreManager.AddGemScore(_scoreValue);
+        GameScoreManager.Instance.AddGemScore(_scoreValue);
 
         gameObject.SetActive(false);
     }
