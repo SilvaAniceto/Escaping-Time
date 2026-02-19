@@ -82,12 +82,12 @@ public class HubDoor : InteractableItem
             GameContextManager.Instance.CharacterHubStartPosition = transform.position;
             GameScoreManager.Instance.ResetPlayerScorePoints();
 
-            GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
+            GameStateTransitionManager.OnFadeInEnd += (() =>
             {
                 GameContextManager.Instance.CharacterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
             });
 
-            GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
+            GameStateTransitionManager.OnFadeOutEnd += (() =>
             {
                 GameContextManager.Instance.LoadLevel = true;
                 GameContextManager.Instance.CharacterContextManager.transform.position = Vector2.zero;

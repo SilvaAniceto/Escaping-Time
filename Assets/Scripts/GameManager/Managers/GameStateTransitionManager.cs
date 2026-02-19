@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.Events;
+using System;
 
 public class GameStateTransitionManager : MonoBehaviour
 {
-    public static UnityEvent OnFadeOff = new UnityEvent();
-    public static UnityEvent OnFadeInStart = new UnityEvent();
-    public static UnityEvent OnFadeInEnd = new UnityEvent();
-    public static UnityEvent OnFadeOutStart = new UnityEvent();
-    public static UnityEvent OnFadeOutEnd = new UnityEvent();
+    public static Action OnFadeOff;
+    public static Action OnFadeInStart;
+    public static Action OnFadeInEnd;
+    public static Action OnFadeOutStart;
+    public static Action OnFadeOutEnd;
 
     private static Animator _animator;
 
@@ -15,7 +15,7 @@ public class GameStateTransitionManager : MonoBehaviour
     private const string FADE_OUT = "Fade_Out";
     private const string FADE_OFF = "Fade_Off";
 
-    private void Start()
+    public void Initialize()
     {
         _animator = GetComponent<Animator>();
     }
@@ -27,12 +27,12 @@ public class GameStateTransitionManager : MonoBehaviour
     public void FadeInStarted()
     {
         OnFadeInStart.Invoke();
-        OnFadeInStart.RemoveAllListeners();
+        OnFadeInStart = null;
     }
     public void FadeInEnded()
     {
         OnFadeInEnd.Invoke();
-        OnFadeInEnd.RemoveAllListeners();
+        OnFadeInEnd = null;
     }
     public static void FadeOut()
     {
@@ -41,17 +41,17 @@ public class GameStateTransitionManager : MonoBehaviour
     public void FadeOutStarted()
     {
         OnFadeOutStart.Invoke();
-        OnFadeOutStart.RemoveAllListeners();
+        OnFadeOutStart = null;
     }
     public void FadeOutEnded()
     {
         OnFadeOutEnd.Invoke();
-        OnFadeOutEnd.RemoveAllListeners();
+        OnFadeOutEnd = null;
     }
     public static void FadeOff()
     {
         _animator.Play(FADE_OFF);
         OnFadeOff?.Invoke();
-        OnFadeOff.RemoveAllListeners();
+        OnFadeOff = null;
     }
 }

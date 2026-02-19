@@ -92016,16 +92016,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7380639548345166203, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 269.73932
+      value: -12.258881
       objectReference: {fileID: 0}
     - target: {fileID: 7380639548345166203, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 23.363873
+      value: 4.3638783
       objectReference: {fileID: 0}
     - target: {fileID: 7552504607136049614, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
       propertyPath: BoundingShape2D
       value: 
-      objectReference: {fileID: 1241434228}
+      objectReference: {fileID: 523235121}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

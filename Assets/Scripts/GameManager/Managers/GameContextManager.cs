@@ -37,6 +37,7 @@ public class GameContextManager : MonoBehaviour
 
     [Header("Game UI Manager")]
     [SerializeField] private GameUIManager _gameUIManager;
+    [SerializeField] private GameStateTransitionManager _transitionScreen;
 
     [Header("Game Audio Manager")]
     [SerializeField] private GameAudioManager _gameAudioManager;  
@@ -185,7 +186,7 @@ public class GameContextManager : MonoBehaviour
 
         CharacterHubStartPosition = Vector2.zero;
 
-        GameStateTransitionManager.OnFadeInStart.AddListener(() =>
+        GameStateTransitionManager.OnFadeInStart += (() =>
         {
             _characterContextManager.EnableCharacterContext();
         });
@@ -228,6 +229,7 @@ public class GameContextManager : MonoBehaviour
     public void OnQuitToMainMenu()
     {
         _playerInputManager = null;
+        OnRunOrPauseStateChanged.RemoveAllListeners();
         Destroy(_cameraBehaviourController.gameObject);
         Destroy(_characterContextManager.gameObject);
     }
@@ -307,7 +309,7 @@ public class GameContextManager : MonoBehaviour
         _gameSaveSystem.OnLaunchGame.RemoveAllListeners();
         _gameSaveSystem.OnLaunchGame.AddListener(() =>
         {
-            GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
+            GameStateTransitionManager.OnFadeOutEnd += (() =>
             {
                 System.Action action = () =>
                 {
@@ -458,7 +460,7 @@ public class GameContextManager : MonoBehaviour
             TargetScene = "MainMenu";
             _exitState = new GameManagerStateFactory(this).GameMainMenuState();
 
-            GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
+            GameStateTransitionManager.OnFadeOutEnd += (() =>
             {
                 OnQuitToMainMenu();
 
@@ -505,12 +507,12 @@ public class GameContextManager : MonoBehaviour
             _characterContextManager.enabled = true;
             _characterContextManager.DisableCharacterContext();
 
-            GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
+            GameStateTransitionManager.OnFadeInEnd += (() =>
             {
                 _characterContextManager.EnableCharacterContext();
             });
 
-            GameStateTransitionManager.OnFadeInStart.AddListener(() =>
+            GameStateTransitionManager.OnFadeInStart += (() =>
             {
                 _characterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
                 _characterContextManager.transform.position = CharacterHubStartPosition;
@@ -607,11 +609,15 @@ public class GameContextManager : MonoBehaviour
     }  
     private void StartDevelopmentEnvironment()
     {
+        _gameContextAudiolistener.enabled = false;
+
         _gameScoreManager = new GameScoreManager();
 
         _gameAudioManager.Initialize();
 
         _gameUIManager.Initialize();
+
+        _gameScoreManager.Initialize(this, false);
 
         _characterContextManager = FindAnyObjectByType<CharacterContextManager>();
 
@@ -623,19 +629,21 @@ public class GameContextManager : MonoBehaviour
 
         _characterContextManager.SetPowerUpCallBack();
 
-        _gameScoreManager.Initialize(this, _gameScoreManager, false);
-
         _playerInputManager.Initialize();
+
+        _characterContextManager.EnableCharacterContext();
     }
     private void StartGameContextEnvironment()
     {
+        _transitionScreen.Initialize();
+
         _gameScoreManager = new GameScoreManager();
+
+        _gameScoreManager.Initialize(this);
 
         _gameAudioManager.Initialize();
 
         _gameUIManager.Initialize();
-
-        _gameScoreManager.Initialize(this, _gameScoreManager);
 
         _gameSaveSystem.Initialize(this);
 

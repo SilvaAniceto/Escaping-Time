@@ -4218,7 +4218,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2597571933276131207}
   - component: {fileID: 2247549219992509927}
-  - component: {fileID: 7665118986765160335}
+  - component: {fileID: 8836420304719170268}
   - component: {fileID: 5762437295123311295}
   - component: {fileID: 2776457176126624380}
   m_Layer: 5
@@ -4255,7 +4255,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3329014353577331609}
   m_CullTransparentMesh: 1
---- !u!114 &7665118986765160335
+--- !u!114 &8836420304719170268
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6932,6 +6932,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8a467166d16df254ca8ea28d2e73bc26, type: 2}
   _gameSaveSystem: {fileID: 2819620706967063627}
   _gameUIManager: {fileID: 7880100503982195351}
+  _transitionScreen: {fileID: 8836420304719170268}
   _gameAudioManager: {fileID: 782641668916674030}
 --- !u!114 &7880100503982195351
 MonoBehaviour:

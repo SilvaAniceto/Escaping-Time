@@ -122,11 +122,21 @@ public class GameUIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        if (GameManagerUIActions == null)
+        {
+            return;
+        }
+
         GameManagerUIActions.Enable();
     }
 
     private void OnDisable()
     {
+        if (GameManagerUIActions == null)
+        {
+            return;
+        }
+
         GameManagerUIActions.Disable();
     }
     private void OnDestroy()

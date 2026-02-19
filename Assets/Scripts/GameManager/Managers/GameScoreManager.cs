@@ -61,11 +61,11 @@ public class GameScoreManager
     #endregion
 
     #region DEFAULT METHODS
-    public void Initialize(GameContextManager gameContextManager, GameScoreManager gameScoreManager, bool isGameContext = true)
+    public void Initialize(GameContextManager gameContextManager, bool isGameContext = true)
     {
         if (Instance == null)
         {
-            Instance = gameScoreManager;
+            Instance = this;
         }
 
         GameContextManager = gameContextManager;

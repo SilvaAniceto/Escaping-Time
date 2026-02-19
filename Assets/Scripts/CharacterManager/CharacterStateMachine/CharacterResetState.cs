@@ -16,13 +16,13 @@ public class CharacterResetState : CharacterAbstractState
         CharacterContextManager.VerticalSpeed = 0.00f;
         CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
 
-        GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
+        GameStateTransitionManager.OnFadeInEnd += (() =>
         {
             CharacterAnimationManager.SetIdleAnimation();
             CharacterContextManager.EnableCharacterContext();
         });
 
-        GameStateTransitionManager.OnFadeOutEnd.AddListener(() =>
+        GameStateTransitionManager.OnFadeOutEnd += (() =>
         {
             CharacterContextManager.transform.position = CharacterContextManager.SpawningPosition;
             CharacterContextManager.OnResetState?.Invoke();

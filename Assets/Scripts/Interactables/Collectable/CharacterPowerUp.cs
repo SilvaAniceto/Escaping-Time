@@ -83,10 +83,6 @@ public class CharacterPowerUp : InteractableItem, ICharacterPowerUp
 
                 if (_rechargable)
                 {
-                    System.Action action = () =>
-                    {
-                        
-                    };
                     characterContextManager.OnPowerUpInteractableRecharge.AddListener(this.RechargePowerUpInteractable);
                 }
 

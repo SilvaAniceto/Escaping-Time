@@ -134,6 +134,10 @@ public class GameSaveSystem : MonoBehaviour
     #region UNITY DEFAULT METHODS
     public void Initialize(GameContextManager gameContextManager)
     {
+        if (Instance ==  null)
+        {
+            Instance = this;
+        }
         _gameContextManager = gameContextManager;
 
         for (int i = 0; i < GameUIManager.Instance.SaveSlots.Length; i++)

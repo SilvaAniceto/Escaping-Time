@@ -24,7 +24,7 @@ public class LevelDoor : InteractableItem
             case PointType.None:
                 break;
             case PointType.Start:
-                GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
+                GameStateTransitionManager.OnFadeInEnd += (() =>
                 {
                     SetClosingAnimation();
                 });
@@ -42,7 +42,7 @@ public class LevelDoor : InteractableItem
             case PointType.Start:
                 if (interactionType == EInteractionType.Enter && GameContextManager.Instance)
                 {
-                    GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
+                    GameStateTransitionManager.OnFadeInEnd += (() =>
                     {
                         characterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
                     });
@@ -55,12 +55,12 @@ public class LevelDoor : InteractableItem
                     characterContextManager.DisableCharacterContext();
                     SetClosingAnimation();
 
-                    GameStateTransitionManager.OnFadeInEnd.AddListener(() =>
+                    GameStateTransitionManager.OnFadeInEnd += (() =>
                     {
                         characterContextManager.EnableCharacterContext();
                     });
 
-                    GameStateTransitionManager.OnFadeInStart.AddListener(() =>
+                    GameStateTransitionManager.OnFadeInStart += (() =>
                     {
                         characterContextManager.transform.position = GameContextManager.Instance.CharacterHubStartPosition;
                     });
