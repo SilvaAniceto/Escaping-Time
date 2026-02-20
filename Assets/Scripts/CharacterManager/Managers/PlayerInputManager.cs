@@ -142,6 +142,7 @@ public class PlayerInputManager
         {
             _characterDirection = direction;
         }
+
         HandleDirectionCommand();
     }
     private void HandleDirectionCommand()

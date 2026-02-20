@@ -13,6 +13,11 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override void UpdateState()
     {
+        if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState() || CharacterContextManager.CurrentState == CharacterStateFactory.InteractionState())
+        {
+            GameAudioManager.Instance.PlayCharacterSFX("Walk", 0.192f);
+        }
+
         if (CharacterContextManager.CurrentState != CharacterStateFactory.OnWallState())
         {
             CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
@@ -30,7 +35,6 @@ public class CharacterMoveState : CharacterAbstractState
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState() || CharacterContextManager.CurrentState == CharacterStateFactory.InteractionState())
         {
             CharacterAnimationManager.SetRunAnimation();
-            GameAudioManager.Instance.PlayCharacterSFX("Walk", 0.192f);
         }
     }
     public override void ExitState()

@@ -40,7 +40,6 @@ public class CharacterRightDirectionCommand : ICharacterActionCommand
             return;
         }
 
-
         _characterContextManager.CurrentState.SetSubState(_characterContextManager.CurrentState.CharacterStateFactory.MoveState());
     }
 }
@@ -88,6 +87,7 @@ public class CharacterJumpCommand : ICharacterActionCommand
         {
             if (_characterContextManager.CoyoteTime)
             {
+
                 _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.JumpState());
                 return;
             }

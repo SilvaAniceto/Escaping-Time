@@ -23,8 +23,6 @@ public class CharacterContextManager : MonoBehaviour
     [SerializeField] private AnimationCurve _fallCurve;
     [SerializeField] private AnimationCurve _dashCurve;
     [SerializeField] private AnimationCurve _damageCurve;
-    [Header("Graphics")]
-    [SerializeField] private GameObject _characterGraphic;
 
     private CharacterAbstractState _currentState;
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }

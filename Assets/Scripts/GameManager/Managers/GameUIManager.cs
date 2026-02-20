@@ -209,7 +209,7 @@ public class GameUIManager : MonoBehaviour
     }
     public void SetOvertimeAirJumpPowerUpUI(float value, CharacterContextManager characterContextManager)
     {
-        StartCoroutine(FillAmount(value, _airJumpUIpowerUp, _airJumpAnimatorPowerUp, characterContextManager));
+        StartCoroutine(UpdatePowerUpUIElement(value, _airJumpUIpowerUp, _airJumpAnimatorPowerUp, characterContextManager));
     }
     public void SetDashPowerUpUI(string clip)
     {
@@ -220,7 +220,7 @@ public class GameUIManager : MonoBehaviour
     }
     public void SetOvertimeDashPowerUpUI(float value, CharacterContextManager characterContextManager)
     {
-        StartCoroutine(FillAmount(value, _dashUIpowerUp, _dashAnimatorPowerUp, characterContextManager));
+        StartCoroutine(UpdatePowerUpUIElement(value, _dashUIpowerUp, _dashAnimatorPowerUp, characterContextManager));
     }
     public void SetWallMovePowerUpUI(string clip)
     {
@@ -231,10 +231,10 @@ public class GameUIManager : MonoBehaviour
     }
     public void SetOvertimeWallMovePowerUpUI(float value, CharacterContextManager characterContextManager)
     {
-        StartCoroutine(FillAmount(value, _wallMoveUIpowerUp, _wallMoveAnimatorPowerUp, characterContextManager));
+        StartCoroutine(UpdatePowerUpUIElement(value, _wallMoveUIpowerUp, _wallMoveAnimatorPowerUp, characterContextManager));
     }
 
-    IEnumerator FillAmount(float value, Image sourceImage, Animator animator, CharacterContextManager characterContextManager)
+    IEnumerator UpdatePowerUpUIElement(float value, Image sourceImage, Animator animator, CharacterContextManager characterContextManager)
     {
         float currentTime = value;
 

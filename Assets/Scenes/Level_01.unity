@@ -2893,6 +2893,10 @@ PrefabInstance:
       propertyPath: _environment
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2246657659668160933, guid: 3e563cb32ee2b5548a02094a00cf8782, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 46.675903
+      objectReference: {fileID: 0}
     - target: {fileID: 6547977640084269230, guid: 3e563cb32ee2b5548a02094a00cf8782, type: 3}
       propertyPath: m_Name
       value: GameManagerContext
@@ -7133,34 +7137,6 @@ PrefabInstance:
       propertyPath: Target.TrackingTarget
       value: 
       objectReference: {fileID: 1496649894}
-    - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5859525621522234506, guid: 8d31d4207be561b469572cac46dbd5d6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0

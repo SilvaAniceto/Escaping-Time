@@ -154,7 +154,7 @@ public class GameSaveSystem : MonoBehaviour
         {
             GameAudioManager.Instance.PlaySFX("Menu_Back");
 
-            System.Action action = () =>
+            Action action = () =>
             {
                 DeleteSaveGame();
                 HideOptions();
@@ -234,7 +234,7 @@ public class GameSaveSystem : MonoBehaviour
 
                         _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.SelectSaveButton.gameObject);
 
-                        System.Action action = () =>
+                        Action action = () =>
                         {
                             ShowOptions();
                             slot.slotButton.gameObject.SetActive(true);
@@ -255,7 +255,7 @@ public class GameSaveSystem : MonoBehaviour
 
                             GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
 
-                            System.Action action = () =>
+                            Action action = () =>
                             {
                                 LoadAndLaunch();
                             };
@@ -296,7 +296,7 @@ public class GameSaveSystem : MonoBehaviour
             GameUIManager.Instance.SelectSaveButton.GetComponentInChildren<Text>().text = "Start";
             GameUIManager.Instance.DeleteButton.gameObject.SetActive(false);
 
-            System.Action action = () =>
+            Action action = () =>
             {
                 ShowOptions();
                 slot.slotButton.gameObject.SetActive(true);
@@ -323,7 +323,7 @@ public class GameSaveSystem : MonoBehaviour
 
                 HideOptions(true);
 
-                System.Action action = () =>
+                Action action = () =>
                 {
                     CreateSaveGame();
                 };

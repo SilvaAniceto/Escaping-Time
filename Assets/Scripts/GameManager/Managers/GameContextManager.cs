@@ -129,20 +129,20 @@ public class GameContextManager : MonoBehaviour
             _gameScoreManager.SetCurrentTimer();
         }
     }
-    //    void OnGUI()
-    //    {
-    //        GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
-    //#if UNITY_EDITOR
-    //        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
-    //        GUILayout.Label("Current State: " + CurrentState.ToString());
-    //        GUILayout.Label("-----------------------------------------------");
-    //        if (_characterContextManager != null)
-    //        {
-    //            GUILayout.Label("Current State: " + _characterContextManager.CurrentState.ToString());
-    //            GUILayout.Label("Current Sub State: " + (_characterContextManager.CurrentState.CurrentSubState != null ? _characterContextManager.CurrentState.CurrentSubState.ToString() : ""));
-    //        }
-    //#endif
-    //    }
+    void OnGUI()
+    {
+        GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
+#if UNITY_EDITOR
+        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
+        GUILayout.Label("Current State: " + (CurrentState == null ? "" : CurrentState.ToString()));
+        GUILayout.Label("-----------------------------------------------");
+        if (_characterContextManager != null)
+        {
+            GUILayout.Label("Current State: " + _characterContextManager.CurrentState.ToString());
+            GUILayout.Label("Current Sub State: " + (_characterContextManager.CurrentState.CurrentSubState != null ? _characterContextManager.CurrentState.CurrentSubState.ToString() : ""));
+        }
+#endif
+    }
     #endregion
 
     #region SCENE MANAGEMENT
