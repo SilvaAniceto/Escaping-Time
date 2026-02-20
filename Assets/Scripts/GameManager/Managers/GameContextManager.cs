@@ -609,6 +609,8 @@ public class GameContextManager : MonoBehaviour
     }  
     private void StartDevelopmentEnvironment()
     {
+        _transitionScreen.Initialize();
+
         _gameContextAudiolistener.enabled = false;
 
         _gameScoreManager = new GameScoreManager();

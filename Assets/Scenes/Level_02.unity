@@ -15592,18 +15592,6 @@ PrefabInstance:
       propertyPath: _hasAirJump
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
-      propertyPath: _hasInfinityDash
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
-      propertyPath: _hasInfinityAirJump
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6770176651829635004, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
-      propertyPath: _hasInfinityWallMove
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6770176651829635007, guid: 1c9712f4aead37e4bac1294162ac97ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
