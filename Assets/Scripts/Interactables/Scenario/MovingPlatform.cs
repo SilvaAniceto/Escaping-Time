@@ -32,6 +32,9 @@ public class MovingPlatform : InteractableItem
     private SpriteRenderer _spriteRenderer;
     private Rigidbody2D _rigidbody;
     private bool _stopIsScheduled = false;
+
+    private Coroutine _scheduledStartCoroutine;
+    private Coroutine _scheduledStopCoroutine;
     #endregion
 
     #region PROPERTIES
@@ -87,6 +90,18 @@ public class MovingPlatform : InteractableItem
         if (!Activated) return;
 
         _rigidbody.MovePosition(_rigidbody.position + (Vector2)_targetDirection * _movementSpeed * Time.fixedDeltaTime);
+    }
+    private void OnDestroy()
+    {
+        if (_scheduledStartCoroutine != null)
+        {
+            StopCoroutine(_scheduledStartCoroutine);
+        }
+
+        if (_scheduledStopCoroutine != null)
+        {
+            StopCoroutine(_scheduledStopCoroutine);
+        }
     }
     #endregion
 
@@ -166,7 +181,7 @@ public class MovingPlatform : InteractableItem
     }
     public void ScheduleStart()
     {
-        StartCoroutine(ScheduledStart());
+        _scheduledStartCoroutine = StartCoroutine(ScheduledStart());
     }
     IEnumerator ScheduledStart()
     {
@@ -179,7 +194,7 @@ public class MovingPlatform : InteractableItem
     }
     public void ScheduleStop()
     {
-        StartCoroutine(ScheduledStop());
+        _scheduledStopCoroutine = StartCoroutine(ScheduledStop());
     }
     private IEnumerator ScheduledStop()
     {
