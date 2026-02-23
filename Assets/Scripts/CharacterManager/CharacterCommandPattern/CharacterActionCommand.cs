@@ -1,4 +1,4 @@
-public class CharacterLeftDirectionCommand : ICharacterActionCommand
+﻿public class CharacterLeftDirectionCommand : ICharacterActionCommand
 {
     private CharacterContextManager _characterContextManager;
 
@@ -260,5 +260,39 @@ public class CharacterCameraTiltNoneDirectionCommand : ICharacterActionCommand
     public void ExecuteCommand()
     {
         _cameraBehaviourController.CameraTilt = (int)ECameraTiltDirection.None;
+    }
+}
+
+public class GamePauseCommand : ICharacterActionCommand
+{
+    private GameContextManager _gameContextManager;
+
+    public GamePauseCommand(GameContextManager gameContextManager)
+    {
+        _gameContextManager = gameContextManager;
+    }
+
+    public void ExecuteCommand()
+    {
+        if (_gameContextManager.CurrentState == null) 
+        {
+            return;
+        }
+
+        if (_gameContextManager.CurrentState == _gameContextManager.CurrentState.GameManagerStateFactory.GameHubState())
+        {
+            _gameContextManager.PauseGameOnHubState();
+            return;
+        }
+        if (_gameContextManager.CurrentState == _gameContextManager.CurrentState.GameManagerStateFactory.GamePauseState())
+        {
+            _gameContextManager.CurrentState.SwitchState(_gameContextManager.ExitState);
+            return;
+        }
+        if (_gameContextManager.CurrentState == _gameContextManager.CurrentState.GameManagerStateFactory.GameRunState())
+        {
+            _gameContextManager.PauseOnRunState();
+            return;
+        }
     }
 }

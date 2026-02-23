@@ -35,6 +35,12 @@ public class CharacterContextManager : MonoBehaviour
 
     public IInteractable Interactable { get; set; }
 
+    private float[] _accelarationLUTCurve;
+    private float[] _jumpLUTCurve;
+    private float[] _fallLUTCurve;
+    private float[] _dashLUTCurve;
+    private float[] _damageLUTCurve;
+
     #region STATE CALLBACK
     [HideInInspector] public UnityEvent OnResetState = new UnityEvent();
     #endregion
@@ -310,74 +316,27 @@ public class CharacterContextManager : MonoBehaviour
 
     #region PHYSICS MOVEMENT PROPERTIES
     public int MoveDirection { get; set; }
+    public float HorizontalSpeed { get; set; }
+    public float HorizontalStartSpeed { get; set; }
+    public float HorizontalTopSpeed { get; set; }
+    public float HorizontalSpeedOvertime { get; set; }
+    
+    public float JumpSpeed { get; set; }
+    public float JumpSpeedOvertime { get; set; }
+    public float FallStartSpeed { get; set; }
+    public float FallSpeedOvertime { get; set; }
+    public bool CoyoteTime { get; set; }
     public Vector2 MovePosition
     {
         get
         {
-            return new Vector2(HorizontalSpeed, VerticalSpeed);
+            return new Vector2(HorizontalSpeed, JumpSpeed);
         }
     }
-    public float HorizontalSpeed { get; set; }
-    public float VerticalSpeed { get; set; }
-    public float FallStartSpeed { get; set; }
-    public bool CoyoteTime { get; set; }
-    public float HorizontalStartSpeed { get; set; }
-    public float HorizontalTopSpeed { get; set; }
-    public float HorizontalSpeedOvertime { get; set; }
-    public float HorizontalSpeedLerpOvertime
-    {
-        get
-        {
-            HorizontalSpeedOvertime += Time.deltaTime / 0.62f;
-            HorizontalSpeedOvertime = Mathf.Clamp01(HorizontalSpeedOvertime);
 
-            return _accelerationCurve.Evaluate(HorizontalSpeedOvertime);
-        }
-    }
-    public float GravityUpwardSpeedOvertime { get; set; }
-    public float GravityUpwardSpeedLerpOvertime
-    {
-        get
-        {
-            GravityUpwardSpeedOvertime += Time.deltaTime / 0.36f;
-            GravityUpwardSpeedOvertime = Mathf.Clamp01(GravityUpwardSpeedOvertime);
-
-            return _jumpForceCurve.Evaluate(GravityUpwardSpeedOvertime);
-        }
-    }
-    public float GravityDownwardSpeedOvertime { get; set; }
-    public float GravityDownwardSpeedLerpOvertime
-    {
-        get
-        {
-            GravityDownwardSpeedOvertime += Time.deltaTime / 0.48f;
-            GravityDownwardSpeedOvertime = Mathf.Clamp01(GravityDownwardSpeedOvertime);
-
-            return _fallCurve.Evaluate(GravityDownwardSpeedOvertime);
-        }
-    }
     public float DashSpeedOvertime { get; set; }
-    public float DashSpeedLerpOvertime
-    {
-        get
-        {
-            DashSpeedOvertime += Time.deltaTime / 0.62f;
-            DashSpeedOvertime = Mathf.Clamp01(DashSpeedOvertime);
-
-            return _dashCurve.Evaluate(DashSpeedOvertime);
-        }
-    }
+    
     public float DamageSpeedOvertime { get; set; }
-    public float DamageSpeedLerpOvertime
-    {
-        get
-        {
-            DamageSpeedOvertime += Time.deltaTime / 0.62f;
-            DamageSpeedOvertime = Mathf.Clamp01(DamageSpeedOvertime);
-
-            return _damageCurve.Evaluate(DamageSpeedOvertime);
-        }
-    }
     public bool DamageOnCoolDown { get; set; } = false;
     #endregion
 
@@ -407,11 +366,144 @@ public class CharacterContextManager : MonoBehaviour
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("WallChecker"), LayerMask.NameToLayer("Default"));
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("WallChecker"), LayerMask.NameToLayer("Camera Objects"));
 
+        _accelarationLUTCurve = CalculateLUTCurve(_accelerationCurve);
+        _jumpLUTCurve = CalculateLUTCurve(_jumpForceCurve);
+        _fallLUTCurve = CalculateLUTCurve(_fallCurve);
+        _dashLUTCurve = CalculateLUTCurve(_dashCurve);
+        _damageLUTCurve = CalculateLUTCurve(_damageCurve);
+
         _currentState = isGameContext ? new CharacterStateFactory(this,  GetComponent<CharacterAnimationManager>()).DisabledState() : new CharacterStateFactory(this, GetComponent<CharacterAnimationManager>()).GroundedState();
 
         _currentState.CharacterAnimationManager.CharacterAnimator = _currentState.CharacterAnimationManager.GetComponentInChildren<Animator>();
 
         _currentState.EnterState();
+    }
+    private float[] CalculateLUTCurve(AnimationCurve curve)
+    {
+        float[] lutArray = new float[128];
+
+        for (int i = 0; i < lutArray.Length; i++)
+        {
+            float time = (float)i / (lutArray.Length - 1);
+            lutArray[i] = curve.Evaluate(time);
+        }
+
+        return lutArray;
+    }
+    #endregion
+
+    #region HORIZONTAL SPEED METHODS
+    private float EvaluateAccelerationLUTCurve(float time)
+    {
+        time = Mathf.Clamp01(time);
+
+        float currentIndex = time * (_accelarationLUTCurve.Length - 1);
+
+        int previousIndex = (int)currentIndex;
+        int nextIndex = Mathf.Min(previousIndex + 1, _accelarationLUTCurve.Length - 1);
+
+        float fractionIndex = currentIndex - previousIndex;
+
+        return Mathf.Lerp(_accelarationLUTCurve[previousIndex], _accelarationLUTCurve[nextIndex], fractionIndex);
+    }
+    public float GetHorizontalSpeedLerpOvertime()
+    {
+        HorizontalSpeedOvertime += Time.deltaTime / 0.62f;
+        HorizontalSpeedOvertime = Mathf.Clamp01(HorizontalSpeedOvertime);
+
+        return EvaluateAccelerationLUTCurve(HorizontalSpeedOvertime);
+    }
+    #endregion
+
+    #region JUMP SPEED METHODS
+    private float EvaluateJumpLUTCurve(float time)
+    {
+        time = Mathf.Clamp01(time);
+
+        float currentIndex = time * (_jumpLUTCurve.Length - 1);
+
+        int previousIndex = (int)currentIndex;
+        int nextIndex = Mathf.Min(previousIndex + 1, _jumpLUTCurve.Length - 1);
+
+        float fractionIndex = currentIndex - previousIndex;
+
+        return Mathf.Lerp(_jumpLUTCurve[previousIndex], _jumpLUTCurve[nextIndex], fractionIndex);
+    }
+    public float GetJumpSpeedLerpOvertime()
+    {
+        JumpSpeedOvertime += Time.deltaTime / 0.36f;
+        JumpSpeedOvertime = Mathf.Clamp01(JumpSpeedOvertime);
+
+        return EvaluateJumpLUTCurve(JumpSpeedOvertime);
+    }
+    #endregion
+
+    #region FALL SPEED METHODS
+    private float EvaluateFallLUTCurve(float time)
+    {
+        time = Mathf.Clamp01(time);
+
+        float currentIndex = time * (_fallLUTCurve.Length - 1);
+
+        int previousIndex = (int)currentIndex;
+        int nextIndex = Mathf.Min(previousIndex + 1, _fallLUTCurve.Length - 1);
+
+        float fractionIndex = currentIndex - previousIndex;
+
+        return Mathf.Lerp(_fallLUTCurve[previousIndex], _fallLUTCurve[nextIndex], fractionIndex);
+    }
+    public float GetFallSpeedLerpOvertime()
+    {
+        FallSpeedOvertime += Time.deltaTime / 0.48f;
+        FallSpeedOvertime = Mathf.Clamp01(FallSpeedOvertime);
+
+        return EvaluateFallLUTCurve(FallSpeedOvertime);
+    }
+    #endregion
+
+    #region DASH SPEED METHODS
+    private float EvaluateDashLUTCurve(float time)
+    {
+        time = Mathf.Clamp01(time);
+
+        float currentIndex = time * (_dashLUTCurve.Length - 1);
+
+        int previousIndex = (int)currentIndex;
+        int nextIndex = Mathf.Min(previousIndex + 1, _dashLUTCurve.Length - 1);
+
+        float fractionIndex = currentIndex - previousIndex;
+
+        return Mathf.Lerp(_dashLUTCurve[previousIndex], _dashLUTCurve[nextIndex], fractionIndex);
+    }
+    public float GetDashSpeedLerpOvertime()
+    {
+        DashSpeedOvertime += Time.deltaTime / 0.62f;
+        DashSpeedOvertime = Mathf.Clamp01(DashSpeedOvertime);
+
+        return EvaluateDashLUTCurve(DashSpeedOvertime);
+    }
+    #endregion
+
+    #region DASH SPEED METHODS
+    private float EvaluateDamageLUTCurve(float time)
+    {
+        time = Mathf.Clamp01(time);
+
+        float currentIndex = time * (_damageLUTCurve.Length - 1);
+
+        int previousIndex = (int)currentIndex;
+        int nextIndex = Mathf.Min(previousIndex + 1, _damageLUTCurve.Length - 1);
+
+        float fractionIndex = currentIndex - previousIndex;
+
+        return Mathf.Lerp(_damageLUTCurve[previousIndex], _damageLUTCurve[nextIndex], fractionIndex);
+    }
+    public float GetDamageSpeedLerpOvertime()
+    {
+        DamageSpeedOvertime += Time.deltaTime / 0.62f;
+        DamageSpeedOvertime = Mathf.Clamp01(DamageSpeedOvertime);
+
+        return EvaluateDamageLUTCurve(DamageSpeedOvertime);
     }
     #endregion
 
@@ -582,20 +674,20 @@ public class CharacterContextManager : MonoBehaviour
     #endregion
 
     #region RENDERING 
-//    private void OnDrawGizmosSelected()
-//    {
-//#if UNITY_EDITOR
-//        Gizmos.color = Color.red;
-//        Gizmos.DrawWireCube(WallCheckerPoint.position, new Vector2(0.06f, 0.15f));
-//        Gizmos.DrawWireCube(transform.position, new Vector2(0.40f, 0.04f));
-//#endif
-//    }
+    //    private void OnDrawGizmosSelected()
+    //    {
+    //#if UNITY_EDITOR
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawWireCube(WallCheckerPoint.position, new Vector2(0.06f, 0.15f));
+    //        Gizmos.DrawWireCube(transform.position, new Vector2(0.40f, 0.04f));
+    //#endif
+    //    }
     //void OnGUI()
     //{
     //    GUILayout.Label("");
     //    GUILayout.Label("");
     //    GUILayout.Label("");
-    //    GUILayout.Label("Dash On Cool DOwn: " + DashOnCoolDown);
+    //    GUILayout.Label("");
     //    GUILayout.Label("Current State: " + CurrentState.ToString());
     //    GUILayout.Label("Current Sub State: " + (CurrentState.CurrentSubState != null ? CurrentState.CurrentSubState.ToString() : ""));
     //}

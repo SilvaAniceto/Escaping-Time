@@ -19,8 +19,9 @@ public enum ECameraTiltDirection
 
 public class PlayerInputManager
 {
-    public PlayerInputManager(CharacterContextManager characterContextManager, CameraBehaviourController cameraBehaviourController, PlayerInputActions playerInputActions)
+    public PlayerInputManager(GameContextManager gameContextManager, CharacterContextManager characterContextManager, CameraBehaviourController cameraBehaviourController, PlayerInputActions playerInputActions)
     {
+        _gameContextManager = gameContextManager;
         _characterContextManager = characterContextManager;
         _cameraBehaviourController = cameraBehaviourController;
         _playerInputActions = playerInputActions;
@@ -28,6 +29,7 @@ public class PlayerInputManager
 
     private bool _initialized = false;
 
+    private GameContextManager _gameContextManager;
     private CharacterContextManager _characterContextManager;
     private CameraBehaviourController _cameraBehaviourController;
     private PlayerInputActions _playerInputActions;
@@ -42,18 +44,18 @@ public class PlayerInputManager
     private float _dashCommandBufferTimer;
     private float _wallMoveCommandBufferTimer;
     private float _interactCommandBufferTimer;
+    private float _pauseCommandBufferTimer;
 
     private Queue<ICharacterActionCommand> _jumpCommandBuffer = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _airJumpCommandCombo = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _dashCommandBuffer = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _wallMoveCommandBuffer = new Queue<ICharacterActionCommand>();
     private Queue<ICharacterActionCommand> _interactCommandBuffer = new Queue<ICharacterActionCommand>();
+    private Queue<ICharacterActionCommand> _pauseCommandBuffer = new Queue<ICharacterActionCommand>();
 
     private List<ICharacterComboCommand> _characterComboRules;
 
     private CharacterActionCommandInvoker _characterActionCommandInvoker;
-
-    public bool Cancel { get => _playerInputActions.PlayerActionMap.Cancel.triggered; }
 
     public void UpdatePlayerInputManager()
     {
@@ -104,6 +106,8 @@ public class PlayerInputManager
 
         _playerInputActions.PlayerActionMap.Interact.started += ctx => HandleInteractCommand();
 
+        _playerInputActions.PlayerActionMap.Cancel.started += ctx => HandlePauseCommand();
+
         _initialized = true;
     }
     private void ProcessCommandBuffer(float deltaTime)
@@ -116,6 +120,15 @@ public class PlayerInputManager
     private void ClearCommandBuffer(Queue<ICharacterActionCommand> commandBuffer)
     {
         commandBuffer.Clear();
+    }
+    #endregion
+
+    #region PAUSE COMMAND
+    private void HandlePauseCommand()
+    {
+        var pauseCommand = new GamePauseCommand(_gameContextManager);
+
+        _characterActionCommandInvoker.ExecuteActionCommand(pauseCommand);
     }
     #endregion
 

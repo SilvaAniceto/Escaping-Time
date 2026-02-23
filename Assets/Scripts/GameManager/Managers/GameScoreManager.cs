@@ -187,6 +187,7 @@ public class GameScoreManager
     }
     private IEnumerator SetGemUIFinalScore()
     {
+        GameAudioManager.Instance.StopSFX();
         GameAudioManager.Instance.PlaySFX("Level_Score");
 
         float gemUIScore = 0;
@@ -233,7 +234,7 @@ public class GameScoreManager
 
         float timeUIScore = 0;
 
-        while (timeUIScore < LevelManager.CurrentHourglassScore)
+        while (timeUIScore < TimeScore)
         {
             timeUIScore += Time.deltaTime;
 
@@ -266,20 +267,20 @@ public class GameScoreManager
 
             GameAudioManager.Instance.LerpPitch("Final_Score", levelUIFinalScore);
 
-            yield return null;
-        }
+            if (levelUIFinalScore >= BrassScorePercentage)
+            {
+                GameUIManager.Instance.ResetBrassTrophy();
+            }
+            if (levelUIFinalScore >= SilverScorePercentage)
+            {
+                GameUIManager.Instance.ResetSilverTrophy();
+            }
+            if (levelUIFinalScore >= 1)
+            {
+                GameUIManager.Instance.ResetGoldTrophy();
+            }
 
-        if (levelUIFinalScore >= BrassScorePercentage)
-        {
-            GameUIManager.Instance.ResetBrassTrophy();
-        }
-        if (levelUIFinalScore >= SilverScorePercentage)
-        {
-            GameUIManager.Instance.ResetSilverTrophy();
-        }
-        if (levelUIFinalScore >= 1)
-        {
-            GameUIManager.Instance.ResetGoldTrophy();
+            yield return null;
         }
     }
 }

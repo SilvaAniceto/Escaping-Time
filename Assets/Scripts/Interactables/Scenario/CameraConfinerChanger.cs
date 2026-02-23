@@ -20,7 +20,7 @@ public class CameraConfinerChanger : InteractableItem
 
     public override void InteractablePauseState(bool value)
     {
-        base.Awake();
+        base.InteractablePauseState(value);
     }
 
     public override void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)

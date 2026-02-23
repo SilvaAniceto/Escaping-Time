@@ -19,7 +19,7 @@ public class CharacterDisabledState : CharacterAbstractState
         CharacterContextManager.Rigidbody.bodyType = RigidbodyType2D.Kinematic;
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.JumpSpeed = 0.00f;
     }
     public override void UpdateState()
     {

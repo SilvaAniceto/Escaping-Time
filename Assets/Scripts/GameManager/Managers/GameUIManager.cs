@@ -44,8 +44,11 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private Button _continueButton;
     [SerializeField] private Button _confirmActionButton;
     [SerializeField] private Button _exitLevelButton;
+    [SerializeField] private Button _exitHubButton;
     [SerializeField] private Button _confirmMainMenuButton;
-    [SerializeField] private Text _confirmPanelText;
+    [SerializeField] private Button _confirmHubButton;
+    [SerializeField] private GameObject _quitToMainMenuPanelText;
+    [SerializeField] private GameObject _quitToHubPanelText;
 
     [Header("Game Save Slot UI Objects")]
     [SerializeField] private GameSaveSlot[] _saveSlots;
@@ -102,7 +105,8 @@ public class GameUIManager : MonoBehaviour
     public GameObject ScorePanel { get => _scorePanel; }
     public GameObject LoadingScreen { get => _loadingScren; }
     public GameObject ConfirmPanel { get => _confirmPanel; }
-    public Text ConfirmPanelText { get => _confirmPanelText; }
+    public GameObject QuitToMainMenuPanelText { get => _quitToMainMenuPanelText; }
+    public GameObject QuitToHubPanelText { get => _quitToHubPanelText; }
 
     public Button StartButton { get => _startButton; }
     public Button QuitButton { get => _quitButton; }
@@ -110,9 +114,12 @@ public class GameUIManager : MonoBehaviour
     public Button ContinueButton { get => _continueButton; }
     public Button ConfirmActionButton { get => _confirmActionButton; }
     public Button ExitLevelButton { get => _exitLevelButton; }
-    public Text ExitLevelButtonText { get => _exitLevelButton.GetComponentInChildren<Text>(); }
+    public Button ExitHubButton { get => _exitHubButton; }
     public Button ConfirmMainMenuButton { get => _confirmMainMenuButton; }
+    public Button ConfirmHubButton { get => _confirmHubButton; }
     #endregion
+
+    private GameContextManager _gameContextManager;
 
     private GameManagerUIActions GameManagerUIActions { get; set; }
 
@@ -148,7 +155,7 @@ public class GameUIManager : MonoBehaviour
     {
         Confirm = !Confirm;
     }
-    public void Initialize()
+    public void Initialize(GameContextManager gameContextManager)
     {
         if (Instance == null)
         {
@@ -159,6 +166,181 @@ public class GameUIManager : MonoBehaviour
         {
             GameManagerUIActions = new GameManagerUIActions();
         }
+
+        _gameContextManager = gameContextManager;
+
+        StartButtonCallback();
+        ContinueButtonCallback();
+        ExitLevelButtonCallback();
+        ExitHubButtonCallback();
+        ConfirmMainMenuButtonCallback();
+        ConfirmHubButtonCallback();
+        ConfirmActionButtonCallback();
+    }
+
+    private void StartButtonCallback()
+    {
+        _startButton.onClick.RemoveAllListeners();
+        _startButton.onClick.AddListener(() =>
+        {
+            _gameContextManager.TargetScene = "Level_Hub";
+
+            GameAudioManager.Instance.StopSFX();
+            GameAudioManager.Instance.PlaySFX("Menu_Click");
+
+            _quitButton.gameObject.SetActive(false);
+
+            System.Action action = () =>
+            {
+                _gameContextManager.CurrentState.SwitchState(_gameContextManager.CurrentState.GameManagerStateFactory.GameSaveMenuState());
+            };
+
+            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+
+        });
+
+        _quitButton.onClick.RemoveAllListeners();
+        _quitButton.onClick.AddListener(() =>
+        {
+            GameAudioManager.Instance.PlaySFX("Menu_Click");
+
+            _startButton.gameObject.SetActive(false);
+
+            _gameContextManager.WaitFrameEnd(() =>
+            {
+                _gameContextManager.QuitGame();
+            });
+        });
+    }
+
+    private void ContinueButtonCallback()
+    {
+        _continueButton.onClick.RemoveAllListeners();
+        _continueButton.onClick.AddListener(() =>
+        {
+            GameAudioManager.Instance.PlaySFX("Menu_Start");
+
+            System.Action action = () =>
+            {
+                _gameContextManager.CurrentState.SwitchState(_gameContextManager.ExitState);
+            };
+
+            _gameContextManager.WaitFrameEnd(action);
+        });
+    }
+
+    private void ExitLevelButtonCallback()
+    {
+        _exitLevelButton.onClick.RemoveAllListeners();
+        _exitLevelButton.onClick.AddListener(() =>
+        {
+            GameAudioManager.Instance.PlaySFX("Menu_Click");
+
+            System.Action action = () =>
+            {
+                _confirmPanel.SetActive(true);
+                _pauseMenu.SetActive(false);
+                _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(_confirmHubButton.gameObject);
+            };
+
+            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+        });
+    }
+
+    private void ExitHubButtonCallback()
+    {
+        _exitHubButton.onClick.RemoveAllListeners();
+        _exitHubButton.onClick.AddListener(() =>
+        {
+            GameAudioManager.Instance.PlaySFX("Menu_Click");
+
+            System.Action action = () =>
+            {
+                _confirmPanel.SetActive(true);
+                _pauseMenu.SetActive(false);
+                _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(_confirmMainMenuButton.gameObject);
+            };
+
+            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+        });
+    }
+
+    private void ConfirmMainMenuButtonCallback()
+    {
+        _confirmMainMenuButton.onClick.RemoveAllListeners();
+        _confirmMainMenuButton.onClick.AddListener(() =>
+        {
+            GameAudioManager.Instance.PlaySFX("Menu_Start");
+            GameSaveSystem.Instance.SaveGame();
+            _gameContextManager.TargetScene = "MainMenu";
+            _gameContextManager.ExitState = _gameContextManager.CurrentState.GameManagerStateFactory.GameMainMenuState();
+
+            GameStateTransitionManager.OnFadeOutEnd += (() =>
+            {
+                _gameContextManager.OnQuitToMainMenu();
+
+                System.Action action = () =>
+                {
+                    _gameContextManager.CurrentState.SwitchState(_gameContextManager.CurrentState.GameManagerStateFactory.GameLoadingState());
+                };
+                _confirmPanel.SetActive(false);
+
+                _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+            });
+
+            GameAudioManager.Instance.StopFadedBGM(0.00f, 1.00f);
+            GameStateTransitionManager.FadeOut();
+        });
+    }
+
+    private void ConfirmHubButtonCallback()
+    {
+        _confirmHubButton.onClick.RemoveAllListeners();
+        _confirmHubButton.onClick.AddListener(() =>
+        {
+            _gameContextManager.CharacterContextManager.enabled = true;
+            _gameContextManager.CharacterContextManager.DisableCharacterContext();
+
+            GameStateTransitionManager.OnFadeInEnd += (() =>
+            {
+                _gameContextManager.CharacterContextManager.EnableCharacterContext();
+            });
+
+            GameStateTransitionManager.OnFadeInStart += (() =>
+            {
+                _gameContextManager.CharacterContextManager.CurrentState.CharacterAnimationManager.SetIdleAnimation();
+                _gameContextManager.CharacterContextManager.transform.position = _gameContextManager.CharacterHubStartPosition;
+            });
+
+            GameAudioManager.Instance.PlaySFX("Menu_Start");
+            _gameContextManager.TargetScene = "Level_Hub";
+
+            System.Action action = () =>
+            {
+                _gameContextManager.ExitState = _gameContextManager.CurrentState.GameManagerStateFactory.GameHubState();
+                _confirmPanel.SetActive(false);
+                _gameContextManager.CurrentState.SwitchState(_gameContextManager.CurrentState.GameManagerStateFactory.GameLoadingState());
+            };
+
+            GameAudioManager.Instance.StopFadedBGM(0.00f, 1.00f);
+            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+        });
+    }
+
+    private void ConfirmActionButtonCallback()
+    {
+        _confirmActionButton.onClick.RemoveAllListeners();
+        _confirmActionButton.onClick.AddListener(() =>
+        {
+            GameAudioManager.Instance.PlaySFX("Menu_Click");
+
+            System.Action action = () =>
+            {
+                SetConfirmAction();
+            };
+
+            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+        });
     }
 
     #region CHARACTER UI 

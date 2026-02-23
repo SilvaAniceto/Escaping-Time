@@ -23,7 +23,7 @@ public class CharacterMoveState : CharacterAbstractState
             CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
         }
 
-        CharacterContextManager.HorizontalSpeed = CharacterContextManager.MoveDirection * Mathf.Lerp(CharacterContextManager.HorizontalStartSpeed, CharacterContextManager.HorizontalTopSpeed, CharacterContextManager.HorizontalSpeedLerpOvertime);
+        CharacterContextManager.HorizontalSpeed = CharacterContextManager.MoveDirection * Mathf.Lerp(CharacterContextManager.HorizontalStartSpeed, CharacterContextManager.HorizontalTopSpeed, CharacterContextManager.GetHorizontalSpeedLerpOvertime());
     }
     public override void FixedUpdateState()
     {

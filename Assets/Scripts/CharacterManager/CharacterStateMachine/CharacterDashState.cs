@@ -11,7 +11,7 @@ public class CharacterDashState : CharacterAbstractState
     {
         CharacterContextManager.DisableFixedJoint2D();
 
-        CharacterContextManager.DashSpeedOvertime = 0;
+        CharacterContextManager.DashSpeedOvertime = 0.00f;
 
         if (!Grounded)
         {
@@ -25,10 +25,10 @@ public class CharacterDashState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        DashSpeed = Mathf.Lerp(25.0f, 0.0f, CharacterContextManager.DashSpeedLerpOvertime);
+        DashSpeed = Mathf.Lerp(25.0f, 0.0f, CharacterContextManager.GetDashSpeedLerpOvertime());
 
         CharacterContextManager.HorizontalSpeed = DashSpeed * CharacterForwardDirection;
-        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.JumpSpeed = 0.00f;
     }
     public override void FixedUpdateState()
     {

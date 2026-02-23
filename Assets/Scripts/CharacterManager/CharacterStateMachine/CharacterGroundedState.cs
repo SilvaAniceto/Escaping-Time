@@ -46,7 +46,7 @@ public class CharacterGroundedState : CharacterAbstractState
         {
             CharacterContextManager.HorizontalStartSpeed = 0.00f;
             CharacterContextManager.HorizontalSpeed = 0.00f;
-            CharacterContextManager.VerticalSpeed = 0.00f;
+            CharacterContextManager.JumpSpeed = 0.00f;
 
             System.Action damagedAction = () =>
             {

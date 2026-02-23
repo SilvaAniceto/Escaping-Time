@@ -33,7 +33,7 @@ public class CharacterOnWallState : CharacterAbstractState
     public override void UpdateState()
     {
         CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, -3.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
+        CharacterContextManager.JumpSpeed = Mathf.Lerp(0.00f, -3.00f, CharacterContextManager.GetFallSpeedLerpOvertime());
     }
 
     public override void FixedUpdateState()
@@ -49,8 +49,8 @@ public class CharacterOnWallState : CharacterAbstractState
 
     public override void ExitState()
     {
-        CharacterContextManager.VerticalSpeed = 0.00f;
-        CharacterContextManager.FallStartSpeed = CharacterContextManager.VerticalSpeed;
+        CharacterContextManager.JumpSpeed = 0.00f;
+        CharacterContextManager.FallStartSpeed = CharacterContextManager.JumpSpeed;
     }
 
     public override void CheckSwitchStates()

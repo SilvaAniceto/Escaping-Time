@@ -17,16 +17,16 @@ public class CharacterDamagedState : CharacterAbstractState
         CharacterContextManager.Rigidbody.gravityScale = 0.00f;
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.JumpSpeed = 0.00f;
 
-        CharacterContextManager.DamageSpeedOvertime = 0;
-        CharacterContextManager.HorizontalSpeedOvertime = 0;
-        CharacterContextManager.GravityDownwardSpeedOvertime = 0;
+        CharacterContextManager.DamageSpeedOvertime = 0.00f;
+        CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
+        CharacterContextManager.FallSpeedOvertime = 0.00f;
     }
     public override void UpdateState()
     {
-        CharacterContextManager.HorizontalSpeed = Mathf.Lerp(CharacterContextManager.HorizontalTopSpeed, 0.00f, CharacterContextManager.DamageSpeedLerpOvertime) * CharacterContextManager.DamageHitDirection;
-        CharacterContextManager.VerticalSpeed = Mathf.Lerp(10.00f, -20.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
+        CharacterContextManager.HorizontalSpeed = Mathf.Lerp(CharacterContextManager.HorizontalTopSpeed, 0.00f, CharacterContextManager.GetDamageSpeedLerpOvertime()) * CharacterContextManager.DamageHitDirection;
+        CharacterContextManager.JumpSpeed = Mathf.Lerp(10.00f, -20.00f, CharacterContextManager.GetFallSpeedLerpOvertime());
     }
     public override void FixedUpdateState()
     {
@@ -45,7 +45,7 @@ public class CharacterDamagedState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.VerticalSpeed <= -10.00f)
+        if (CharacterContextManager.JumpSpeed <= -10.00f)
         {
             SwitchState(CharacterStateFactory.ResetState());
         }

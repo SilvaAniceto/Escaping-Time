@@ -17,7 +17,7 @@ public class CharacterIdleState : CharacterAbstractState
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState())
         {
             GameAudioManager.Instance.StopCharacterSFX();
-            CharacterContextManager.HorizontalSpeedOvertime = 0;
+            CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
         }
     }
     public override void UpdateState()

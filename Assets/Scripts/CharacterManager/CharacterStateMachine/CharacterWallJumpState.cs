@@ -11,24 +11,24 @@ public class CharacterWallJumpState : CharacterAbstractState
     {
         CharacterContextManager.CeilingChecker.enabled = true;
 
-        CharacterContextManager.GravityUpwardSpeedOvertime = 0;
-        CharacterContextManager.HorizontalSpeedOvertime = 0;
+        CharacterContextManager.JumpSpeedOvertime = 0;
+        CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
 
         GameAudioManager.Instance.StopCharacterSFX();
         GameAudioManager.Instance.PlayCharacterSFX("Jump");
     }
     public override void UpdateState()
     {
-        CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GravityUpwardSpeedLerpOvertime);
+        CharacterContextManager.JumpSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GetJumpSpeedLerpOvertime());
 
         if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && CharacterContextManager.MoveDirection != 0 && CharacterContextManager.MoveDirection != CharacterForwardDirection)
         {
             CharacterContextManager.AirJumpIsAllowed = false;
-            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.HorizontalSpeedLerpOvertime) * CharacterForwardDirection * CharacterContextManager.MoveDirection;
+            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.GetHorizontalSpeedLerpOvertime()) * CharacterForwardDirection * CharacterContextManager.MoveDirection;
         }
         else
         {
-            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.HorizontalSpeedLerpOvertime) * CharacterForwardDirection;
+            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.GetHorizontalSpeedLerpOvertime()) * CharacterForwardDirection;
         }
 
         CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
@@ -44,12 +44,12 @@ public class CharacterWallJumpState : CharacterAbstractState
     public override void ExitState()
     {
         CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.JumpSpeed = 0.00f;
         CharacterContextManager.FallStartSpeed = 1.00f;
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.VerticalSpeed <= 1.00f)
+        if (CharacterContextManager.JumpSpeed <= 1.00f)
         {
             SwitchState(CharacterStateFactory.FallState());
         }

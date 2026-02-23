@@ -16,7 +16,7 @@ public class CharacterJumpState : CharacterAbstractState
 
         CharacterContextManager.CeilingChecker.enabled = true;
 
-        CharacterContextManager.GravityUpwardSpeedOvertime = 0;
+        CharacterContextManager.JumpSpeedOvertime = 0;
 
         if (CharacterContextManager.HasAirJump)
         {
@@ -28,7 +28,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        CharacterContextManager.VerticalSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GravityUpwardSpeedLerpOvertime);
+        CharacterContextManager.JumpSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GetJumpSpeedLerpOvertime());
     }
     public override void FixedUpdateState()
     {
@@ -44,7 +44,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.VerticalSpeed <= 0.00f)
+        if (CharacterContextManager.JumpSpeed <= 0.00f)
         {
             SwitchState(CharacterStateFactory.FallState());
         }

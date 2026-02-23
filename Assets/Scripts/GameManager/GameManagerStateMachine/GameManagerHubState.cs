@@ -30,11 +30,6 @@ public class GameManagerHubState : GameManagerAbstractState
 
             GameSaveSystem.Instance.SaveGame();
         }
-
-        if (GameContextManager.PlayerInputManager.Cancel)
-        {
-            GameContextManager.PauseGameOnHubState();
-        }
     }
 
     public override void CheckSwitchSubStates()

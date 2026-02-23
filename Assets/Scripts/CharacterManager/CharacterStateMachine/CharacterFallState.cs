@@ -14,12 +14,12 @@ public class CharacterFallState : CharacterAbstractState
         CharacterContextManager.CeilingChecker.enabled = false;
         CharacterContextManager.WallChecker.enabled = false;
 
-        CharacterContextManager.GravityDownwardSpeedOvertime = 0;
+        CharacterContextManager.FallSpeedOvertime = 0.00f;
 
     }
     public override void UpdateState()
     {
-        CharacterContextManager.VerticalSpeed = Mathf.Lerp(CharacterContextManager.FallStartSpeed, -24.00f, CharacterContextManager.GravityDownwardSpeedLerpOvertime);
+        CharacterContextManager.JumpSpeed = Mathf.Lerp(CharacterContextManager.FallStartSpeed, -24.00f, CharacterContextManager.GetFallSpeedLerpOvertime());
     }
     public override void FixedUpdateState()
     {
@@ -34,7 +34,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.JumpSpeed = 0.00f;
     }
     public override void CheckSwitchStates()
     {

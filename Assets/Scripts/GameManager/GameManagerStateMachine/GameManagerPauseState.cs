@@ -20,7 +20,15 @@ public class GameManagerPauseState : GameManagerAbstractState
             }
             else
             {
-                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.ConfirmMainMenuButton.gameObject);
+                if (GameUIManager.Instance.ConfirmMainMenuButton.gameObject.activeInHierarchy)
+                {
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.ConfirmMainMenuButton.gameObject);
+                }
+
+                if (GameUIManager.Instance.ConfirmHubButton.gameObject.activeInHierarchy)
+                {
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.ConfirmHubButton.gameObject);
+                }
             }
         }
     }
@@ -32,12 +40,7 @@ public class GameManagerPauseState : GameManagerAbstractState
 
     public override void CheckSwitchStates()
     {
-        if (GameContextManager.PlayerInputManager == null) return;
 
-        if (GameContextManager.PlayerInputManager.Cancel)
-        {
-            SwitchState(GameContextManager.ExitState);
-        }
     }
 
     public override void CheckSwitchSubStates()

@@ -25,10 +25,7 @@ public class GameManagerRunState : GameManagerAbstractState
 
     public override void CheckSwitchStates()
     {
-        if (GameContextManager.PlayerInputManager.Cancel)
-        {
-            GameContextManager.PauseOnRunState();
-        }
+        
     }
 
     public override void CheckSwitchSubStates()

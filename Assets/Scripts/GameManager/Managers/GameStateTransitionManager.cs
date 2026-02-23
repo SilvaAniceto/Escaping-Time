@@ -17,7 +17,10 @@ public class GameStateTransitionManager : MonoBehaviour
 
     public void Initialize()
     {
-        _animator = GetComponent<Animator>();
+        if (_animator == null)
+        {
+            _animator = GetComponent<Animator>();
+        }
     }
 
     public static void FadeIn()
@@ -26,12 +29,12 @@ public class GameStateTransitionManager : MonoBehaviour
     }
     public void FadeInStarted()
     {
-        OnFadeInStart.Invoke();
+        OnFadeInStart?.Invoke();
         OnFadeInStart = null;
     }
     public void FadeInEnded()
     {
-        OnFadeInEnd.Invoke();
+        OnFadeInEnd?.Invoke();
         OnFadeInEnd = null;
     }
     public static void FadeOut()
@@ -40,12 +43,12 @@ public class GameStateTransitionManager : MonoBehaviour
     }
     public void FadeOutStarted()
     {
-        OnFadeOutStart.Invoke();
+        OnFadeOutStart?.Invoke();
         OnFadeOutStart = null;
     }
     public void FadeOutEnded()
     {
-        OnFadeOutEnd.Invoke();
+        OnFadeOutEnd?.Invoke();
         OnFadeOutEnd = null;
     }
     public static void FadeOff()

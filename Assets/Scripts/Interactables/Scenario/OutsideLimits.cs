@@ -27,6 +27,6 @@ public class OutsideLimits : InteractableItem
 
     public override void InteractablePauseState(bool value)
     {
-
+        base.InteractablePauseState(value);
     }
 }

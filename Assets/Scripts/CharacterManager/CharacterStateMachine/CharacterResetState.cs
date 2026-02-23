@@ -13,7 +13,7 @@ public class CharacterResetState : CharacterAbstractState
         CharacterAnimationManager.SetDisabledAnimation();
 
         CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.VerticalSpeed = 0.00f;
+        CharacterContextManager.JumpSpeed = 0.00f;
         CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
 
         GameStateTransitionManager.OnFadeInEnd += (() =>

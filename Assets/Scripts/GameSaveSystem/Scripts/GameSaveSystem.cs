@@ -116,7 +116,7 @@ public class GameSaveSystem : MonoBehaviour
 
                     Action action = () =>
                     {
-                        _gameContextManager.CurrentState.SwitchState(new GameManagerStateFactory(_gameContextManager).GameMainMenuState());
+                        _gameContextManager.CurrentState.SwitchState(_gameContextManager.CurrentState.GameManagerStateFactory.GameMainMenuState());
                     };
 
                     _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Back"));
@@ -163,6 +163,22 @@ public class GameSaveSystem : MonoBehaviour
             };
 
             _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Back"));
+        });
+
+        OnLaunchGame.RemoveAllListeners();
+        OnLaunchGame.AddListener(() =>
+        {
+            GameStateTransitionManager.OnFadeOutEnd += (() =>
+            {
+                System.Action action = () =>
+                {
+                    _gameContextManager.CurrentState.SwitchState(_gameContextManager.CurrentState.GameManagerStateFactory.GameLoadingState());
+                };
+
+                _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+            });
+
+            GameStateTransitionManager.FadeOut();
         });
     }
     private void OnDestroy()
