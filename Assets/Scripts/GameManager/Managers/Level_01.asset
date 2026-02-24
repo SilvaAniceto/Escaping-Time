@@ -18,7 +18,7 @@ MonoBehaviour:
   _tier3TargetScore: 1950
   _tier2TargetScore: 1700
   _tier1TargetScore: 1200
-  _maxGemScore: 650
+  _maxGemScore: 600
   _maxHourglassScore: 300
   _currentGemScore: 0
   _currentHourglassScore: 0
