@@ -29,8 +29,8 @@ public class GameContextManager : MonoBehaviour
     [Header("Playeable Character Set")]
     [SerializeField] private PlayeableCharacterSet _playeableCharacterSet;
 
-    [Header("Game Level Manager")]
-    [SerializeField] private GameLevelManager[] _gameLevelManagers;
+    [Header("Game Level Config")]
+    [SerializeField] private GameLevelConfig[] _gameLevelConfigs;
 
     [Header("Game Save System")]
     [SerializeField] private GameSaveSystem _gameSaveSystem;
@@ -66,7 +66,7 @@ public class GameContextManager : MonoBehaviour
 
     public PlayerInputManager PlayerInputManager { get => _playerInputManager; }
 
-    public List<GameLevelManager> GameLevelManagers { get; private set; } = new List<GameLevelManager>();    
+    public List<GameLevelRuntimeData> GameLevelRuntimeData { get; private set; } = new List<GameLevelRuntimeData>();
     public string TargetScene { get; set; }
 
     public EventSystem GameManagerEventSystem {  get => EventSystem.current; }
@@ -429,35 +429,23 @@ public class GameContextManager : MonoBehaviour
 
     private void InstantiateLevelManagers()
     {
-        foreach (GameLevelManager levelManager in _gameLevelManagers)
+        foreach (GameLevelConfig config in _gameLevelConfigs)
         {
-            ScriptableObject level = ScriptableObject.CreateInstance(typeof(GameLevelManager));
-
-            ((GameLevelManager)level).State = GameLevelManager.EState.Closed;
-
-            ((GameLevelManager)level).LevelSceneName = levelManager.LevelSceneName;
-
-            ((GameLevelManager)level).LevelUnlockScore = levelManager.LevelUnlockScore;
-
-            ((GameLevelManager)level).Tier3TargetScore = levelManager.Tier3TargetScore;
-            ((GameLevelManager)level).Tier2TargetScore = levelManager.Tier2TargetScore;
-            ((GameLevelManager)level).Tier1TargetScore = levelManager.Tier1TargetScore;
-
-            ((GameLevelManager)level).ClassficationTierReached = EClassficationTier.None;
-
-            ((GameLevelManager)level).MaxGemScore = levelManager.MaxGemScore;
-            ((GameLevelManager)level).MaxHourglassScore = levelManager.MaxHourglassScore;
-
-            ((GameLevelManager)level).CurrentGemScore = 0;
-            ((GameLevelManager)level).CurrentHourglassScore = 0;
-
-            ((GameLevelManager)level).MaxGemScoreReached = 0;
-            ((GameLevelManager)level).MaxHourglassScoreReached = 0;
-            ((GameLevelManager)level).MaxLevelScoreReached = 0;
-
-            GameLevelManagers.Add((GameLevelManager)level);
+            GameLevelRuntimeData runtimeData = new GameLevelRuntimeData
+            {
+                State = ELevelState.Closed,
+                LevelSceneName = config.LevelSceneName,
+                Config = config,
+                CurrentGemScore = 0,
+                CurrentHourglassScore = 0,
+                MaxGemScoreReached = 0,
+                MaxHourglassScoreReached = 0,
+                MaxLevelScoreReached = 0,
+                ClassficationTierReached = EClassficationTier.None
+            };
+            GameLevelRuntimeData.Add(runtimeData);
         }
-    }  
+    }
     private void StartDevelopmentEnvironment()
     {
         _transitionScreen.Initialize();

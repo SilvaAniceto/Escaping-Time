@@ -17,7 +17,7 @@ public class HubDoor : InteractableItem
     [SerializeField] private Sprite _silverTrophy;
     [SerializeField] private Sprite _brassTrophy;
 
-    public GameLevelManager LevelManager { get; private set; }
+    public GameLevelRuntimeData GameLevelRuntimeData { get; private set; }
 
     public override void Awake()
     {
@@ -30,13 +30,13 @@ public class HubDoor : InteractableItem
     }
     private void SetHubDoor()
     {
-        LevelManager = GameContextManager.Instance.GameLevelManagers.Find(x => x.LevelSceneName == _levelSceneName);
+        GameLevelRuntimeData = GameContextManager.Instance.GameLevelRuntimeData.Find(x => x.LevelSceneName == _levelSceneName);
 
         _trophy.transform.parent.gameObject.SetActive(false);
         _gemScoreText.transform.parent.gameObject.SetActive(false);
         _hourglassScoreText.transform.parent.gameObject.SetActive(false);
 
-        switch (LevelManager.ClassficationTierReached)
+        switch (GameLevelRuntimeData.ClassficationTierReached)
         {
             case EClassficationTier.None:
 
@@ -58,15 +58,15 @@ public class HubDoor : InteractableItem
                 break;
         }
 
-        switch (LevelManager.State)
+        switch (GameLevelRuntimeData.State)
         {
-            case GameLevelManager.EState.Closed:
+            case ELevelState.Closed:
                 Animator.Play("Closed");
                 break;
-            case GameLevelManager.EState.Open:
+            case ELevelState.Open:
                 Animator.Play("Opened");
                 break;
-            case GameLevelManager.EState.Finished:
+            case ELevelState.Finished:
                 Animator.Play("Opened");
                 break;
         }
@@ -74,11 +74,11 @@ public class HubDoor : InteractableItem
 
     public override void ConfirmInteraction()
     {
-        if (LevelManager.State == GameLevelManager.EState.Open || LevelManager.State == GameLevelManager.EState.Finished)
+        if (GameLevelRuntimeData.State == ELevelState.Open || GameLevelRuntimeData.State == ELevelState.Finished)
         {
             GameContextManager.Instance.CharacterContextManager.DisableCharacterContext();
-            GameContextManager.Instance.TargetScene = LevelManager.LevelSceneName;
-            GameScoreManager.Instance.LevelManager = LevelManager;
+            GameContextManager.Instance.TargetScene = GameLevelRuntimeData.LevelSceneName;
+            GameScoreManager.Instance.GameLevelRuntimeData = GameLevelRuntimeData;
             GameContextManager.Instance.CharacterHubStartPosition = transform.position;
             GameScoreManager.Instance.ResetPlayerScorePoints();
 
@@ -99,7 +99,7 @@ public class HubDoor : InteractableItem
         }
         else
         {
-            if (GameScoreManager.Instance.MasterScore >= LevelManager.LevelUnlockScore)
+            if (GameScoreManager.Instance.MasterScore >= GameLevelRuntimeData.Config.LevelUnlockScore)
             {
                 Animator.Play("Opening");
             }
@@ -118,7 +118,7 @@ public class HubDoor : InteractableItem
             case EInteractionType.Enter:
                 break;
             case EInteractionType.Stay:
-                if (LevelManager.State == GameLevelManager.EState.Open)
+                if (GameLevelRuntimeData.State == ELevelState.Open)
                 {
                     _gemScoreText.text = $"???";
                     _hourglassScoreText.text = $"???";
@@ -130,11 +130,11 @@ public class HubDoor : InteractableItem
                     _hourglassScoreText.transform.parent.gameObject.SetActive(true);
                 }
 
-                if (LevelManager.State == GameLevelManager.EState.Finished)
+                if (GameLevelRuntimeData.State == ELevelState.Finished)
                 {
-                    _gemScoreText.text = $"{LevelManager.MaxGemScoreReached}/ {LevelManager.MaxGemScore}";
-                    _hourglassScoreText.text = $"{LevelManager.MaxHourglassScoreReached}/ {LevelManager.MaxHourglassScore}";
-                    _levelScoreText.text = $"{LevelManager.MaxLevelScoreReached}";
+                    _gemScoreText.text = $"{GameLevelRuntimeData.MaxGemScoreReached}/ {GameLevelRuntimeData.Config.MaxGemScore}";
+                    _hourglassScoreText.text = $"{GameLevelRuntimeData.MaxHourglassScoreReached}/ {GameLevelRuntimeData.Config.MaxHourglassScore}";
+                    _levelScoreText.text = $"{GameLevelRuntimeData.MaxLevelScoreReached}";
 
                     _trophy.transform.parent.gameObject.SetActive(true);
                     _trophy.color = Color.white;
@@ -155,7 +155,7 @@ public class HubDoor : InteractableItem
 
     public void SetOpenState()
     {
-        LevelManager.State = GameLevelManager.EState.Open;
+        GameLevelRuntimeData.State = ELevelState.Open;
     }
 
     public void SetDoorSFX()

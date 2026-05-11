@@ -41,16 +41,16 @@ public class GameSaveSystem : MonoBehaviour
         public bool CharacterHasAirJump;
         public bool CharacterHasWallMove;
         public int MasterScore;
-        public GameLevelManager[] GameLevelManager;
+        public GameLevelRuntimeData[] GameLevelRuntimeData;
 
-        public PlayerProfileData(string profileName, bool characterHasDash, bool characterHasAirJump, bool characterHasWallMove, int masterScore, GameLevelManager[] gameLevelManager)
+        public PlayerProfileData(string profileName, bool characterHasDash, bool characterHasAirJump, bool characterHasWallMove, int masterScore, GameLevelRuntimeData[] gameLevelRuntimeData)
         {
             this.ProfileName = profileName;
             this.CharacterHasDash = characterHasDash;
             this.CharacterHasAirJump = characterHasAirJump;
             this.CharacterHasWallMove = characterHasWallMove;
             this.MasterScore = masterScore;
-            this.GameLevelManager = gameLevelManager;
+            this.GameLevelRuntimeData = gameLevelRuntimeData;
         }
 
         public PlayerProfileData() { }
@@ -430,15 +430,15 @@ public class GameSaveSystem : MonoBehaviour
         gameContextManager.CharacterContextManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
         GameScoreManager.Instance.MasterScore = ProfileData.MasterScore;
 
-        for (int i = 0; i < gameContextManager.GameLevelManagers.Count; i++)
+        for (int i = 0; i < gameContextManager.GameLevelRuntimeData.Count; i++)
         {
-            gameContextManager.GameLevelManagers[i].State = ProfileData.GameLevelManager[i].State;
-            gameContextManager.GameLevelManagers[i].CurrentGemScore = ProfileData.GameLevelManager[i].CurrentGemScore;
-            gameContextManager.GameLevelManagers[i].CurrentHourglassScore = ProfileData.GameLevelManager[i].CurrentHourglassScore;
-            gameContextManager.GameLevelManagers[i].MaxGemScoreReached = ProfileData.GameLevelManager[i].MaxGemScoreReached;
-            gameContextManager.GameLevelManagers[i].MaxHourglassScoreReached = ProfileData.GameLevelManager[i].MaxHourglassScoreReached;
-            gameContextManager.GameLevelManagers[i].MaxLevelScoreReached = ProfileData.GameLevelManager[i].MaxLevelScoreReached;
-            gameContextManager.GameLevelManagers[i].ClassficationTierReached = ProfileData.GameLevelManager[i].ClassficationTierReached;
+            gameContextManager.GameLevelRuntimeData[i].State = ProfileData.GameLevelRuntimeData[i].State;
+            gameContextManager.GameLevelRuntimeData[i].CurrentGemScore = ProfileData.GameLevelRuntimeData[i].CurrentGemScore;
+            gameContextManager.GameLevelRuntimeData[i].CurrentHourglassScore = ProfileData.GameLevelRuntimeData[i].CurrentHourglassScore;
+            gameContextManager.GameLevelRuntimeData[i].MaxGemScoreReached = ProfileData.GameLevelRuntimeData[i].MaxGemScoreReached;
+            gameContextManager.GameLevelRuntimeData[i].MaxHourglassScoreReached = ProfileData.GameLevelRuntimeData[i].MaxHourglassScoreReached;
+            gameContextManager.GameLevelRuntimeData[i].MaxLevelScoreReached = ProfileData.GameLevelRuntimeData[i].MaxLevelScoreReached;
+            gameContextManager.GameLevelRuntimeData[i].ClassficationTierReached = ProfileData.GameLevelRuntimeData[i].ClassficationTierReached;
         }
     }
     public void SaveGame()
@@ -479,7 +479,7 @@ public class GameSaveSystem : MonoBehaviour
         ProfileData.CharacterHasDash = characterContextManager.HasInfinityDash;
         ProfileData.CharacterHasWallMove = characterContextManager.HasInfinityWallMove;
         ProfileData.MasterScore = scoreManager.MasterScore;
-        ProfileData.GameLevelManager = _gameContextManager.GameLevelManagers.ToArray();
+        ProfileData.GameLevelRuntimeData = _gameContextManager.GameLevelRuntimeData.ToArray();
     }
     private void UpdateLoadedProfileData(PlayerProfileData data)
     {
@@ -488,11 +488,11 @@ public class GameSaveSystem : MonoBehaviour
         ProfileData.CharacterHasDash = data.CharacterHasDash;
         ProfileData.CharacterHasWallMove = data.CharacterHasWallMove;
         ProfileData.MasterScore = data.MasterScore;
-        ProfileData.GameLevelManager = data.GameLevelManager;
+        ProfileData.GameLevelRuntimeData = data.GameLevelRuntimeData;
     }
     private PlayerProfileData CreateProfileData(string profileName)
     {
-        ProfileData = new PlayerProfileData(profileName, false, false, false, 0, _gameContextManager.GameLevelManagers.ToArray());
+        ProfileData = new PlayerProfileData(profileName, false, false, false, 0, _gameContextManager.GameLevelRuntimeData.ToArray());
 
         return ProfileData;
     }

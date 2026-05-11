@@ -24,7 +24,7 @@ public class GameScoreManager
     public static GameScoreManager Instance;
 
     #region PUBLIC PROPERTIES
-    public GameLevelManager LevelManager { get; set; }
+    public GameLevelRuntimeData GameLevelRuntimeData { get; set; }
     public int MasterScore { get; set; }
     public int CurrentScore { get; private set; }
     #endregion
@@ -72,7 +72,7 @@ public class GameScoreManager
 
         if (!isGameContext)
         {
-            LevelManager = gameContextManager.GameLevelManagers[0];
+            GameLevelRuntimeData = gameContextManager.GameLevelRuntimeData[0];
             ResetPlayerScorePoints();
         }
     }
@@ -92,25 +92,25 @@ public class GameScoreManager
         CurrentScore = 0;
         CurrentTimer = 300;
         TimeScore = 0;
-        LevelManager.CurrentGemScore = 0;
-        LevelManager.CurrentHourglassScore = 0;
+        GameLevelRuntimeData.CurrentGemScore = 0;
+        GameLevelRuntimeData.CurrentHourglassScore = 0;
 
         GameUIManager.Instance.ResetScoreUI();
-        GameUIManager.Instance.SetHourglassDisplay(LevelManager.CurrentHourglassScore / 100);
+        GameUIManager.Instance.SetHourglassDisplay(GameLevelRuntimeData.CurrentHourglassScore / 100);
     }
     public void AddGemScore(int value)
     {
-        LevelManager.CurrentGemScore += value;
+        GameLevelRuntimeData.CurrentGemScore += value;
 
         AddScorePoints(value);
     }
     public void AddCollectedHourglass()
     {
-        LevelManager.CurrentHourglassScore += 100;
+        GameLevelRuntimeData.CurrentHourglassScore += 100;
 
         AddScorePoints(100);
 
-        GameUIManager.Instance.SetHourglassDisplay(LevelManager.CurrentHourglassScore / 100);
+        GameUIManager.Instance.SetHourglassDisplay(GameLevelRuntimeData.CurrentHourglassScore / 100);
     }
     public void AddScorePoints(int value)
     {
@@ -138,31 +138,31 @@ public class GameScoreManager
 
         CurrentScore = CurrentScore * (TimeScoreMultiplier == 0 ? TimeScoreMultiplier : 1);
 
-        if (LevelManager.CurrentGemScore >= LevelManager.MaxGemScoreReached)
+        if (GameLevelRuntimeData.CurrentGemScore >= GameLevelRuntimeData.MaxGemScoreReached)
         {
-            LevelManager.MaxGemScoreReached = LevelManager.CurrentGemScore;
+            GameLevelRuntimeData.MaxGemScoreReached = GameLevelRuntimeData.CurrentGemScore;
         }
 
-        if (LevelManager.CurrentHourglassScore >= LevelManager.MaxHourglassScoreReached)
+        if (GameLevelRuntimeData.CurrentHourglassScore >= GameLevelRuntimeData.MaxHourglassScoreReached)
         {
-            LevelManager.MaxHourglassScoreReached = LevelManager.CurrentHourglassScore;
+            GameLevelRuntimeData.MaxHourglassScoreReached = GameLevelRuntimeData.CurrentHourglassScore;
         }
 
-        if (CurrentScore > LevelManager.MaxLevelScoreReached)
+        if (CurrentScore > GameLevelRuntimeData.MaxLevelScoreReached)
         {
-            int diff = CurrentScore - LevelManager.MaxLevelScoreReached;
+            int diff = CurrentScore - GameLevelRuntimeData.MaxLevelScoreReached;
 
-            LevelManager.MaxLevelScoreReached = CurrentScore;
+            GameLevelRuntimeData.MaxLevelScoreReached = CurrentScore;
 
             MasterScore += diff;
         }
 
-        LevelManager.SetClassficationTier(CurrentScore);
+        GameLevelRuntimeData.SetClassficationTier(CurrentScore);
     }
     private void SetTrophyPercentage()
     {
-        SilverScorePercentage = Mathf.Round(Mathf.InverseLerp(0, LevelManager.Tier3TargetScore, LevelManager.Tier2TargetScore) * 100) / 100;
-        BrassScorePercentage = Mathf.Round(Mathf.InverseLerp(0, LevelManager.Tier3TargetScore, LevelManager.Tier1TargetScore) * 100) / 100;
+        SilverScorePercentage = Mathf.Round(Mathf.InverseLerp(0, GameLevelRuntimeData.Config.Tier3TargetScore, GameLevelRuntimeData.Config.Tier2TargetScore) * 100) / 100;
+        BrassScorePercentage = Mathf.Round(Mathf.InverseLerp(0, GameLevelRuntimeData.Config.Tier3TargetScore, GameLevelRuntimeData.Config.Tier1TargetScore) * 100) / 100;
 
         GameUIManager.Instance.SetTrophyUIPosition();
     }
@@ -192,13 +192,13 @@ public class GameScoreManager
 
         float gemUIScore = 0;
 
-        while (gemUIScore < LevelManager.CurrentGemScore)
+        while (gemUIScore < GameLevelRuntimeData.CurrentGemScore)
         {
             gemUIScore += Time.deltaTime / 3;
 
             gemUIScore = Mathf.CeilToInt(gemUIScore);
 
-            gemUIScore = Mathf.Clamp(gemUIScore, 0, LevelManager.CurrentGemScore);
+            gemUIScore = Mathf.Clamp(gemUIScore, 0, GameLevelRuntimeData.CurrentGemScore);
 
             GameUIManager.Instance.SetGemScoreText($"= {gemUIScore.ToString()}");
 
@@ -213,13 +213,13 @@ public class GameScoreManager
 
         float hourglassUIScore = 0;
 
-        while (hourglassUIScore < LevelManager.CurrentHourglassScore)
+        while (hourglassUIScore < GameLevelRuntimeData.CurrentHourglassScore)
         {
             hourglassUIScore +=  Time.deltaTime / 3;
 
             hourglassUIScore = Mathf.CeilToInt(hourglassUIScore);
 
-            hourglassUIScore = Mathf.Clamp(hourglassUIScore, 0, LevelManager.CurrentGemScore);
+            hourglassUIScore = Mathf.Clamp(hourglassUIScore, 0, GameLevelRuntimeData.CurrentGemScore);
 
             GameUIManager.Instance.SetHourglassText($"= {hourglassUIScore}");
 
@@ -255,7 +255,7 @@ public class GameScoreManager
 
         float levelUIFinalScore = 0;
 
-        float finalScorePercentage = Mathf.InverseLerp(0.00f, LevelManager.Tier3TargetScore, CurrentScore);
+        float finalScorePercentage = Mathf.InverseLerp(0.00f, GameLevelRuntimeData.Config.Tier3TargetScore, CurrentScore);
 
         while (levelUIFinalScore < finalScorePercentage)
         {

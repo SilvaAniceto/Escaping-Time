@@ -7239,12 +7239,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d8874b46712ff4f90a6648c32ac94d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnRunOrPauseStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
   _environment: 1
   _playeableCharacterSet: {fileID: 11400000, guid: 0fbe31a7dcb54b84295cecdf976e4daf, type: 2}
-  _gameLevelManagers:
+  _gameLevelConfigs:
   - {fileID: 11400000, guid: 6b17632813e6c564c82df884cf92c6de, type: 2}
   - {fileID: 11400000, guid: 8a467166d16df254ca8ea28d2e73bc26, type: 2}
   _gameSaveSystem: {fileID: 2819620706967063627}
