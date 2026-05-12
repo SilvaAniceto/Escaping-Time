@@ -183,7 +183,7 @@ public class GameUIManager : MonoBehaviour
         _startButton.onClick.RemoveAllListeners();
         _startButton.onClick.AddListener(() =>
         {
-            _gameContextManager.TargetScene = "Level_Hub";
+            _gameContextManager.TargetScene = SceneIdentifier.Level_Hub;
 
             GameAudioManager.Instance.StopSFX();
             GameAudioManager.Instance.PlaySFX("Menu_Click");
@@ -272,7 +272,7 @@ public class GameUIManager : MonoBehaviour
         {
             GameAudioManager.Instance.PlaySFX("Menu_Start");
             GameSaveSystem.Instance.SaveGame();
-            _gameContextManager.TargetScene = "MainMenu";
+            _gameContextManager.TargetScene = SceneIdentifier.MainMenu;
             _gameContextManager.ExitState = _gameContextManager.CurrentState.GameManagerStateFactory.GameMainMenuState();
 
             GameStateTransitionManager.OnFadeOutEnd += (() =>
@@ -313,7 +313,7 @@ public class GameUIManager : MonoBehaviour
             });
 
             GameAudioManager.Instance.PlaySFX("Menu_Start");
-            _gameContextManager.TargetScene = "Level_Hub";
+            _gameContextManager.TargetScene = SceneIdentifier.Level_Hub;
 
             System.Action action = () =>
             {

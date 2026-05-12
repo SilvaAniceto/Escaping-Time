@@ -11,7 +11,7 @@ public class CharacterDashState : CharacterAbstractState
     {
         CharacterContextManager.DisableFixedJoint2D();
 
-        CharacterContextManager.DashSpeedOvertime = 0.00f;
+        CharacterContextManager.PhysicsManager.ResetDashOvertime();
 
         if (!Grounded)
         {
@@ -25,10 +25,10 @@ public class CharacterDashState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        DashSpeed = Mathf.Lerp(25.0f, 0.0f, CharacterContextManager.GetDashSpeedLerpOvertime());
+        DashSpeed = Mathf.Lerp(25.0f, 0.0f, CharacterContextManager.PhysicsManager.GetDashSpeedLerpOvertime(Time.deltaTime));
 
-        CharacterContextManager.HorizontalSpeed = DashSpeed * CharacterForwardDirection;
-        CharacterContextManager.JumpSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.HorizontalSpeed = DashSpeed * CharacterForwardDirection;
+        CharacterContextManager.PhysicsManager.JumpSpeed = 0.00f;
     }
     public override void FixedUpdateState()
     {
@@ -40,11 +40,11 @@ public class CharacterDashState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.HorizontalSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.HorizontalSpeed = 0.00f;
     }
     public override void CheckSwitchStates()
     {
-        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) <= 7.0f)
+        if (Mathf.Abs(CharacterContextManager.PhysicsManager.HorizontalSpeed) <= 7.0f)
         {
             SwitchState(CharacterStateFactory.FallState());
         }

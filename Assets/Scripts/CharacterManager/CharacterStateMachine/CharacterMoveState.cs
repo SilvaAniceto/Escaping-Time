@@ -23,7 +23,7 @@ public class CharacterMoveState : CharacterAbstractState
             CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
         }
 
-        CharacterContextManager.HorizontalSpeed = CharacterContextManager.MoveDirection * Mathf.Lerp(CharacterContextManager.HorizontalStartSpeed, CharacterContextManager.HorizontalTopSpeed, CharacterContextManager.GetHorizontalSpeedLerpOvertime());
+        CharacterContextManager.PhysicsManager.HorizontalSpeed = CharacterContextManager.PhysicsManager.MoveDirection * Mathf.Lerp(CharacterContextManager.PhysicsManager.HorizontalStartSpeed, CharacterContextManager.PhysicsManager.HorizontalTopSpeed, CharacterContextManager.PhysicsManager.GetHorizontalSpeedLerpOvertime(Time.deltaTime));
     }
     public override void FixedUpdateState()
     {
@@ -54,7 +54,7 @@ public class CharacterMoveState : CharacterAbstractState
     }
     public override Quaternion CurrentLookRotation()
     {
-        float angle = Mathf.Atan2(0, CharacterContextManager.MoveDirection) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(0, CharacterContextManager.PhysicsManager.MoveDirection) * Mathf.Rad2Deg;
         return Quaternion.AngleAxis(angle, Vector3.up);
     }
     public override void OnCollisionEnter2D(Collision2D collision) { }

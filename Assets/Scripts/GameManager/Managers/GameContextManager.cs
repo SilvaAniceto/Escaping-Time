@@ -40,7 +40,10 @@ public class GameContextManager : MonoBehaviour
     [SerializeField] private GameStateTransitionManager _transitionScreen;
 
     [Header("Game Audio Manager")]
-    [SerializeField] private GameAudioManager _gameAudioManager;  
+    [SerializeField] private GameAudioManager _gameAudioManager;
+
+    [Header("Debug Settings")]
+    [SerializeField] private bool _debugOnGui = false;
     #endregion
 
     #region PRIVATE FIELDS
@@ -66,12 +69,12 @@ public class GameContextManager : MonoBehaviour
 
     public PlayerInputManager PlayerInputManager { get => _playerInputManager; }
 
-    public List<GameLevelRuntimeData> GameLevelRuntimeData { get; private set; } = new List<GameLevelRuntimeData>();
-    public string TargetScene { get; set; }
+    public List<GameLevelRuntimeData> GameLevelsRuntimeData { get; private set; } = new List<GameLevelRuntimeData>();
+    public SceneIdentifier TargetScene { get; set; }
 
     public EventSystem GameManagerEventSystem {  get => EventSystem.current; }
 
-    public bool InstantiateCharacter { get => _characterContextManager == null && TargetScene != "MainMenu"; }
+    public bool InstantiateCharacter { get => _characterContextManager == null && TargetScene != SceneIdentifier.MainMenu; }
     public bool SetTimer { get; set; } = false;
     public bool LoadLevel { get; set; } = false;
     #endregion
@@ -132,17 +135,20 @@ public class GameContextManager : MonoBehaviour
     }
     void OnGUI()
     {
-        GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
-//#if UNITY_EDITOR
-//        GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
-//        GUILayout.Label("Current State: " + (CurrentState == null ? "" : CurrentState.ToString()));
-//        GUILayout.Label("-----------------------------------------------");
-//        if (_characterContextManager != null)
-//        {
-//            GUILayout.Label("Current State: " + _characterContextManager.CurrentState.ToString());
-//            GUILayout.Label("Current Sub State: " + (_characterContextManager.CurrentState.CurrentSubState != null ? _characterContextManager.CurrentState.CurrentSubState.ToString() : ""));
-//        }
-//#endif
+#if UNITY_EDITOR
+        if (_debugOnGui)
+        {
+            GUILayout.Label("FPS: " + Mathf.RoundToInt(1f / Time.deltaTime));
+            GUILayout.Label("Exit State: " + (ExitState == null ? "" : ExitState.ToString()));
+            GUILayout.Label("Current State: " + (CurrentState == null ? "" : CurrentState.ToString()));
+            GUILayout.Label("-----------------------------------------------");
+            if (_characterContextManager != null)
+            {
+                GUILayout.Label("Current State: " + _characterContextManager.CurrentState.ToString());
+                GUILayout.Label("Current Sub State: " + (_characterContextManager.CurrentState.CurrentSubState != null ? _characterContextManager.CurrentState.CurrentSubState.ToString() : ""));
+            }
+        }
+#endif
     }
     #endregion
 
@@ -295,7 +301,7 @@ public class GameContextManager : MonoBehaviour
         _gameUIManager.CharacterUIManager.gameObject.SetActive(false);
         _gameUIManager.LoadingScreen.SetActive(true);
 
-        SceneManager.LoadSceneAsync(TargetScene);
+        SceneManager.LoadSceneAsync(TargetScene.ToString());
 
         OnLoadSceneEnd.RemoveAllListeners();
         OnLoadSceneEnd.AddListener(() =>
@@ -413,7 +419,7 @@ public class GameContextManager : MonoBehaviour
 
         _gameScoreManager.SetScoreManager();
 
-        TargetScene = "Level_Hub";
+        TargetScene = SceneIdentifier.Level_Hub;
     }
     public void OnExitScoreState()
     {
@@ -443,7 +449,7 @@ public class GameContextManager : MonoBehaviour
                 MaxLevelScoreReached = 0,
                 ClassficationTierReached = EClassficationTier.None
             };
-            GameLevelRuntimeData.Add(runtimeData);
+            GameLevelsRuntimeData.Add(runtimeData);
         }
     }
     private void StartDevelopmentEnvironment()
@@ -492,7 +498,7 @@ public class GameContextManager : MonoBehaviour
 
         OnRunOrPauseStateChanged.AddListener((value) =>
         {
-            if (TargetScene != "Level_Hub")
+            if (TargetScene != SceneIdentifier.Level_Hub)
             {
                 SetTimer = value;
             }

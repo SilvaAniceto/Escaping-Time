@@ -56,7 +56,7 @@ public abstract class CharacterAbstractState
     {
         FixedUpdateState();
 
-        CharacterContextManager.Rigidbody.MovePosition(CharacterContextManager.Rigidbody.position + CharacterContextManager.MovePosition * Time.fixedDeltaTime);
+        CharacterContextManager.Rigidbody.MovePosition(CharacterContextManager.Rigidbody.position + CharacterContextManager.PhysicsManager.MovePosition * Time.fixedDeltaTime);
         
         if (_currentSubState != null)
         {

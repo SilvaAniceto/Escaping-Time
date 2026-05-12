@@ -9,17 +9,17 @@ public class CharacterFallState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.HorizontalTopSpeed = 6.30f;
+        CharacterContextManager.PhysicsManager.HorizontalTopSpeed = 6.30f;
 
         CharacterContextManager.CeilingChecker.enabled = false;
         CharacterContextManager.WallChecker.enabled = false;
 
-        CharacterContextManager.FallSpeedOvertime = 0.00f;
+        CharacterContextManager.PhysicsManager.ResetFallOvertime();
 
     }
     public override void UpdateState()
     {
-        CharacterContextManager.JumpSpeed = Mathf.Lerp(CharacterContextManager.FallStartSpeed, -24.00f, CharacterContextManager.GetFallSpeedLerpOvertime());
+        CharacterContextManager.PhysicsManager.JumpSpeed = Mathf.Lerp(CharacterContextManager.PhysicsManager.FallStartSpeed, -24.00f, CharacterContextManager.PhysicsManager.GetFallSpeedLerpOvertime(Time.deltaTime));
     }
     public override void FixedUpdateState()
     {
@@ -34,7 +34,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.JumpSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.JumpSpeed = 0.00f;
     }
     public override void CheckSwitchStates()
     {

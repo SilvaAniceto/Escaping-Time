@@ -8,7 +8,7 @@
     }
     public void ExecuteCommand()
     {
-        _characterContextManager.MoveDirection = (int)ECharacterDirection.Left;
+        _characterContextManager.PhysicsManager.MoveDirection = (int)ECharacterDirection.Left;
 
         if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState() ||
              _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState() ||
@@ -31,7 +31,7 @@ public class CharacterRightDirectionCommand : ICharacterActionCommand
     }
     public void ExecuteCommand()
     {
-        _characterContextManager.MoveDirection = (int)ECharacterDirection.Right;
+        _characterContextManager.PhysicsManager.MoveDirection = (int)ECharacterDirection.Right;
 
         if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState() ||
              _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState() ||
@@ -54,7 +54,7 @@ public class CharacterNoneDirectionCommand : ICharacterActionCommand
     }
     public void ExecuteCommand()
     {
-        _characterContextManager.MoveDirection = (int)ECharacterDirection.None;
+        _characterContextManager.PhysicsManager.MoveDirection = (int)ECharacterDirection.None;
 
         if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.OnWallState() ||
              _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState() ||
@@ -85,7 +85,7 @@ public class CharacterJumpCommand : ICharacterActionCommand
         
         if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState())
         {
-            if (_characterContextManager.CoyoteTime)
+            if (_characterContextManager.PhysicsManager.CoyoteTime)
             {
 
                 _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.JumpState());

@@ -9,14 +9,14 @@ public class CharacterJumpState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.HorizontalStartSpeed = CharacterContextManager.HorizontalSpeed * CharacterContextManager.MoveDirection;
-        CharacterContextManager.HorizontalTopSpeed = 7.86f;
+        CharacterContextManager.PhysicsManager.HorizontalStartSpeed = CharacterContextManager.PhysicsManager.HorizontalSpeed * CharacterContextManager.PhysicsManager.MoveDirection;
+        CharacterContextManager.PhysicsManager.HorizontalTopSpeed = 7.86f;
 
         CharacterContextManager.DisableFixedJoint2D();
 
         CharacterContextManager.CeilingChecker.enabled = true;
 
-        CharacterContextManager.JumpSpeedOvertime = 0;
+        CharacterContextManager.PhysicsManager.ResetJumpOvertime();
 
         if (CharacterContextManager.HasAirJump)
         {
@@ -28,7 +28,7 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        CharacterContextManager.JumpSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GetJumpSpeedLerpOvertime());
+        CharacterContextManager.PhysicsManager.JumpSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.PhysicsManager.GetJumpSpeedLerpOvertime(Time.deltaTime));
     }
     public override void FixedUpdateState()
     {
@@ -40,11 +40,11 @@ public class CharacterJumpState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.FallStartSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.FallStartSpeed = 0.00f;
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.JumpSpeed <= 0.00f)
+        if (CharacterContextManager.PhysicsManager.JumpSpeed <= 0.00f)
         {
             SwitchState(CharacterStateFactory.FallState());
         }

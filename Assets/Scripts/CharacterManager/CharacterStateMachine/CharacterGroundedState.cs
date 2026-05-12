@@ -20,7 +20,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
         CharacterContextManager.Rigidbody.gravityScale = 50.00f;
 
-        CharacterContextManager.HorizontalTopSpeed = 6.30f;
+        CharacterContextManager.PhysicsManager.HorizontalTopSpeed = 6.30f;
 
         CharacterContextManager.CeilingChecker.enabled = true;
 
@@ -40,13 +40,13 @@ public class CharacterGroundedState : CharacterAbstractState
 
         CharacterContextManager.WaitSeconds(dashAction, 0.25f);
 
-        CharacterContextManager.HorizontalStartSpeed = CharacterContextManager.HorizontalSpeed;
+        CharacterContextManager.PhysicsManager.HorizontalStartSpeed = CharacterContextManager.PhysicsManager.HorizontalSpeed;
 
         if (CharacterContextManager.DamageOnCoolDown)
         {
-            CharacterContextManager.HorizontalStartSpeed = 0.00f;
-            CharacterContextManager.HorizontalSpeed = 0.00f;
-            CharacterContextManager.JumpSpeed = 0.00f;
+            CharacterContextManager.PhysicsManager.HorizontalStartSpeed = 0.00f;
+            CharacterContextManager.PhysicsManager.HorizontalSpeed = 0.00f;
+            CharacterContextManager.PhysicsManager.JumpSpeed = 0.00f;
 
             System.Action damagedAction = () =>
             {
@@ -75,7 +75,7 @@ public class CharacterGroundedState : CharacterAbstractState
     public override void ExitState()
     {
         CharacterContextManager.Rigidbody.gravityScale = 0.00f;
-        CharacterContextManager.FallStartSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.FallStartSpeed = 0.00f;
 
         if (CharacterContextManager.HasAirJump)
         {
@@ -91,11 +91,11 @@ public class CharacterGroundedState : CharacterAbstractState
 
         if (!Grounded)
         {
-            CharacterContextManager.CoyoteTime = true;
+            CharacterContextManager.PhysicsManager.CoyoteTime = true;
 
             System.Action action = () =>
             {
-                CharacterContextManager.CoyoteTime = false;
+                CharacterContextManager.PhysicsManager.CoyoteTime = false;
             };
 
             SwitchState(CharacterStateFactory.FallState());

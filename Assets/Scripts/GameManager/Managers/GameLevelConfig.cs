@@ -1,11 +1,10 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GameLevelConfig", menuName = "Game Level Config", order = 2)]
-[System.Serializable]
 public class GameLevelConfig : ScriptableObject
 {
     [Header("Level Name")]
-    [SerializeField] private string _levelSceneName;
+    [SerializeField] private SceneIdentifier _levelSceneName;
 
     [Header("Unlock Target")]
     [SerializeField] private int _levelUnlockScore;
@@ -19,7 +18,7 @@ public class GameLevelConfig : ScriptableObject
     [SerializeField] private int _maxGemScore;
     [SerializeField] private int _maxHourglassScore;
 
-    public string LevelSceneName { get => _levelSceneName; set => _levelSceneName = value; }
+    public SceneIdentifier LevelSceneName { get => _levelSceneName; set => _levelSceneName = value; }
     public int LevelUnlockScore { get => _levelUnlockScore; set => _levelUnlockScore = value; }
     public int Tier3TargetScore { get => _tier3TargetScore; set => _tier3TargetScore = value; }
     public int Tier2TargetScore { get => _tier2TargetScore; set => _tier2TargetScore = value; }

@@ -10,7 +10,9 @@ public class GameLevelRuntimeData
 {
 
     public ELevelState State;
-    public string LevelSceneName;
+    public SceneIdentifier LevelSceneName;
+
+    [System.NonSerialized] 
     public GameLevelConfig Config;
 
     public int CurrentGemScore;

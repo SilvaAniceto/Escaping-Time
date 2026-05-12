@@ -11,24 +11,24 @@ public class CharacterWallJumpState : CharacterAbstractState
     {
         CharacterContextManager.CeilingChecker.enabled = true;
 
-        CharacterContextManager.JumpSpeedOvertime = 0;
-        CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
+        CharacterContextManager.PhysicsManager.ResetJumpOvertime();
+        CharacterContextManager.PhysicsManager.ResetHorizontalOvertime();
 
         GameAudioManager.Instance.StopCharacterSFX();
         GameAudioManager.Instance.PlayCharacterSFX("Jump");
     }
     public override void UpdateState()
     {
-        CharacterContextManager.JumpSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.GetJumpSpeedLerpOvertime());
+        CharacterContextManager.PhysicsManager.JumpSpeed = Mathf.Lerp(0.00f, 12.00f, CharacterContextManager.PhysicsManager.GetJumpSpeedLerpOvertime(Time.deltaTime));
 
-        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && CharacterContextManager.MoveDirection != 0 && CharacterContextManager.MoveDirection != CharacterForwardDirection)
+        if (Mathf.Abs(CharacterContextManager.PhysicsManager.HorizontalSpeed) >= CharacterContextManager.PhysicsManager.HorizontalTopSpeed && CharacterContextManager.PhysicsManager.MoveDirection != 0 && CharacterContextManager.PhysicsManager.MoveDirection != CharacterForwardDirection)
         {
             CharacterContextManager.AirJumpIsAllowed = false;
-            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.GetHorizontalSpeedLerpOvertime()) * CharacterForwardDirection * CharacterContextManager.MoveDirection;
+            CharacterContextManager.PhysicsManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.PhysicsManager.GetHorizontalSpeedLerpOvertime(Time.deltaTime)) * CharacterForwardDirection * CharacterContextManager.PhysicsManager.MoveDirection;
         }
         else
         {
-            CharacterContextManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.GetHorizontalSpeedLerpOvertime()) * CharacterForwardDirection;
+            CharacterContextManager.PhysicsManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.PhysicsManager.GetHorizontalSpeedLerpOvertime(Time.deltaTime)) * CharacterForwardDirection;
         }
 
         CharacterAnimationManager.CharacterAnimator.transform.rotation = CurrentLookRotation();
@@ -43,13 +43,13 @@ public class CharacterWallJumpState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.JumpSpeed = 0.00f;
-        CharacterContextManager.FallStartSpeed = 1.00f;
+        CharacterContextManager.PhysicsManager.HorizontalSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.JumpSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.FallStartSpeed = 1.00f;
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.JumpSpeed <= 1.00f)
+        if (CharacterContextManager.PhysicsManager.JumpSpeed <= 1.00f)
         {
             SwitchState(CharacterStateFactory.FallState());
         }
@@ -63,9 +63,9 @@ public class CharacterWallJumpState : CharacterAbstractState
     {
         float angle = 0;
 
-        if (Mathf.Abs(CharacterContextManager.HorizontalSpeed) >= CharacterContextManager.HorizontalTopSpeed && CharacterContextManager.MoveDirection != 0 && CharacterContextManager.MoveDirection != CharacterForwardDirection)
+        if (Mathf.Abs(CharacterContextManager.PhysicsManager.HorizontalSpeed) >= CharacterContextManager.PhysicsManager.HorizontalTopSpeed && CharacterContextManager.PhysicsManager.MoveDirection != 0 && CharacterContextManager.PhysicsManager.MoveDirection != CharacterForwardDirection)
         {
-            angle = Mathf.Atan2(0, CharacterContextManager.MoveDirection) * Mathf.Rad2Deg;
+            angle = Mathf.Atan2(0, CharacterContextManager.PhysicsManager.MoveDirection) * Mathf.Rad2Deg;
         }
         else
         {

@@ -11,12 +11,12 @@ public class CharacterIdleState : CharacterAbstractState
     {
         CharacterContextManager.EnableFixedJoint2D();
 
-        CharacterContextManager.HorizontalSpeed = 0.00f;
-        CharacterContextManager.HorizontalStartSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.HorizontalSpeed = 0.00f;
+        CharacterContextManager.PhysicsManager.HorizontalStartSpeed = 0.00f;
 
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState())
         {
-            CharacterContextManager.HorizontalSpeedOvertime = 0.00f;
+            CharacterContextManager.PhysicsManager.ResetHorizontalOvertime();
         }
     }
     public override void UpdateState()
@@ -36,11 +36,11 @@ public class CharacterIdleState : CharacterAbstractState
     }
     public override void ExitState()
     {
-        CharacterContextManager.HorizontalStartSpeed = 3.50f;
+        CharacterContextManager.PhysicsManager.HorizontalStartSpeed = 3.50f;
     }
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.MoveDirection != 0 && !IsWallColliding)
+        if (CharacterContextManager.PhysicsManager.MoveDirection != 0 && !IsWallColliding)
         {
             if (!CharacterContextManager.DamageOnCoolDown)
             {

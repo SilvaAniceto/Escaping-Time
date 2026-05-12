@@ -430,15 +430,15 @@ public class GameSaveSystem : MonoBehaviour
         gameContextManager.CharacterContextManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
         GameScoreManager.Instance.MasterScore = ProfileData.MasterScore;
 
-        for (int i = 0; i < gameContextManager.GameLevelRuntimeData.Count; i++)
+        for (int i = 0; i < gameContextManager.GameLevelsRuntimeData.Count; i++)
         {
-            gameContextManager.GameLevelRuntimeData[i].State = ProfileData.GameLevelRuntimeData[i].State;
-            gameContextManager.GameLevelRuntimeData[i].CurrentGemScore = ProfileData.GameLevelRuntimeData[i].CurrentGemScore;
-            gameContextManager.GameLevelRuntimeData[i].CurrentHourglassScore = ProfileData.GameLevelRuntimeData[i].CurrentHourglassScore;
-            gameContextManager.GameLevelRuntimeData[i].MaxGemScoreReached = ProfileData.GameLevelRuntimeData[i].MaxGemScoreReached;
-            gameContextManager.GameLevelRuntimeData[i].MaxHourglassScoreReached = ProfileData.GameLevelRuntimeData[i].MaxHourglassScoreReached;
-            gameContextManager.GameLevelRuntimeData[i].MaxLevelScoreReached = ProfileData.GameLevelRuntimeData[i].MaxLevelScoreReached;
-            gameContextManager.GameLevelRuntimeData[i].ClassficationTierReached = ProfileData.GameLevelRuntimeData[i].ClassficationTierReached;
+            gameContextManager.GameLevelsRuntimeData[i].State = ProfileData.GameLevelRuntimeData[i].State;
+            gameContextManager.GameLevelsRuntimeData[i].CurrentGemScore = ProfileData.GameLevelRuntimeData[i].CurrentGemScore;
+            gameContextManager.GameLevelsRuntimeData[i].CurrentHourglassScore = ProfileData.GameLevelRuntimeData[i].CurrentHourglassScore;
+            gameContextManager.GameLevelsRuntimeData[i].MaxGemScoreReached = ProfileData.GameLevelRuntimeData[i].MaxGemScoreReached;
+            gameContextManager.GameLevelsRuntimeData[i].MaxHourglassScoreReached = ProfileData.GameLevelRuntimeData[i].MaxHourglassScoreReached;
+            gameContextManager.GameLevelsRuntimeData[i].MaxLevelScoreReached = ProfileData.GameLevelRuntimeData[i].MaxLevelScoreReached;
+            gameContextManager.GameLevelsRuntimeData[i].ClassficationTierReached = ProfileData.GameLevelRuntimeData[i].ClassficationTierReached;
         }
     }
     public void SaveGame()
@@ -479,7 +479,7 @@ public class GameSaveSystem : MonoBehaviour
         ProfileData.CharacterHasDash = characterContextManager.HasInfinityDash;
         ProfileData.CharacterHasWallMove = characterContextManager.HasInfinityWallMove;
         ProfileData.MasterScore = scoreManager.MasterScore;
-        ProfileData.GameLevelRuntimeData = _gameContextManager.GameLevelRuntimeData.ToArray();
+        ProfileData.GameLevelRuntimeData = _gameContextManager.GameLevelsRuntimeData.ToArray();
     }
     private void UpdateLoadedProfileData(PlayerProfileData data)
     {
@@ -492,7 +492,7 @@ public class GameSaveSystem : MonoBehaviour
     }
     private PlayerProfileData CreateProfileData(string profileName)
     {
-        ProfileData = new PlayerProfileData(profileName, false, false, false, 0, _gameContextManager.GameLevelRuntimeData.ToArray());
+        ProfileData = new PlayerProfileData(profileName, false, false, false, 0, _gameContextManager.GameLevelsRuntimeData.ToArray());
 
         return ProfileData;
     }
