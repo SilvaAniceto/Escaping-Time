@@ -3,7 +3,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(CharacterAnimationManager))][System.Serializable]
+[RequireComponent(typeof(CharacterAnimationManager))]
+[RequireComponent(typeof(CharacterPowerUpManager))]
+[RequireComponent(typeof(CharacterDamageManager))]
 public class CharacterContextManager : MonoBehaviour
 {
     [Header("Camera Target")]
@@ -19,281 +21,22 @@ public class CharacterContextManager : MonoBehaviour
     [SerializeField] private BoxCollider2D _wallChecker;
     [Header("Physics Settings")]
     [SerializeField] private CharacterPhysicsManager _physicsManager = new CharacterPhysicsManager();
+    [Header("Power-Up Manager")]
+    [SerializeField] private CharacterPowerUpManager _powerUpManager;
+    [Header("Damage Controller")]
+    [SerializeField] private CharacterDamageManager _damageManager;
 
     public CharacterPhysicsManager PhysicsManager => _physicsManager;
 
     private CharacterAbstractState _currentState;
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
 
-    public PlayerInputManager PlayerInputManager { get; private set; }
-
     public Transform CameraTarget { get => _cameraTarget; }
-
+    public PlayerInputManager PlayerInputManager { get; private set; }
+    public CharacterPowerUpManager PowerUpManager => _powerUpManager;
+    public CharacterDamageManager DamageManager => _damageManager;
     public CameraBehaviourController CameraBehaviourController { get; private set; }
-
     public IInteractable Interactable { get; set; }
-
-    #region STATE CALLBACK
-    [HideInInspector] public UnityEvent OnResetState = new UnityEvent();
-    #endregion
-
-    #region POWER UP
-    #region Dash
-    [SerializeField] private bool _hasInfinityDash;
-    public bool HasInfinityDash
-    {
-        get
-        {
-            return _hasInfinityDash;
-        }
-        set
-        {
-            if (_hasInfinityDash == value)
-            {
-                return;
-            }
-
-            _hasInfinityDash = value;
-
-            if (_hasInfinityDash)
-            {
-                OnDashPowerStateChange.Invoke("PwrUp_Infinity");
-            }
-        }
-    }
-
-    private bool _hasTemporaryDash;
-    public bool HasTemporaryDash 
-    {
-        get
-        {
-            return _hasTemporaryDash;
-        }
-        set
-        {
-            if (value == _hasTemporaryDash || HasInfinityDash)
-            {
-                return;
-            }    
-
-            _hasTemporaryDash = value;
-
-            if (_hasTemporaryDash)
-            {
-                OnDashPowerStateChange.Invoke("PwrUp_UI_Lit");
-            }
-            else
-            {
-                OnDashPowerStateChange.Invoke("PwrUp_UI_Unlit");
-            }
-        }
-    }
-
-    public bool HasDash
-    {
-        get
-        {
-            return HasTemporaryDash || HasInfinityDash ? true : false;
-        }
-    }
-    public bool DashIsAllowed
-    {
-        get
-        {
-            return HasDash ? !DashOnCoolDown && !DashIsWaitingGroundedState : false;
-        }
-    }
-    public bool DashOnCoolDown { get; set; }
-    public bool DashIsWaitingGroundedState { get; set; }
-
-    public void SetTemporaryDash(float coolDown = 0)
-    {
-        HasTemporaryDash = true;
-
-        if (coolDown != 0)
-        {
-            Action tempAirJumpAction = () =>
-            {
-                HasTemporaryDash = false;
-            };
-
-            WaitSeconds(tempAirJumpAction, coolDown);
-            GameUIManager.Instance.SetOvertimeDashPowerUpUI(coolDown, this);
-        }
-    }
-    #endregion
-
-    #region AirJump
-    [SerializeField] private bool _hasInfinityAirJump;
-    public bool HasInfinityAirJump
-    {
-        get
-        {
-            return _hasInfinityAirJump;
-        }
-        set
-        {
-            if (_hasInfinityAirJump == value)
-            {
-                return;
-            }
-
-            _hasInfinityAirJump = value;
-
-            if (_hasInfinityAirJump)
-            {
-                OnAirJumpPowerStateChange.Invoke("PwrUp_Infinity");
-            }
-        }
-    }
-
-    private bool _hasTemporaryAirJump;
-    public bool HasTemporaryAirJump 
-    { 
-        get
-        {
-            return _hasTemporaryAirJump;
-        }
-        set
-        {
-            if (value == _hasTemporaryAirJump || HasInfinityAirJump)
-            {
-                return;
-            }
-
-            _hasTemporaryAirJump = value;
-
-            if (_hasTemporaryAirJump)
-            {
-                OnAirJumpPowerStateChange.Invoke("PwrUp_UI_Lit");
-            }
-            else
-            {
-                OnAirJumpPowerStateChange.Invoke("PwrUp_UI_Unlit");
-            }
-        }
-    }
-
-    public bool HasAirJump
-    {
-        get
-        {
-            return HasTemporaryAirJump || HasInfinityAirJump ? true : false;
-        }
-    }
-    public bool AirJumpIsAllowed { get; set; }
-
-    public void SetTemporaryAirJump(float coolDown = 0)
-    {
-        HasTemporaryAirJump = true;
-
-        if (coolDown != 0)
-        {
-            Action tempAirJumpAction = () =>
-            {
-                HasTemporaryAirJump = false;
-            };
-
-            WaitSeconds(tempAirJumpAction, coolDown);
-            GameUIManager.Instance.SetOvertimeAirJumpPowerUpUI(coolDown, this);
-        }
-    }
-    #endregion
-
-    #region WallMove
-    [SerializeField] private bool _hasInfinityWallMove;
-    public bool HasInfinityWallMove
-    {
-        get
-        {
-            return _hasInfinityWallMove;
-        }
-        set
-        {
-            if (_hasInfinityWallMove == value)
-            {
-                return;
-            }
-
-            _hasInfinityWallMove = value;
-
-            if (_hasInfinityWallMove)
-            {
-                OnWallMovePowerStateChange.Invoke("PwrUp_Infinity");
-            }
-        }
-    }
-
-    private bool _hasTemporaryWallMove;
-    public bool HasTemporaryWallMove
-    {
-        get
-        {
-            return _hasTemporaryWallMove;
-        }
-        set
-        {
-            if (value == _hasTemporaryWallMove || HasInfinityWallMove)
-            {
-                return;
-            }
-
-            _hasTemporaryWallMove = value;
-
-            if (_hasTemporaryWallMove)
-            {
-                OnWallMovePowerStateChange.Invoke("PwrUp_UI_Lit");
-            }
-            else
-            {
-                OnWallMovePowerStateChange.Invoke("PwrUp_UI_Unlit");
-            }
-        }
-    }
-
-    public bool HasWallMove
-    {
-        get
-        {
-            return HasInfinityWallMove || HasTemporaryWallMove ? true : false;
-        }
-    }
-    public void SetTemporaryWallMove(float coolDown = 0)
-    {
-        HasTemporaryWallMove = true;
-
-        if (coolDown != 0)
-        {
-            Action tempAirJumpAction = () =>
-            {
-                HasTemporaryWallMove = false;
-            };
-
-            WaitSeconds(tempAirJumpAction, coolDown);
-            GameUIManager.Instance.SetOvertimeWallMovePowerUpUI(coolDown, this);
-        }
-    }
-    #endregion
-    #endregion
-
-    #region POWER UP CALLBACKS
-    [HideInInspector] public UnityEvent OnPowerUpInteractableRecharge = new UnityEvent();
-    [HideInInspector] public UnityEvent<string> OnAirJumpPowerStateChange = new UnityEvent<string>();
-    [HideInInspector] public UnityEvent<string> OnDashPowerStateChange = new UnityEvent<string>();
-    [HideInInspector] public UnityEvent<string> OnWallMovePowerStateChange = new UnityEvent<string>();
-
-    public void SetPowerUpCallBack()
-    {
-        OnAirJumpPowerStateChange.AddListener(GameUIManager.Instance.SetAirJumpPowerUpUI);
-        OnDashPowerStateChange.AddListener(GameUIManager.Instance.SetDashPowerUpUI);
-        OnWallMovePowerStateChange.AddListener(GameUIManager.Instance.SetWallMovePowerUpUI);
-    }
-    public void DispatchPowerUpInteractableRecharge()
-    {
-        OnPowerUpInteractableRecharge?.Invoke();
-        OnPowerUpInteractableRecharge.RemoveAllListeners();
-    }
-    #endregion
 
     #region COLLISION PROPERTIES
     public Rigidbody2D Rigidbody { get; private set; }
@@ -309,12 +52,6 @@ public class CharacterContextManager : MonoBehaviour
     #region PHYSICS DETECTION PROPERTIES
     public Rigidbody2D FixedJointConnectedBody { get; set;}
     public Joint2D FixedJoint2D { get; set; }
-    #endregion
-
-    #region DAMAGE PROPERTIES
-    public bool DamageOnCoolDown { get; set; } = false;
-    public float DamageHitDirection { get; private set; }
-    public Vector3 SpawningPosition { get; set; }
     #endregion
 
     #region INITIALIZATION
@@ -334,6 +71,12 @@ public class CharacterContextManager : MonoBehaviour
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("WallChecker"), LayerMask.NameToLayer("Camera Objects"));
 
         _physicsManager.Initialize();
+
+        _powerUpManager.RegisterDashCallback();
+        _powerUpManager.RegisterAirJumpCallback();
+        _powerUpManager.RegisterWallMoveCallback();
+
+        _damageManager.Initialize(this);
 
         _currentState = isGameContext ? new CharacterStateFactory(this,  GetComponent<CharacterAnimationManager>()).DisabledState() : new CharacterStateFactory(this, GetComponent<CharacterAnimationManager>()).GroundedState();
 
@@ -383,29 +126,6 @@ public class CharacterContextManager : MonoBehaviour
     {
         FixedJoint2D.enabled = false;
         FixedJoint2D.connectedBody = null;
-    }
-    public void ApplyDamage(float damageDirection)
-    {
-        PlayerInputManager.DisableInputAction();
-
-        DamageHitDirection = damageDirection;
-
-        _currentState = new CharacterStateFactory(this, CurrentState.CharacterAnimationManager).DamagedState();
-
-        _currentState.EnterState();
-    }
-    public void ResetCharacter()
-    {
-        PlayerInputManager.DisableInputAction();
-
-        _currentState = new CharacterStateFactory(this, CurrentState.CharacterAnimationManager).ResetState();
-
-        _currentState.EnterState();
-
-        if (CameraBehaviourController)
-        {
-            CameraBehaviourController.CinemachinePositionComposer.Damping = new Vector3(0.00f, 0.80f, 0.00f);
-        }
     }
     public void DisableCharacterContext()
     {
@@ -532,15 +252,11 @@ public class CharacterContextManager : MonoBehaviour
     #region DECOMMISSIONING
     void OnDisable()
     {
-        
+
     }
     void OnDestroy()
     {
-        OnResetState.RemoveAllListeners();
-        OnPowerUpInteractableRecharge.RemoveAllListeners();
-        OnAirJumpPowerStateChange.RemoveAllListeners();
-        OnDashPowerStateChange.RemoveAllListeners();
-        OnWallMovePowerStateChange.RemoveAllListeners();
+
     }
     #endregion
 }

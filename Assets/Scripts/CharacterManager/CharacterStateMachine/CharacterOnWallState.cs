@@ -13,18 +13,18 @@ public class CharacterOnWallState : CharacterAbstractState
 
         CharacterContextManager.PlayerInputManager.ClearAirJumpCommandCombo();
 
-        if (CharacterContextManager.HasAirJump)
+        if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
         }
 
         CharacterAnimationManager.CharacterAnimator.transform.rotation *= Quaternion.Euler(0, 180, 0);
 
-        CharacterContextManager.DashIsWaitingGroundedState = false;
+        CharacterContextManager.PowerUpManager.DashIsWaitingGroundedState = false;
 
         System.Action action = () =>
         {
-            CharacterContextManager.DashOnCoolDown = false;
+            CharacterContextManager.PowerUpManager.DashOnCoolDown = false;
         };
 
         CharacterContextManager.WaitFrameEnd(action);

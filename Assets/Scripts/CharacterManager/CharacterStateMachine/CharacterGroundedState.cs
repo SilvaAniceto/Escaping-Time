@@ -26,23 +26,23 @@ public class CharacterGroundedState : CharacterAbstractState
 
         CharacterContextManager.WallChecker.enabled = false;
 
-        if (CharacterContextManager.HasAirJump)
+        if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
         }
 
-        CharacterContextManager.DashIsWaitingGroundedState = false;
+        CharacterContextManager.PowerUpManager.DashIsWaitingGroundedState = false;
 
         System.Action dashAction = () =>
         {
-            CharacterContextManager.DashOnCoolDown = false;
+            CharacterContextManager.PowerUpManager.DashOnCoolDown = false;
         };
 
         CharacterContextManager.WaitSeconds(dashAction, 0.25f);
 
         CharacterContextManager.PhysicsManager.HorizontalStartSpeed = CharacterContextManager.PhysicsManager.HorizontalSpeed;
 
-        if (CharacterContextManager.DamageOnCoolDown)
+        if (CharacterContextManager.DamageManager.IsInvincible)
         {
             CharacterContextManager.PhysicsManager.HorizontalStartSpeed = 0.00f;
             CharacterContextManager.PhysicsManager.HorizontalSpeed = 0.00f;
@@ -50,7 +50,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
             System.Action damagedAction = () =>
             {
-                CharacterContextManager.DamageOnCoolDown = false;
+                CharacterContextManager.DamageManager.IsInvincible = false;
             };
 
             CharacterContextManager.WaitSeconds(damagedAction, 0.66f);
@@ -77,9 +77,9 @@ public class CharacterGroundedState : CharacterAbstractState
         CharacterContextManager.Rigidbody.gravityScale = 0.00f;
         CharacterContextManager.PhysicsManager.FallStartSpeed = 0.00f;
 
-        if (CharacterContextManager.HasAirJump)
+        if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
         }
 
         SetSubState(null);
@@ -87,7 +87,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void CheckSwitchStates()
     {
-        if (CharacterContextManager.DamageOnCoolDown) return;
+        if (CharacterContextManager.DamageManager.IsInvincible) return;
 
         if (!Grounded)
         {
@@ -106,7 +106,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void CheckSwitchSubStates()
     {
-        if (CharacterContextManager.DamageOnCoolDown) return;
+        if (CharacterContextManager.DamageManager.IsInvincible) return;
     }
     public override Quaternion CurrentLookRotation()
     {

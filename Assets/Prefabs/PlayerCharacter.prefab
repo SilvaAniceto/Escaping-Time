@@ -342,6 +342,8 @@ GameObject:
   - component: {fileID: 2176057719628083661}
   - component: {fileID: 6770176651829635004}
   - component: {fileID: 6991579637883874698}
+  - component: {fileID: 3774754941410985247}
+  - component: {fileID: 4795829980937725345}
   - component: {fileID: 4057470492026846897}
   m_Layer: 3
   m_Name: PlayerCharacter
@@ -624,24 +626,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  OnResetState:
-    m_PersistentCalls:
-      m_Calls: []
-  _hasInfinityDash: 0
-  _hasInfinityAirJump: 0
-  _hasInfinityWallMove: 0
-  OnPowerUpInteractableRecharge:
-    m_PersistentCalls:
-      m_Calls: []
-  OnAirJumpPowerStateChange:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDashPowerStateChange:
-    m_PersistentCalls:
-      m_Calls: []
-  OnWallMovePowerStateChange:
-    m_PersistentCalls:
-      m_Calls: []
+  _powerUpManager: {fileID: 3774754941410985247}
+  _damageManager: {fileID: 4795829980937725345}
 --- !u!114 &6991579637883874698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -654,6 +640,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0e1bacc92e88724586eeefd999322a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3774754941410985247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6770176651829635003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 484f0a7e8c4f1e74b9f99a033e6251f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hasInfinityDash: 0
+  _hasInfinityAirJump: 0
+  _hasInfinityWallMove: 0
+  OnPowerUpInteractableRecharge:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDashPowerStateChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAirJumpPowerStateChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnWallMovePowerStateChange:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4795829980937725345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6770176651829635003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe4dcef60c26314b8c8cefb1325eaa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnResetState:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!81 &4057470492026846897
 AudioListener:
   m_ObjectHideFlags: 0

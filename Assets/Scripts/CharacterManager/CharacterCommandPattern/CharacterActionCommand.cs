@@ -92,7 +92,7 @@ public class CharacterJumpCommand : ICharacterActionCommand
                 return;
             }
 
-            if (_characterContextManager.HasAirJump && _characterContextManager.AirJumpIsAllowed)
+            if (_characterContextManager.PowerUpManager.HasAirJump && _characterContextManager.PowerUpManager.AirJumpIsAllowed)
             {
                 _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.AirJumpState());
             }
@@ -120,7 +120,7 @@ public class CharacterAirJumpCommand : ICharacterActionCommand
     }
     public void ExecuteCommand()
     {
-        if (_characterContextManager.HasAirJump && _characterContextManager.AirJumpIsAllowed)
+        if (_characterContextManager.PowerUpManager.HasAirJump && _characterContextManager.PowerUpManager.AirJumpIsAllowed)
         {
             _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.AirJumpState());
         }
@@ -157,7 +157,7 @@ public class CharacterDashCommand : ICharacterActionCommand
 
     public void ExecuteCommand()
     {
-        if (_characterContextManager.DashIsAllowed)
+        if (_characterContextManager.PowerUpManager.DashIsAllowed)
         {
             _characterContextManager.CurrentState.SwitchState(_characterContextManager.CurrentState.CharacterStateFactory.DashState());
         }
@@ -191,9 +191,9 @@ public class CharacterWallMoveCommand : ICharacterActionCommand
     }
     public void ExecuteCommand()
     {
-        if (_characterContextManager.DamageOnCoolDown) return;
+        if (_characterContextManager.DamageManager.IsInvincible) return;
 
-        if (_characterContextManager.HasWallMove && _characterContextManager.CurrentState.IsWallColliding)
+        if (_characterContextManager.PowerUpManager.HasWallMove && _characterContextManager.CurrentState.IsWallColliding)
         {
             if (_characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.FallState() ||
             _characterContextManager.CurrentState == _characterContextManager.CurrentState.CharacterStateFactory.WallJumpState())

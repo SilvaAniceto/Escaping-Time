@@ -23,7 +23,7 @@ public class CharacterWallJumpState : CharacterAbstractState
 
         if (Mathf.Abs(CharacterContextManager.PhysicsManager.HorizontalSpeed) >= CharacterContextManager.PhysicsManager.HorizontalTopSpeed && CharacterContextManager.PhysicsManager.MoveDirection != 0 && CharacterContextManager.PhysicsManager.MoveDirection != CharacterForwardDirection)
         {
-            CharacterContextManager.AirJumpIsAllowed = false;
+            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = false;
             CharacterContextManager.PhysicsManager.HorizontalSpeed = Mathf.Lerp(3.5f, 15.0f, CharacterContextManager.PhysicsManager.GetHorizontalSpeedLerpOvertime(Time.deltaTime)) * CharacterForwardDirection * CharacterContextManager.PhysicsManager.MoveDirection;
         }
         else

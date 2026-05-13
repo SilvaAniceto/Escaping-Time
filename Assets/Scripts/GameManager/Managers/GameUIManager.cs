@@ -437,7 +437,7 @@ public class GameUIManager : MonoBehaviour
         System.Action action = () =>
         {
             animator.gameObject.SetActive(false);
-            characterContextManager.DispatchPowerUpInteractableRecharge();
+            characterContextManager.PowerUpManager.DispatchPowerUpInteractableRecharge();
         };
 
         GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("EndTimeCount"));

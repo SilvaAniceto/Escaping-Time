@@ -425,9 +425,9 @@ public class GameSaveSystem : MonoBehaviour
     }
     public void LoadProfileDataToContext(GameContextManager gameContextManager)
     {
-        gameContextManager.CharacterContextManager.HasInfinityAirJump = ProfileData.CharacterHasAirJump;
-        gameContextManager.CharacterContextManager.HasInfinityDash = ProfileData.CharacterHasDash;
-        gameContextManager.CharacterContextManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
+        gameContextManager.CharacterContextManager.PowerUpManager.HasInfinityAirJump = ProfileData.CharacterHasAirJump;
+        gameContextManager.CharacterContextManager.PowerUpManager.HasInfinityDash = ProfileData.CharacterHasDash;
+        gameContextManager.CharacterContextManager.PowerUpManager.HasInfinityWallMove = ProfileData.CharacterHasWallMove;
         GameScoreManager.Instance.MasterScore = ProfileData.MasterScore;
 
         for (int i = 0; i < gameContextManager.GameLevelsRuntimeData.Count; i++)
@@ -475,9 +475,9 @@ public class GameSaveSystem : MonoBehaviour
     private void PrepareProfileDataToSave(string profile, CharacterContextManager characterContextManager, GameScoreManager scoreManager)
     {
         ProfileData.ProfileName = profile;
-        ProfileData.CharacterHasAirJump = characterContextManager.HasInfinityAirJump;
-        ProfileData.CharacterHasDash = characterContextManager.HasInfinityDash;
-        ProfileData.CharacterHasWallMove = characterContextManager.HasInfinityWallMove;
+        ProfileData.CharacterHasAirJump = characterContextManager.PowerUpManager.HasInfinityAirJump;
+        ProfileData.CharacterHasDash = characterContextManager.PowerUpManager.HasInfinityDash;
+        ProfileData.CharacterHasWallMove = characterContextManager.PowerUpManager.HasInfinityWallMove;
         ProfileData.MasterScore = scoreManager.MasterScore;
         ProfileData.GameLevelRuntimeData = _gameContextManager.GameLevelsRuntimeData.ToArray();
     }

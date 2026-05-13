@@ -42,7 +42,7 @@ public class CharacterIdleState : CharacterAbstractState
     {
         if (CharacterContextManager.PhysicsManager.MoveDirection != 0 && !IsWallColliding)
         {
-            if (!CharacterContextManager.DamageOnCoolDown)
+            if (!CharacterContextManager.DamageManager.IsInvincible)
             {
                 SwitchState(CharacterStateFactory.MoveState());
             }

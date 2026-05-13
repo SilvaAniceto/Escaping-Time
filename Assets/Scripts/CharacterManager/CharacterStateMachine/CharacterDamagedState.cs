@@ -10,7 +10,7 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.DamageOnCoolDown = true;
+        CharacterContextManager.DamageManager.IsInvincible = true;
 
         CharacterContextManager.DisableFixedJoint2D();
 
@@ -25,7 +25,7 @@ public class CharacterDamagedState : CharacterAbstractState
     }
     public override void UpdateState()
     {
-        CharacterContextManager.PhysicsManager.HorizontalSpeed = Mathf.Lerp(CharacterContextManager.PhysicsManager.HorizontalTopSpeed, 0.00f, CharacterContextManager.PhysicsManager.GetDamageSpeedLerpOvertime(Time.deltaTime)) * CharacterContextManager.DamageHitDirection;
+        CharacterContextManager.PhysicsManager.HorizontalSpeed = Mathf.Lerp(CharacterContextManager.PhysicsManager.HorizontalTopSpeed, 0.00f, CharacterContextManager.PhysicsManager.GetDamageSpeedLerpOvertime(Time.deltaTime)) * CharacterContextManager.DamageManager.DamageHitDirection;
         CharacterContextManager.PhysicsManager.JumpSpeed = Mathf.Lerp(10.00f, -20.00f, CharacterContextManager.PhysicsManager.GetFallSpeedLerpOvertime(Time.deltaTime));
     }
     public override void FixedUpdateState()
@@ -41,7 +41,7 @@ public class CharacterDamagedState : CharacterAbstractState
     {
         CharacterContextManager.PhysicsManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.PhysicsManager.ResetHorizontalOvertime();
-        CharacterContextManager.DashIsWaitingGroundedState = true;
+        CharacterContextManager.PowerUpManager.DashIsWaitingGroundedState = true;
     }
     public override void CheckSwitchStates()
     {

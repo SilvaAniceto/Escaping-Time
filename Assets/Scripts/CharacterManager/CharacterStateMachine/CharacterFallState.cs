@@ -27,7 +27,7 @@ public class CharacterFallState : CharacterAbstractState
     }
     public override void LateUpdateState()
     {
-        if (!CharacterContextManager.DamageOnCoolDown)
+        if (!CharacterContextManager.DamageManager.IsInvincible)
         {
             CharacterAnimationManager.SetFallAnimation();
         }

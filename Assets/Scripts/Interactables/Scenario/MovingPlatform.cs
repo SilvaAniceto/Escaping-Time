@@ -66,7 +66,7 @@ public class MovingPlatform : InteractableItem
     }
     private void Start()
     {
-        GameContextManager.Instance.CharacterContextManager.OnResetState.AddListener(ResetMovingPlatform);        
+        GameContextManager.Instance.CharacterContextManager.DamageManager.OnResetState.AddListener(ResetMovingPlatform);        
     }
     private void Update()
     {

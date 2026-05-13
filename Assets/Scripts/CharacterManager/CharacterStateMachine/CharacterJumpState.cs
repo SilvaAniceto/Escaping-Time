@@ -18,9 +18,9 @@ public class CharacterJumpState : CharacterAbstractState
 
         CharacterContextManager.PhysicsManager.ResetJumpOvertime();
 
-        if (CharacterContextManager.HasAirJump)
+        if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
         }
 
         GameAudioManager.Instance.StopCharacterSFX();

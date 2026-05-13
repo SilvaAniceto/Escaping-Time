@@ -48,13 +48,13 @@ public class CharacterPowerUp : InteractableItem, ICharacterPowerUp
                 switch (PowerUp)
                 {
                     case EPowerUp.AirJump:
-                        characterContextManager.HasInfinityAirJump = true;
+                        characterContextManager.PowerUpManager.HasInfinityAirJump = true;
                         break;
                     case EPowerUp.Dash:
-                        characterContextManager.HasInfinityDash = true;
+                        characterContextManager.PowerUpManager.HasInfinityDash = true;
                         break;
                     case EPowerUp.WallMove:
-                        characterContextManager.HasInfinityWallMove = true;
+                        characterContextManager.PowerUpManager.HasInfinityWallMove = true;
                         break;
                 }
                 break;
@@ -62,28 +62,28 @@ public class CharacterPowerUp : InteractableItem, ICharacterPowerUp
                 switch (PowerUp)
                 {
                     case EPowerUp.AirJump:
-                        if (!characterContextManager.HasInfinityAirJump)
+                        if (!characterContextManager.PowerUpManager.HasInfinityAirJump)
                         {
-                            characterContextManager.SetTemporaryAirJump(_powerUpTemporaryTime);
+                            characterContextManager.PowerUpManager.SetTemporaryAirJump(_powerUpTemporaryTime);
                         }
                         break;
                     case EPowerUp.Dash:
-                        if (!characterContextManager.HasInfinityDash)
+                        if (!characterContextManager.PowerUpManager.HasInfinityDash)
                         {
-                            characterContextManager.SetTemporaryDash(_powerUpTemporaryTime);
+                            characterContextManager.PowerUpManager.SetTemporaryDash(_powerUpTemporaryTime);
                         }
                         break;
                     case EPowerUp.WallMove:
-                        if (!characterContextManager.HasInfinityWallMove)
+                        if (!characterContextManager.PowerUpManager.HasInfinityWallMove)
                         {
-                            characterContextManager.SetTemporaryWallMove(_powerUpTemporaryTime);
+                            characterContextManager.PowerUpManager.SetTemporaryWallMove(_powerUpTemporaryTime);
                         }
                         break;
                 }
 
                 if (_rechargable)
                 {
-                    characterContextManager.OnPowerUpInteractableRecharge.AddListener(this.RechargePowerUpInteractable);
+                    characterContextManager.PowerUpManager.OnPowerUpInteractableRecharge.AddListener(this.RechargePowerUpInteractable);
                 }
 
                 break;

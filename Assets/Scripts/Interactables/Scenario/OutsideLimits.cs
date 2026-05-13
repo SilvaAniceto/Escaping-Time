@@ -13,8 +13,8 @@ public class OutsideLimits : InteractableItem
 
     public override void SetCharacterReset(CharacterContextManager characterContextManager)
     {
-        characterContextManager.SpawningPosition = _targetPosition.position;
-        characterContextManager.ResetCharacter();
+        characterContextManager.DamageManager.SpawningPosition = _targetPosition.position;
+        characterContextManager.DamageManager.ResetCharacter();
     }
     public override void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {

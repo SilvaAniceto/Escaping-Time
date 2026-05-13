@@ -33,7 +33,7 @@ public class DamagingObject : InteractableItem
     }
     public override void SetCharacterReset(CharacterContextManager characterContextManager)
     {
-        characterContextManager.SpawningPosition = _targetPosition.position;
+        characterContextManager.DamageManager.SpawningPosition = _targetPosition.position;
     }
 
     public override void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
@@ -72,7 +72,7 @@ public class DamagingObject : InteractableItem
                 break;
         }
 
-        characterContextManager.ApplyDamage(currentDirection);
+        characterContextManager.DamageManager.ApplyDamage(currentDirection);
     }
     public override void ConfirmInteraction()
     {

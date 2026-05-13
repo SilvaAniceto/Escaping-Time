@@ -24,8 +24,8 @@ public class CharacterResetState : CharacterAbstractState
 
         GameStateTransitionManager.OnFadeOutEnd += (() =>
         {
-            CharacterContextManager.transform.position = CharacterContextManager.SpawningPosition;
-            CharacterContextManager.OnResetState?.Invoke();
+            CharacterContextManager.transform.position = CharacterContextManager.DamageManager.SpawningPosition;
+            CharacterContextManager.DamageManager.OnResetState?.Invoke();
             GameStateTransitionManager.FadeIn();
         });
 

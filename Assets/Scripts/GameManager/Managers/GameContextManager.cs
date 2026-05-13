@@ -189,8 +189,6 @@ public class GameContextManager : MonoBehaviour
 
         _characterContextManager.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController);
 
-        _characterContextManager.SetPowerUpCallBack();
-
         CharacterHubStartPosition = Vector2.zero;
 
         GameStateTransitionManager.OnFadeInStart += (() =>
@@ -473,8 +471,6 @@ public class GameContextManager : MonoBehaviour
         _playerInputManager = new PlayerInputManager(this, _characterContextManager, _cameraBehaviourController, new PlayerInputActions());
 
         _characterContextManager?.InitializeCharacterContextManager(_playerInputManager, _cameraBehaviourController, false);
-
-        _characterContextManager.SetPowerUpCallBack();
 
         _playerInputManager.Initialize();
 
