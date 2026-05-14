@@ -20,7 +20,7 @@ public class CharacterJumpState : CharacterAbstractState
 
         if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.EnableAirJump();
         }
 
         GameAudioManager.Instance.StopCharacterSFX();

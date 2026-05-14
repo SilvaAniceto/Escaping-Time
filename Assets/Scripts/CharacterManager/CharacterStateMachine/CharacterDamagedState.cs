@@ -10,7 +10,7 @@ public class CharacterDamagedState : CharacterAbstractState
 
     public override void EnterState()
     {
-        CharacterContextManager.DamageManager.IsInvincible = true;
+        CharacterContextManager.DamageManager.SetInvincibleForSeconds(1.5f);
 
         CharacterContextManager.DisableFixedJoint2D();
 
@@ -41,7 +41,7 @@ public class CharacterDamagedState : CharacterAbstractState
     {
         CharacterContextManager.PhysicsManager.HorizontalSpeed = 0.00f;
         CharacterContextManager.PhysicsManager.ResetHorizontalOvertime();
-        CharacterContextManager.PowerUpManager.DashIsWaitingGroundedState = true;
+        CharacterContextManager.PowerUpManager.SetDashWaitingForGround();
     }
     public override void CheckSwitchStates()
     {

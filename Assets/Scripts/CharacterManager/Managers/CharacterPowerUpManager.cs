@@ -1,6 +1,6 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class CharacterPowerUpManager : MonoBehaviour
 {
@@ -15,13 +15,16 @@ public class CharacterPowerUpManager : MonoBehaviour
     private bool _hasTemporaryAirJump;
     private bool _hasTemporaryWallMove;
 
+    private bool _dashOnCoolDown;
+    private bool _dashIsWaitingGroundedState;
+
+    private bool _airJumpIsAllowed;
+
     [HideInInspector] public UnityEvent OnPowerUpInteractableRecharge = new UnityEvent();
     [HideInInspector] public UnityEvent<string> OnDashPowerStateChange = new UnityEvent<string>();
     [HideInInspector] public UnityEvent<string> OnAirJumpPowerStateChange = new UnityEvent<string>();
     [HideInInspector] public UnityEvent<string> OnWallMovePowerStateChange = new UnityEvent<string>();
 
-    public bool DashOnCoolDown { get; set; }
-    public bool DashIsWaitingGroundedState { get; set; }
     public bool HasInfinityDash
     {
         get => _hasInfinityDash;
@@ -56,9 +59,8 @@ public class CharacterPowerUpManager : MonoBehaviour
         }
     }
     public bool HasDash => HasTemporaryDash || HasInfinityDash;
-    public bool DashIsAllowed => HasDash && !DashOnCoolDown && !DashIsWaitingGroundedState;
+    public bool DashIsAllowed => HasDash && !_dashOnCoolDown && !_dashIsWaitingGroundedState;
 
-    public bool AirJumpIsAllowed { get; set; }
     public bool HasInfinityAirJump
     {
         get => _hasInfinityAirJump;
@@ -93,6 +95,7 @@ public class CharacterPowerUpManager : MonoBehaviour
         }
     }
     public bool HasAirJump => HasTemporaryAirJump || HasInfinityAirJump;
+    public bool AirJumpIsAllowed => HasAirJump && _airJumpIsAllowed;
 
     public bool HasInfinityWallMove
     {
@@ -129,6 +132,22 @@ public class CharacterPowerUpManager : MonoBehaviour
     }
     public bool HasWallMove => HasInfinityWallMove || HasTemporaryWallMove;
 
+    public void SetDashCooldown()
+    {
+        _dashOnCoolDown = true;
+    }
+    public void SetDashWaitingForGround()
+    {
+        _dashIsWaitingGroundedState = true;
+    }
+    public void ResetDashOnLand()
+    {
+        _dashIsWaitingGroundedState = false;
+    }
+    public void ResetDashCoolDown()
+    {
+        _dashOnCoolDown = false;
+    }
     public void SetTemporaryDash(float coolDown = 0)
     {
         HasTemporaryDash = true;
@@ -147,6 +166,14 @@ public class CharacterPowerUpManager : MonoBehaviour
         OnDashPowerStateChange.AddListener(GameUIManager.Instance.SetDashPowerUpUI);
     }
 
+    public void EnableAirJump()
+    {
+        _airJumpIsAllowed = true;
+    }
+    public void DisableAirJump()
+    {
+        _airJumpIsAllowed = false;
+    }
     public void SetTemporaryAirJump(float coolDown = 0)
     {
         HasTemporaryAirJump = true;

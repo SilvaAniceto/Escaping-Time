@@ -15,10 +15,10 @@ public class CharacterDashState : CharacterAbstractState
 
         if (!Grounded)
         {
-            CharacterContextManager.PowerUpManager.DashIsWaitingGroundedState = true;
+            CharacterContextManager.PowerUpManager.SetDashWaitingForGround();
         }
 
-        CharacterContextManager.PowerUpManager.DashOnCoolDown = true;
+        CharacterContextManager.PowerUpManager.SetDashCooldown();
 
         GameAudioManager.Instance.StopCharacterSFX();
         GameAudioManager.Instance.PlayCharacterSFX("Dash");

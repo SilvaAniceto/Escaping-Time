@@ -28,14 +28,14 @@ public class CharacterGroundedState : CharacterAbstractState
 
         if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.EnableAirJump();
         }
 
-        CharacterContextManager.PowerUpManager.DashIsWaitingGroundedState = false;
+        CharacterContextManager.PowerUpManager.ResetDashOnLand();
 
         System.Action dashAction = () =>
         {
-            CharacterContextManager.PowerUpManager.DashOnCoolDown = false;
+            CharacterContextManager.PowerUpManager.ResetDashCoolDown();
         };
 
         CharacterContextManager.WaitSeconds(dashAction, 0.25f);
@@ -50,7 +50,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
             System.Action damagedAction = () =>
             {
-                CharacterContextManager.DamageManager.IsInvincible = false;
+                CharacterContextManager.DamageManager.ResetInvincibility();
             };
 
             CharacterContextManager.WaitSeconds(damagedAction, 0.66f);
@@ -59,12 +59,12 @@ public class CharacterGroundedState : CharacterAbstractState
 
     public override void UpdateState()
     {
-        
+
     }
 
     public override void FixedUpdateState()
     {
-        
+
     }
 
     public override void LateUpdateState()
@@ -79,7 +79,7 @@ public class CharacterGroundedState : CharacterAbstractState
 
         if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.EnableAirJump();
         }
 
         SetSubState(null);

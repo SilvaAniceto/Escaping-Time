@@ -15,16 +15,16 @@ public class CharacterOnWallState : CharacterAbstractState
 
         if (CharacterContextManager.PowerUpManager.HasAirJump)
         {
-            CharacterContextManager.PowerUpManager.AirJumpIsAllowed = true;
+            CharacterContextManager.PowerUpManager.EnableAirJump();
         }
 
         CharacterAnimationManager.CharacterAnimator.transform.rotation *= Quaternion.Euler(0, 180, 0);
 
-        CharacterContextManager.PowerUpManager.DashIsWaitingGroundedState = false;
+        CharacterContextManager.PowerUpManager.ResetDashOnLand();
 
         System.Action action = () =>
         {
-            CharacterContextManager.PowerUpManager.DashOnCoolDown = false;
+            CharacterContextManager.PowerUpManager.ResetDashCoolDown();
         };
 
         CharacterContextManager.WaitFrameEnd(action);
