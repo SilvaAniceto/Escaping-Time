@@ -3,16 +3,8 @@ using UnityEngine;
 [System.Serializable]
 public class CharacterPhysicsManager
 {
-    [Header("Acceleration Curve")]
-    [SerializeField] private AnimationCurve _accelerationCurve;
-    [Header("Jump Force Curve")]
-    [SerializeField] private AnimationCurve _jumpForceCurve;
-    [Header("Fall Curve")]
-    [SerializeField] private AnimationCurve _fallCurve;
-    [Header("Dash Curve")]
-    [SerializeField] private AnimationCurve _dashCurve;
-    [Header("Damage Curve")]
-    [SerializeField] private AnimationCurve _damageCurve;
+    [Header("Configuration")]
+    [SerializeField] private CharacterPhysicsConfig _config;
 
     private float[] _accelerationLUT;
     private float[] _jumpLUT;
@@ -34,12 +26,6 @@ public class CharacterPhysicsManager
     private float _fallStartSpeed;
     private bool _coyoteTime;
 
-    private const float ACCELERATION_DURATION = 0.62f;
-    private const float JUMP_DURATION = 0.36f;
-    private const float FALL_DURATION = 0.48f;
-    private const float DASH_DURATION = 0.62f;
-    private const float DAMAGE_IMPULSE_DURATION = 0.62f;
-
     public int MoveDirection { get => _moveDirection; set => _moveDirection = value; }
     public float JumpSpeed { get => _jumpSpeed; set => _jumpSpeed = value; }
     public Vector2 MovePosition => new Vector2(HorizontalSpeed, JumpSpeed);
@@ -57,11 +43,11 @@ public class CharacterPhysicsManager
 
     public void Initialize()
     {
-        _accelerationLUT = CalculateLUT(_accelerationCurve);
-        _jumpLUT = CalculateLUT(_jumpForceCurve);
-        _fallLUT = CalculateLUT(_fallCurve);
-        _dashLUT = CalculateLUT(_dashCurve);
-        _damageLUT = CalculateLUT(_damageCurve);
+        _accelerationLUT = CalculateLUT(_config.AccelerationCurve);
+        _jumpLUT = CalculateLUT(_config.JumpForceCurve);
+        _fallLUT = CalculateLUT(_config.FallCurve);
+        _dashLUT = CalculateLUT(_config.DashCurve);
+        _damageLUT = CalculateLUT(_config.DamageCurve);
     }
 
     private float[] CalculateLUT(AnimationCurve curve)
@@ -87,35 +73,35 @@ public class CharacterPhysicsManager
 
     public float GetHorizontalSpeedLerpOvertime(float deltaTime)
     {
-        _horizontalOvertime += deltaTime / ACCELERATION_DURATION;
+        _horizontalOvertime += deltaTime / _config.AccelerationDuration;
         _horizontalOvertime = Mathf.Clamp01(_horizontalOvertime);
         return EvaluateLUT(_accelerationLUT, _horizontalOvertime);
     }
 
     public float GetJumpSpeedLerpOvertime(float deltaTime)
     {
-        _jumpOvertime += deltaTime / JUMP_DURATION;
+        _jumpOvertime += deltaTime / _config.JumpDuration;
         _jumpOvertime = Mathf.Clamp01(_jumpOvertime);
         return EvaluateLUT(_jumpLUT, _jumpOvertime);
     }
 
     public float GetFallSpeedLerpOvertime(float deltaTime)
     {
-        _fallOvertime += deltaTime / FALL_DURATION;
+        _fallOvertime += deltaTime / _config.FallDuration;
         _fallOvertime = Mathf.Clamp01(_fallOvertime);
         return EvaluateLUT(_fallLUT, _fallOvertime);
     }
 
     public float GetDashSpeedLerpOvertime(float deltaTime)
     {
-        _dashOvertime += deltaTime / DASH_DURATION;
+        _dashOvertime += deltaTime / _config.DashDuration;
         _dashOvertime = Mathf.Clamp01(_dashOvertime);
         return EvaluateLUT(_dashLUT, _dashOvertime);
     }
 
     public float GetDamageSpeedLerpOvertime(float deltaTime)
     {
-        _damageOvertime += deltaTime / DAMAGE_IMPULSE_DURATION;
+        _damageOvertime += deltaTime / _config.DamageImpulseDuration;
         _damageOvertime = Mathf.Clamp01(_damageOvertime);
         return EvaluateLUT(_damageLUT, _damageOvertime);
     }
