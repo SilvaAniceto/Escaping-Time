@@ -26,7 +26,11 @@ public class HubDoor : InteractableItem
         Interactions.Add(EInteractionType.Stay);
         Interactions.Add(EInteractionType.Exit);
 
-        GameContextManager.OnHubState.AddListener(SetHubDoor);
+        GameEventsManager.OnHubEntered.AddListener(SetHubDoor);
+    }
+    private void OnDestroy()
+    {
+        GameEventsManager.OnHubEntered.RemoveListener(SetHubDoor);
     }
     private void SetHubDoor()
     {
@@ -77,7 +81,7 @@ public class HubDoor : InteractableItem
         if (GameLevelsRuntimeData.State == ELevelState.Open || GameLevelsRuntimeData.State == ELevelState.Finished)
         {
             GameContextManager.Instance.CharacterContextManager.DisableCharacterContext();
-            GameContextManager.Instance.TargetScene = GameLevelsRuntimeData.LevelSceneName;
+            GameEventsManager.OnSceneLoadRequested?.Invoke(GameLevelsRuntimeData.LevelSceneName);
             GameScoreManager.Instance.CurrentLevelRuntimeData = GameLevelsRuntimeData;
             GameContextManager.Instance.CharacterHubStartPosition = transform.position;
             GameScoreManager.Instance.ResetPlayerScorePoints();

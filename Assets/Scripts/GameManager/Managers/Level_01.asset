@@ -12,17 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b82aebbdec2bbe49b547d0d6e4b13e8, type: 3}
   m_Name: Level_01
   m_EditorClassIdentifier: 
-  _state: 0
-  _levelSceneName: Level_01
+  _levelSceneName: 2
   _levelUnlockScore: 0
   _tier3TargetScore: 1950
   _tier2TargetScore: 1700
   _tier1TargetScore: 1200
   _maxGemScore: 600
   _maxHourglassScore: 300
-  _currentGemScore: 0
-  _currentHourglassScore: 0
-  _maxGemScoreReached: 0
-  _maxHourglassScoreReached: 0
-  _maxLevelScoreReached: 0
-  _classficationTierReached: 0

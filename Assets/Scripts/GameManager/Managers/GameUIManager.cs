@@ -176,6 +176,8 @@ public class GameUIManager : MonoBehaviour
         ConfirmMainMenuButtonCallback();
         ConfirmHubButtonCallback();
         ConfirmActionButtonCallback();
+
+        SetScoreUICallback();
     }
 
     private void StartButtonCallback()
@@ -183,7 +185,7 @@ public class GameUIManager : MonoBehaviour
         _startButton.onClick.RemoveAllListeners();
         _startButton.onClick.AddListener(() =>
         {
-            _gameContextManager.TargetScene = SceneIdentifier.Level_Hub;
+            GameEventsManager.OnSceneLoadRequested?.Invoke(SceneIdentifier.Level_Hub);
 
             GameAudioManager.Instance.StopSFX();
             GameAudioManager.Instance.PlaySFX("Menu_Click");
@@ -272,7 +274,7 @@ public class GameUIManager : MonoBehaviour
         {
             GameAudioManager.Instance.PlaySFX("Menu_Start");
             GameSaveSystem.Instance.SaveGame();
-            _gameContextManager.TargetScene = SceneIdentifier.MainMenu;
+            GameEventsManager.OnSceneLoadRequested?.Invoke(SceneIdentifier.MainMenu);
             _gameContextManager.ExitState = _gameContextManager.CurrentState.GameManagerStateFactory.GameMainMenuState();
 
             GameStateTransitionManager.OnFadeOutEnd += (() =>
@@ -313,7 +315,7 @@ public class GameUIManager : MonoBehaviour
             });
 
             GameAudioManager.Instance.PlaySFX("Menu_Start");
-            _gameContextManager.TargetScene = SceneIdentifier.Level_Hub;
+            GameEventsManager.OnSceneLoadRequested?.Invoke(SceneIdentifier.Level_Hub);
 
             System.Action action = () =>
             {
@@ -445,12 +447,45 @@ public class GameUIManager : MonoBehaviour
     #endregion
 
     #region SCORE UI
+    private void SetScoreUICallback()
+    {
+        GameEventsManager.OnScoreUpdated.AddListener(SetScoreDisplay);
+        GameEventsManager.OnTimerUpdated.AddListener(SetTimerDisplay);
+        GameEventsManager.OnHourglassUpdated.AddListener(SetHourglassDisplay);
+        GameEventsManager.OnMasterScoreUpdated.AddListener(SetMasterScoreText); // ajuste se o método espera string
+        GameEventsManager.OnScorePanelShown.AddListener(ShowScorePanel);
+        GameEventsManager.OnScorePanelHidden.AddListener(HideScorePanel);
+        GameEventsManager.OnGemScoreTextUpdated.AddListener(SetGemScoreText);
+        GameEventsManager.OnHourglassTextUpdated.AddListener(SetHourglassText);
+        GameEventsManager.OnTimeScoreTextUpdated.AddListener(SetTimeScoreText);
+        GameEventsManager.OnScoreFillAmountUpdated.AddListener(SetFillAmount);
+        GameEventsManager.OnBrassTrophyReset.AddListener(ResetBrassTrophy);
+        GameEventsManager.OnSilverTrophyReset.AddListener(ResetSilverTrophy);
+        GameEventsManager.OnGoldTrophyReset.AddListener(ResetGoldTrophy);
+        GameEventsManager.OnConfirmActionShown.AddListener(() => ConfirmActionButton.gameObject.SetActive(true));
+        GameEventsManager.OnConfirmActionHidden.AddListener(() => ConfirmActionButton.gameObject.SetActive(false));
+        GameEventsManager.OnConfirmActionSelected.AddListener(() =>
+        {
+            if (GameContextManager.Instance != null)
+                GameContextManager.Instance.GameManagerEventSystem.SetSelectedGameObject(ConfirmActionButton.gameObject);
+        });
+    }
     public void ResetScoreUI()
     {
         _brass.color = Color.black;
         _silver.color = Color.black;
         _gold.color = Color.black;
         _fill.fillAmount = 0;
+    }
+    private void ShowScorePanel()
+    {
+        ScorePanel.SetActive(true);
+        ResetScoreUI();
+    }
+
+    private void HideScorePanel()
+    {
+        ScorePanel.SetActive(false);
     }
     public void SetTrophyUIPosition()
     {

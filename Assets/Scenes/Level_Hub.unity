@@ -213,7 +213,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 8a467166d16df254ca8ea28d2e73bc26, type: 2}
     - target: {fileID: 8416767327270696453, guid: 3dd01518f82bb0345a92c83ee74c910a, type: 3}
       propertyPath: _levelSceneName
-      value: Level_02
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8799102878424912862, guid: 3dd01518f82bb0345a92c83ee74c910a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12564,7 +12564,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 6b17632813e6c564c82df884cf92c6de, type: 2}
     - target: {fileID: 8416767327270696453, guid: 3dd01518f82bb0345a92c83ee74c910a, type: 3}
       propertyPath: _levelSceneName
-      value: Level_01
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8799102878424912862, guid: 3dd01518f82bb0345a92c83ee74c910a, type: 3}
       propertyPath: m_StaticEditorFlags

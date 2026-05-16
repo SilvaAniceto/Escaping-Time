@@ -47,7 +47,7 @@ public class DamagingObjectShooter : InteractableItem
 
             foreach (var shooter in _shooters)
             {
-                GameContextManager.OnRunOrPauseStateChanged.AddListener(shooter.OnPauseState);
+                GameEventsManager.OnPauseStateChanged.AddListener(shooter.OnPauseState);
             }
         }
         else
@@ -57,13 +57,13 @@ public class DamagingObjectShooter : InteractableItem
                 OnShootProjectile.AddListener(shooter.ShootProjectile);
                 OnStopShootingProjectile.AddListener(shooter.StopShooting);
 
-                GameContextManager.OnRunOrPauseStateChanged.AddListener(shooter.OnPauseState);
+                GameEventsManager.OnPauseStateChanged.AddListener(shooter.OnPauseState);
             }
         }
     }
     private void OnDestroy()
     {
-        
+        GameEventsManager.OnPauseStateChanged.RemoveListener(OnPauseState);
     }
     #endregion
 

@@ -16,10 +16,8 @@ public class GameContextManager : MonoBehaviour
 
     #region STATIC FIELDS
     public static GameContextManager Instance { get; private set; }
-     
-    public static UnityEvent<bool> OnRunOrPauseStateChanged = new UnityEvent<bool>();
+
     public static UnityEvent OnLoadSceneEnd = new UnityEvent();
-    public static UnityEvent OnHubState = new UnityEvent();
     #endregion
 
     #region INSPECTOR FIELDS
@@ -111,6 +109,8 @@ public class GameContextManager : MonoBehaviour
                 StartGameContextEnvironment();
                 break;
         }
+
+        GameEventsManager.OnSceneLoadRequested.AddListener(OnSceneLoadRequested);
     }
     private void Start()
     {
@@ -133,6 +133,10 @@ public class GameContextManager : MonoBehaviour
             _gameScoreManager.SetCurrentTimer();
         }
     }
+    private void OnDestroy()
+    {
+        GameEventsManager.OnSceneLoadRequested.RemoveListener(OnSceneLoadRequested);
+    }
     void OnGUI()
     {
 #if UNITY_EDITOR
@@ -153,6 +157,10 @@ public class GameContextManager : MonoBehaviour
     #endregion
 
     #region SCENE MANAGEMENT
+    private void OnSceneLoadRequested(SceneIdentifier sceneId)
+    {
+        TargetScene = sceneId;
+    }
     public void AfterLoadSceneEnd(Scene scene, LoadSceneMode loadSceneMode)
     {
         StartCoroutine(BeforeLoadEnd(scene));
@@ -196,7 +204,7 @@ public class GameContextManager : MonoBehaviour
             _characterContextManager.EnableCharacterContext();
         });
 
-        OnRunOrPauseStateChanged.AddListener((value) =>
+        GameEventsManager.OnPauseStateChanged.AddListener((value) =>
         {
             _characterContextManager.enabled = value;
             _characterContextManager.Rigidbody.bodyType = value ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
@@ -234,7 +242,7 @@ public class GameContextManager : MonoBehaviour
     public void OnQuitToMainMenu()
     {
         _playerInputManager = null;
-        OnRunOrPauseStateChanged.RemoveAllListeners();
+        GameEventsManager.OnPauseStateChanged.RemoveAllListeners();
         Destroy(_cameraBehaviourController.gameObject);
         Destroy(_characterContextManager.gameObject);
     }
@@ -249,7 +257,7 @@ public class GameContextManager : MonoBehaviour
     {
         _gameContextAudiolistener.enabled = true;
 
-        OnRunOrPauseStateChanged.RemoveAllListeners();
+        GameEventsManager.OnPauseStateChanged.RemoveAllListeners();
 
         _gameUIManager.MainMenu.SetActive(true);
 
@@ -331,7 +339,7 @@ public class GameContextManager : MonoBehaviour
 
         _gameUIManager.CharacterUIManager.SetActive(true);
 
-        OnHubState?.Invoke();
+        GameEventsManager.OnHubEntered?.Invoke();
 
         GameManagerEventSystem.SetSelectedGameObject(null);
 
@@ -361,7 +369,7 @@ public class GameContextManager : MonoBehaviour
     #region PAUSE STATE
     public void OnEnterPauseState()
     {
-        OnRunOrPauseStateChanged?.Invoke(false);
+        GameEventsManager.OnPauseStateChanged?.Invoke(false);
 
         _gameUIManager.PauseMenu.SetActive(true);
 
@@ -370,7 +378,7 @@ public class GameContextManager : MonoBehaviour
     public void OnExitPauseState()
     {
         _gameUIManager.PauseMenu.SetActive(false);
-        OnRunOrPauseStateChanged?.Invoke(true);
+        GameEventsManager.OnPauseStateChanged?.Invoke(true);
     }
     public void PauseGameOnHubState()
     {
@@ -492,7 +500,7 @@ public class GameContextManager : MonoBehaviour
 
         _currentState = new GameManagerStateFactory(this).GameMainMenuState();
 
-        OnRunOrPauseStateChanged.AddListener((value) =>
+        GameEventsManager.OnPauseStateChanged.AddListener((value) =>
         {
             if (TargetScene != SceneIdentifier.Level_Hub)
             {

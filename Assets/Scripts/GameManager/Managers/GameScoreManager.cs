@@ -83,7 +83,7 @@ public class GameScoreManager
     {
         CurrentTimer -= Time.deltaTime;
         CurrentTimer = Mathf.Clamp(CurrentTimer, 0, 300);
-        GameUIManager.Instance.SetTimerDisplay(Mathf.Round(CurrentTimer).ToString());
+        GameEventsManager.OnTimerUpdated?.Invoke(Mathf.Round(CurrentTimer).ToString());
     }
     #endregion
 
@@ -95,8 +95,8 @@ public class GameScoreManager
         CurrentLevelRuntimeData.CurrentGemScore = 0;
         CurrentLevelRuntimeData.CurrentHourglassScore = 0;
 
-        GameUIManager.Instance.ResetScoreUI();
-        GameUIManager.Instance.SetHourglassDisplay(CurrentLevelRuntimeData.CurrentHourglassScore / 100);
+        GameEventsManager.OnScoreUpdated?.Invoke(0);
+        GameEventsManager.OnHourglassUpdated?.Invoke(0);
     }
     public void AddGemScore(int value)
     {
@@ -110,13 +110,13 @@ public class GameScoreManager
 
         AddScorePoints(100);
 
-        GameUIManager.Instance.SetHourglassDisplay(CurrentLevelRuntimeData.CurrentHourglassScore / 100);
+        GameEventsManager.OnHourglassUpdated?.Invoke(CurrentLevelRuntimeData.CurrentHourglassScore / 100);
     }
     public void AddScorePoints(int value)
     {
         CurrentScore += value;
 
-        GameUIManager.Instance.SetScoreDisplay(CurrentScore);
+        GameEventsManager.OnScoreUpdated?.Invoke(CurrentScore);
     }
     public void SetScoreManager()
     {
@@ -124,11 +124,13 @@ public class GameScoreManager
 
         SetTrophyPercentage();
 
+        GameEventsManager.OnScorePanelShown?.Invoke();
+
         GameContextManager.StartCoroutine(SetLevelFinalScoreCoroutine());
     }
     private void SetFinalScore()
     {
-        GameUIManager.Instance.SetMasterScoreText($"Master Score: {MasterScore}");
+        GameEventsManager.OnMasterScoreUpdated?.Invoke($"Master Score: {MasterScore}");
 
         CurrentTimer = Mathf.RoundToInt(CurrentTimer);
 
@@ -168,22 +170,22 @@ public class GameScoreManager
     }
     private IEnumerator SetLevelFinalScoreCoroutine()
     {
-        GameUIManager.Instance.SetTimeScoreText($"x {TimeScoreMultiplier} = {0}");
+        GameEventsManager.OnTimeScoreTextUpdated?.Invoke($"x {TimeScoreMultiplier} = {0}");
 
         yield return GameContextManager.StartCoroutine(SetGemUIFinalScore());
         yield return GameContextManager.StartCoroutine(SetHourglassUIFinalScore());
         yield return GameContextManager.StartCoroutine(SetTimeUIFinalScore());
         yield return GameContextManager.StartCoroutine(SetLevelUIFinalScore());
 
-        GameUIManager.Instance.SetMasterScoreText($"Master Score: {MasterScore}");
+        GameEventsManager.OnMasterScoreUpdated?.Invoke($"Master Score: {MasterScore}");
         GameAudioManager.Instance.StopSFX();
         GameAudioManager.Instance.PlaySFX("End_Score");
 
         yield return new WaitForSeconds(3.00f);
 
-        GameUIManager.Instance.ConfirmActionButton.gameObject.SetActive(true);
+        GameEventsManager.OnConfirmActionShown?.Invoke();
 
-        GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.ConfirmActionButton.gameObject);
+        GameEventsManager.OnConfirmActionSelected?.Invoke();
     }
     private IEnumerator SetGemUIFinalScore()
     {
@@ -200,7 +202,7 @@ public class GameScoreManager
 
             gemUIScore = Mathf.Clamp(gemUIScore, 0, CurrentLevelRuntimeData.CurrentGemScore);
 
-            GameUIManager.Instance.SetGemScoreText($"= {gemUIScore.ToString()}");
+            GameEventsManager.OnGemScoreTextUpdated?.Invoke($"= {gemUIScore.ToString()}");
 
             yield return null;
         }
@@ -221,7 +223,7 @@ public class GameScoreManager
 
             hourglassUIScore = Mathf.Clamp(hourglassUIScore, 0, CurrentLevelRuntimeData.CurrentGemScore);
 
-            GameUIManager.Instance.SetHourglassText($"= {hourglassUIScore}");
+            GameEventsManager.OnHourglassTextUpdated?.Invoke($"= {hourglassUIScore.ToString()}");
 
             yield return null;
         }
@@ -242,7 +244,7 @@ public class GameScoreManager
 
             timeUIScore = Mathf.Clamp(timeUIScore, 0, TimeScore);
 
-            GameUIManager.Instance.SetTimeScoreText($"x {TimeScoreMultiplier} = {timeUIScore}");
+            GameEventsManager.OnTimeScoreTextUpdated?.Invoke($"x {TimeScoreMultiplier} = {timeUIScore}");
 
             yield return null;
         }
@@ -263,21 +265,21 @@ public class GameScoreManager
 
             levelUIFinalScore = Mathf.Clamp(levelUIFinalScore, 0.00f, finalScorePercentage);
 
-            GameUIManager.Instance.SetFillAmount(levelUIFinalScore);
+            GameEventsManager.OnScoreFillAmountUpdated?.Invoke(levelUIFinalScore);
 
             GameAudioManager.Instance.LerpPitch("Final_Score", levelUIFinalScore);
 
             if (levelUIFinalScore >= BrassScorePercentage)
             {
-                GameUIManager.Instance.ResetBrassTrophy();
+                GameEventsManager.OnBrassTrophyReset?.Invoke();
             }
             if (levelUIFinalScore >= SilverScorePercentage)
             {
-                GameUIManager.Instance.ResetSilverTrophy();
+                GameEventsManager.OnSilverTrophyReset?.Invoke();
             }
             if (levelUIFinalScore >= 1)
             {
-                GameUIManager.Instance.ResetGoldTrophy();
+                GameEventsManager.OnGoldTrophyReset?.Invoke();
             }
 
             yield return null;

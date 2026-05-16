@@ -15,7 +15,7 @@ public class InteractableItem : MonoBehaviour, IInteractable
         AudioSource = GetAudioSource();
         Collider = GetCollider2D();
 
-        GameContextManager.OnRunOrPauseStateChanged.AddListener(InteractablePauseState);
+        GameEventsManager.OnPauseStateChanged.AddListener(InteractablePauseState);
     }
     public virtual void SetInteraction(CharacterContextManager characterContextManager, EInteractionType interactionType)
     {
