@@ -14,8 +14,8 @@ public class CharacterWallJumpState : CharacterAbstractState
         CharacterContextManager.PhysicsManager.ResetJumpOvertime();
         CharacterContextManager.PhysicsManager.ResetHorizontalOvertime();
 
-        GameAudioManager.Instance.StopCharacterSFX();
-        GameAudioManager.Instance.PlayCharacterSFX("Jump");
+        GameContextManager.Instance.AudioManager.StopCharacterSFX();
+        GameContextManager.Instance.AudioManager.PlayCharacterSFX("Jump");
     }
     public override void UpdateState()
     {

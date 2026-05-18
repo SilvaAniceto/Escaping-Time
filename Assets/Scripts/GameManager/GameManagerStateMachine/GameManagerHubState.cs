@@ -28,7 +28,7 @@ public class GameManagerHubState : GameManagerAbstractState
 
             SwitchState(GameManagerStateFactory.GameLoadingState());
 
-            GameSaveSystem.Instance.SaveGame();
+            GameContextManager.SaveSystem.SaveGame();
         }
     }
 

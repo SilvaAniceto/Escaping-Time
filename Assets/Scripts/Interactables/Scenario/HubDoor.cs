@@ -80,11 +80,11 @@ public class HubDoor : InteractableItem
     {
         if (GameLevelsRuntimeData.State == ELevelState.Open || GameLevelsRuntimeData.State == ELevelState.Finished)
         {
+            GameEventsManager.OnTargetSceneUpdated?.Invoke(GameLevelsRuntimeData.LevelSceneName);
             GameContextManager.Instance.CharacterContextManager.DisableCharacterContext();
-            GameEventsManager.OnSceneLoadRequested?.Invoke(GameLevelsRuntimeData.LevelSceneName);
-            GameScoreManager.Instance.CurrentLevelRuntimeData = GameLevelsRuntimeData;
             GameContextManager.Instance.CharacterHubStartPosition = transform.position;
-            GameScoreManager.Instance.ResetPlayerScorePoints();
+            GameContextManager.Instance.ScoreManager.CurrentLevelRuntimeData = GameLevelsRuntimeData;
+            GameContextManager.Instance.ScoreManager.ResetPlayerScorePoints();
 
             GameStateTransitionManager.OnFadeInEnd += (() =>
             {
@@ -99,11 +99,11 @@ public class HubDoor : InteractableItem
 
             GameStateTransitionManager.FadeOut();
 
-            GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
+            GameContextManager.Instance.AudioManager.StopFadedBGM(0.0f, 1.5f);
         }
         else
         {
-            if (GameScoreManager.Instance.MasterScore >= GameLevelsRuntimeData.Config.LevelUnlockScore)
+            if (GameContextManager.Instance.ScoreManager.MasterScore >= GameLevelsRuntimeData.Config.LevelUnlockScore)
             {
                 Animator.Play("Opening");
             }
@@ -164,6 +164,6 @@ public class HubDoor : InteractableItem
 
     public void SetDoorSFX()
     {
-        GameAudioManager.Instance.PlaySFX("Door");
+        GameContextManager.Instance.AudioManager.PlaySFX("Door");
     }
 }

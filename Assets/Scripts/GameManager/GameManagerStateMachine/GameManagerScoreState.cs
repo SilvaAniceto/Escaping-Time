@@ -22,9 +22,9 @@
 
     public override void CheckSwitchStates()
     {
-        if (GameUIManager.Instance.ConfirmActionButton.gameObject.activeInHierarchy)
+        if (GameContextManager.UIManager.ConfirmActionButton.gameObject.activeInHierarchy)
         {
-            if (GameUIManager.Instance.Confirm)
+            if (GameContextManager.UIManager.Confirm)
             {
                 GameContextManager.ExitState = GameManagerStateFactory.GameHubState();
 

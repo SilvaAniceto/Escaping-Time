@@ -45,8 +45,8 @@ public class DamagingObject : InteractableItem
             if (characterContextManager.CurrentState == characterContextManager.CurrentState.CharacterStateFactory.DashState()) return;
         }
 
-        GameAudioManager.Instance.StopCharacterSFX();
-        GameAudioManager.Instance.PlayCharacterSFX("Damage");
+        GameContextManager.Instance.AudioManager.StopCharacterSFX();
+        GameContextManager.Instance.AudioManager.PlayCharacterSFX("Damage");
 
         if (_targetPosition != null)
         {

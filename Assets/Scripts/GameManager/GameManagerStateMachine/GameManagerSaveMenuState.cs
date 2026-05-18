@@ -12,22 +12,22 @@ public class GameManagerSaveMenuState : GameManagerAbstractState
 
     public override void UpdateState()
     {
-        if (GameUIManager.Instance.Start)
+        if (GameContextManager.UIManager.Start)
         {
-            GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.SelectSaveButton.gameObject);
+            GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.UIManager.SelectSaveButton.gameObject);
         }
 
-        if (GameUIManager.Instance.Navigating)
+        if (GameContextManager.UIManager.Navigating)
         {
             if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
             {
-                if (GameSaveSystem.Instance.SlotIsSelected)
+                if (GameContextManager.SaveSystem.SlotIsSelected)
                 {
-                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.SelectSaveButton.gameObject);
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.UIManager.SelectSaveButton.gameObject);
                 }
                 else
                 {
-                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.SaveSlots[0].slotButton.gameObject);
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.UIManager.SaveSlots[0].slotButton.gameObject);
                 }
             }
         }

@@ -185,10 +185,10 @@ public class MovingPlatform : InteractableItem
     }
     IEnumerator ScheduledStart()
     {
-        GameAudioManager.Instance.StopSFX(AudioSource);
-        GameAudioManager.Instance.PlaySFX("Enter_Platform", AudioSource);
+        GameContextManager.Instance.AudioManager.StopSFX(AudioSource);
+        GameContextManager.Instance.AudioManager.PlaySFX("Enter_Platform", AudioSource);
 
-        yield return new WaitForSeconds(GameAudioManager.Instance.AudioClipLength("Enter_Platform"));
+        yield return new WaitForSeconds(GameContextManager.Instance.AudioManager.AudioClipLength("Enter_Platform"));
 
         Activated = true;
     }

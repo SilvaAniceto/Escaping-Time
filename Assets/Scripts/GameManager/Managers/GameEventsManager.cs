@@ -4,7 +4,7 @@ public static class GameEventsManager
 {
     public static UnityEvent<bool> OnPauseStateChanged = new UnityEvent<bool>();
 
-    public static UnityEvent<SceneIdentifier> OnSceneLoadRequested = new UnityEvent<SceneIdentifier>();
+    public static UnityEvent<SceneIdentifier> OnTargetSceneUpdated = new UnityEvent<SceneIdentifier>();
     public static UnityEvent OnSceneLoaded = new UnityEvent();
 
     public static UnityEvent OnHubEntered = new UnityEvent();

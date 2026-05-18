@@ -7183,6 +7183,7 @@ GameObject:
   - component: {fileID: 6547977640084269231}
   - component: {fileID: 1003316471355286933}
   - component: {fileID: 7880100503982195351}
+  - component: {fileID: 7525639954717762531}
   - component: {fileID: 6547977640084269234}
   - component: {fileID: 6547977640084269229}
   - component: {fileID: 6547977640084269228}
@@ -7239,7 +7240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d8874b46712ff4f90a6648c32ac94d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _environment: 1
+  _environmentManager:
+    _environment: 1
   _playeableCharacterSet: {fileID: 11400000, guid: 0fbe31a7dcb54b84295cecdf976e4daf, type: 2}
   _gameLevelConfigs:
   - {fileID: 11400000, guid: 6b17632813e6c564c82df884cf92c6de, type: 2}
@@ -7248,6 +7250,8 @@ MonoBehaviour:
   _gameUIManager: {fileID: 7880100503982195351}
   _transitionScreen: {fileID: 8836420304719170268}
   _gameAudioManager: {fileID: 782641668916674030}
+  _gameSceneLoader: {fileID: 7525639954717762531}
+  _debugOnGui: 0
 --- !u!114 &7880100503982195351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7311,6 +7315,19 @@ MonoBehaviour:
   _wallMoveAnimatorPowerUp: {fileID: 8669266439725489783}
   _wallMoveUIpowerUp: {fileID: 3345855000163824089}
   _hourglassParent: {fileID: 2039331290544515389}
+--- !u!114 &7525639954717762531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6547977640084269230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 046c62b63002aaa40894ddbc41a92aac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loadingScreen: {fileID: 2608095290173874532}
 --- !u!223 &6547977640084269234
 Canvas:
   m_ObjectHideFlags: 0

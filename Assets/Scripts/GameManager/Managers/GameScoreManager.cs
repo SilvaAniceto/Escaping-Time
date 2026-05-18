@@ -21,8 +21,6 @@ public enum EClassficationTier
 
 public class GameScoreManager
 {
-    public static GameScoreManager Instance;
-
     #region PUBLIC PROPERTIES
     public GameLevelRuntimeData CurrentLevelRuntimeData { get; set; }
     public int MasterScore { get; set; }
@@ -63,11 +61,6 @@ public class GameScoreManager
     #region DEFAULT METHODS
     public void Initialize(GameContextManager gameContextManager, bool isGameContext = true)
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-
         GameContextManager = gameContextManager;
 
         if (!isGameContext)
@@ -166,7 +159,7 @@ public class GameScoreManager
         SilverScorePercentage = Mathf.Round(Mathf.InverseLerp(0, CurrentLevelRuntimeData.Config.Tier3TargetScore, CurrentLevelRuntimeData.Config.Tier2TargetScore) * 100) / 100;
         BrassScorePercentage = Mathf.Round(Mathf.InverseLerp(0, CurrentLevelRuntimeData.Config.Tier3TargetScore, CurrentLevelRuntimeData.Config.Tier1TargetScore) * 100) / 100;
 
-        GameUIManager.Instance.SetTrophyUIPosition();
+        GameContextManager.UIManager.SetTrophyUIPosition();
     }
     private IEnumerator SetLevelFinalScoreCoroutine()
     {
@@ -178,8 +171,8 @@ public class GameScoreManager
         yield return GameContextManager.StartCoroutine(SetLevelUIFinalScore());
 
         GameEventsManager.OnMasterScoreUpdated?.Invoke($"Master Score: {MasterScore}");
-        GameAudioManager.Instance.StopSFX();
-        GameAudioManager.Instance.PlaySFX("End_Score");
+        GameContextManager.AudioManager.StopSFX();
+        GameContextManager.AudioManager.PlaySFX("End_Score");
 
         yield return new WaitForSeconds(3.00f);
 
@@ -189,8 +182,8 @@ public class GameScoreManager
     }
     private IEnumerator SetGemUIFinalScore()
     {
-        GameAudioManager.Instance.StopSFX();
-        GameAudioManager.Instance.PlaySFX("Level_Score");
+        GameContextManager.AudioManager.StopSFX();
+        GameContextManager.AudioManager.PlaySFX("Level_Score");
 
         float gemUIScore = 0;
 
@@ -207,11 +200,11 @@ public class GameScoreManager
             yield return null;
         }
 
-        GameAudioManager.Instance.StopSFX();
+        GameContextManager.AudioManager.StopSFX();
     }
     private IEnumerator SetHourglassUIFinalScore()
     {
-        GameAudioManager.Instance.PlaySFX("Level_Score");
+        GameContextManager.AudioManager.PlaySFX("Level_Score");
 
         float hourglassUIScore = 0;
 
@@ -228,11 +221,11 @@ public class GameScoreManager
             yield return null;
         }
 
-        GameAudioManager.Instance.StopSFX();
+        GameContextManager.AudioManager.StopSFX();
     }
     private IEnumerator SetTimeUIFinalScore()
     {
-        GameAudioManager.Instance.PlaySFX("Level_Score");
+        GameContextManager.AudioManager.PlaySFX("Level_Score");
 
         float timeUIScore = 0;
 
@@ -249,11 +242,11 @@ public class GameScoreManager
             yield return null;
         }
 
-        GameAudioManager.Instance.StopSFX();
+        GameContextManager.AudioManager.StopSFX();
     }
     private IEnumerator SetLevelUIFinalScore()
     {
-        GameAudioManager.Instance.PlaySFX("Final_Score");
+        GameContextManager.AudioManager.PlaySFX("Final_Score");
 
         float levelUIFinalScore = 0;
 
@@ -267,7 +260,7 @@ public class GameScoreManager
 
             GameEventsManager.OnScoreFillAmountUpdated?.Invoke(levelUIFinalScore);
 
-            GameAudioManager.Instance.LerpPitch("Final_Score", levelUIFinalScore);
+            GameContextManager.AudioManager.LerpPitch("Final_Score", levelUIFinalScore);
 
             if (levelUIFinalScore >= BrassScorePercentage)
             {

@@ -89,12 +89,12 @@ public class LevelDoor : InteractableItem
     }
     public void StartClosing()
     {
-        GameAudioManager.Instance.PlaySFX("Door");
+        GameContextManager.Instance.AudioManager.PlaySFX("Door");
     }
     public void EndClosing()
     {
-        GameAudioManager.Instance.StopSFX();
-        GameAudioManager.Instance.PlaySFX("Door_Close");
+        GameContextManager.Instance.AudioManager.StopSFX();
+        GameContextManager.Instance.AudioManager.PlaySFX("Door_Close");
 
         switch (_type)
         {
@@ -105,14 +105,14 @@ public class LevelDoor : InteractableItem
                 {
                     GameContextManager.Instance.SetTimer = true;
                     GameContextManager.Instance.CharacterContextManager.EnableCharacterContext();
-                    GameAudioManager.Instance.PlayFadedBGM("Level_Loop", 1.6f);
+                    GameContextManager.Instance.AudioManager.PlayFadedBGM("Level_Loop", 1.6f);
                 }
                 break;
             case PointType.Finish:
                 if (GameContextManager.Instance)
                 {
                     StartCoroutine(DelaySetFinalScore());
-                    GameAudioManager.Instance.StopFadedBGM(0.0f, 1.5f);
+                    GameContextManager.Instance.AudioManager.StopFadedBGM(0.0f, 1.5f);
                 }
                 break;
             default:

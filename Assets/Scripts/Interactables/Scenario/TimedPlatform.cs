@@ -46,8 +46,8 @@ public class TimedPlatform : InteractableItem
     {
         Activated = true;
 
-        GameAudioManager.Instance.StopSFX(AudioSource);
-        GameAudioManager.Instance.PlaySFX("Enter_Platform", AudioSource);
+        GameContextManager.Instance.AudioManager.StopSFX(AudioSource);
+        GameContextManager.Instance.AudioManager.PlaySFX("Enter_Platform", AudioSource);
         Animator.Play("TimedPlatform");
 
         yield return new WaitForSeconds((2.0f / _tileCount));
@@ -55,8 +55,8 @@ public class TimedPlatform : InteractableItem
         Animator.Play("Unactive");
         Collider.enabled = false;
 
-        GameAudioManager.Instance.StopSFX(AudioSource);
-        GameAudioManager.Instance.PlaySFX("End_Platform", AudioSource);
+        GameContextManager.Instance.AudioManager.StopSFX(AudioSource);
+        GameContextManager.Instance.AudioManager.PlaySFX("End_Platform", AudioSource);
 
         yield return new WaitForSeconds(2);
 

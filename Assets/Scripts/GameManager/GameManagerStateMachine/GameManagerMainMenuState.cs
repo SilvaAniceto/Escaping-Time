@@ -12,11 +12,11 @@ public class GameManagerMainMenuState : GameManagerAbstractState
 
     public override void UpdateState()
     {
-        if (GameUIManager.Instance.Navigating)
+        if (GameContextManager.UIManager.Navigating)
         {
             if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
             {
-                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.StartButton.gameObject);
+                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.UIManager.StartButton.gameObject);
             }
         }
     }

@@ -29,13 +29,13 @@ public abstract class GameManagerAbstractState
         CheckSwitchStates();
         CheckSwitchSubStates();
 
-        if (GameUIManager.Instance.Navigating)
+        if (GameContextManager.UIManager.Navigating)
         {
             if (GameContextManager.GameManagerEventSystem.currentSelectedGameObject != null)
             {
-                GameAudioManager.Instance.PlaySFX("Menu_Select");
+                GameContextManager.AudioManager.PlaySFX("Menu_Select");
 
-                GameContextManager.WaitSeconds(null, GameAudioManager.Instance.AudioClipLength("Menu_Select"));
+                GameContextManager.WaitSeconds(null, GameContextManager.AudioManager.AudioClipLength("Menu_Select"));
             }
         }
 

@@ -4,8 +4,6 @@ using System.Collections;
 
 public class GameUIManager : MonoBehaviour
 {
-    public static GameUIManager Instance;
-
     #region INTERNAL CLASSES
     [System.Serializable]
     public class GameSaveSlot
@@ -157,11 +155,6 @@ public class GameUIManager : MonoBehaviour
     }
     public void Initialize(GameContextManager gameContextManager)
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-
         if (GameManagerUIActions == null)
         {
             GameManagerUIActions = new GameManagerUIActions();
@@ -185,10 +178,10 @@ public class GameUIManager : MonoBehaviour
         _startButton.onClick.RemoveAllListeners();
         _startButton.onClick.AddListener(() =>
         {
-            GameEventsManager.OnSceneLoadRequested?.Invoke(SceneIdentifier.Level_Hub);
+            GameEventsManager.OnTargetSceneUpdated?.Invoke(SceneIdentifier.Level_Hub);
 
-            GameAudioManager.Instance.StopSFX();
-            GameAudioManager.Instance.PlaySFX("Menu_Click");
+            _gameContextManager.AudioManager.StopSFX();
+            _gameContextManager.AudioManager.PlaySFX("Menu_Click");
 
             _quitButton.gameObject.SetActive(false);
 
@@ -197,14 +190,14 @@ public class GameUIManager : MonoBehaviour
                 _gameContextManager.CurrentState.SwitchState(_gameContextManager.CurrentState.GameManagerStateFactory.GameSaveMenuState());
             };
 
-            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+            _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("Menu_Click"));
 
         });
 
         _quitButton.onClick.RemoveAllListeners();
         _quitButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Click");
+            _gameContextManager.AudioManager.PlaySFX("Menu_Click");
 
             _startButton.gameObject.SetActive(false);
 
@@ -220,7 +213,7 @@ public class GameUIManager : MonoBehaviour
         _continueButton.onClick.RemoveAllListeners();
         _continueButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Start");
+            _gameContextManager.AudioManager.PlaySFX("Menu_Start");
 
             System.Action action = () =>
             {
@@ -236,7 +229,7 @@ public class GameUIManager : MonoBehaviour
         _exitLevelButton.onClick.RemoveAllListeners();
         _exitLevelButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Click");
+            _gameContextManager.AudioManager.PlaySFX("Menu_Click");
 
             System.Action action = () =>
             {
@@ -245,7 +238,7 @@ public class GameUIManager : MonoBehaviour
                 _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(_confirmHubButton.gameObject);
             };
 
-            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+            _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("Menu_Click"));
         });
     }
 
@@ -254,7 +247,7 @@ public class GameUIManager : MonoBehaviour
         _exitHubButton.onClick.RemoveAllListeners();
         _exitHubButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Click");
+            _gameContextManager.AudioManager.PlaySFX("Menu_Click");
 
             System.Action action = () =>
             {
@@ -263,7 +256,7 @@ public class GameUIManager : MonoBehaviour
                 _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(_confirmMainMenuButton.gameObject);
             };
 
-            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+            _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("Menu_Click"));
         });
     }
 
@@ -272,9 +265,9 @@ public class GameUIManager : MonoBehaviour
         _confirmMainMenuButton.onClick.RemoveAllListeners();
         _confirmMainMenuButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Start");
-            GameSaveSystem.Instance.SaveGame();
-            GameEventsManager.OnSceneLoadRequested?.Invoke(SceneIdentifier.MainMenu);
+            _gameContextManager.AudioManager.PlaySFX("Menu_Start");
+            _gameContextManager.SaveSystem.SaveGame();
+            GameEventsManager.OnTargetSceneUpdated?.Invoke(SceneIdentifier.MainMenu);
             _gameContextManager.ExitState = _gameContextManager.CurrentState.GameManagerStateFactory.GameMainMenuState();
 
             GameStateTransitionManager.OnFadeOutEnd += (() =>
@@ -287,10 +280,10 @@ public class GameUIManager : MonoBehaviour
                 };
                 _confirmPanel.SetActive(false);
 
-                _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+                _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("Menu_Start"));
             });
 
-            GameAudioManager.Instance.StopFadedBGM(0.00f, 1.00f);
+            _gameContextManager.AudioManager.StopFadedBGM(0.00f, 1.00f);
             GameStateTransitionManager.FadeOut();
         });
     }
@@ -314,8 +307,8 @@ public class GameUIManager : MonoBehaviour
                 _gameContextManager.CharacterContextManager.transform.position = _gameContextManager.CharacterHubStartPosition;
             });
 
-            GameAudioManager.Instance.PlaySFX("Menu_Start");
-            GameEventsManager.OnSceneLoadRequested?.Invoke(SceneIdentifier.Level_Hub);
+            _gameContextManager.AudioManager.PlaySFX("Menu_Start");
+            GameEventsManager.OnTargetSceneUpdated?.Invoke(SceneIdentifier.Level_Hub);
 
             System.Action action = () =>
             {
@@ -324,8 +317,8 @@ public class GameUIManager : MonoBehaviour
                 _gameContextManager.CurrentState.SwitchState(_gameContextManager.CurrentState.GameManagerStateFactory.GameLoadingState());
             };
 
-            GameAudioManager.Instance.StopFadedBGM(0.00f, 1.00f);
-            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Start"));
+            _gameContextManager.AudioManager.StopFadedBGM(0.00f, 1.00f);
+            _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("Menu_Start"));
         });
     }
 
@@ -334,14 +327,14 @@ public class GameUIManager : MonoBehaviour
         _confirmActionButton.onClick.RemoveAllListeners();
         _confirmActionButton.onClick.AddListener(() =>
         {
-            GameAudioManager.Instance.PlaySFX("Menu_Click");
+            _gameContextManager.AudioManager.PlaySFX("Menu_Click");
 
             System.Action action = () =>
             {
                 SetConfirmAction();
             };
 
-            _gameContextManager.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("Menu_Click"));
+            _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("Menu_Click"));
         });
     }
 
@@ -422,7 +415,7 @@ public class GameUIManager : MonoBehaviour
     {
         float currentTime = value;
 
-        GameAudioManager.Instance.CreateEnqueuedPowerUpSFX("TimeCount", value, sourceImage, true);
+        _gameContextManager.AudioManager.CreateEnqueuedPowerUpSFX("TimeCount", value, sourceImage, true);
 
         while (currentTime >= 0.00f)
         {
@@ -433,8 +426,8 @@ public class GameUIManager : MonoBehaviour
             yield return null;
         }
 
-        GameAudioManager.Instance.StopEnqueuedPowerUpSFX();
-        GameAudioManager.Instance.PlaySFX("EndTimeCount");
+        _gameContextManager.AudioManager.StopEnqueuedPowerUpSFX();
+        _gameContextManager.AudioManager.PlaySFX("EndTimeCount");
 
         System.Action action = () =>
         {
@@ -442,7 +435,7 @@ public class GameUIManager : MonoBehaviour
             characterContextManager.PowerUpManager.DispatchPowerUpInteractableRecharge();
         };
 
-        GameContextManager.Instance.WaitSeconds(action, GameAudioManager.Instance.AudioClipLength("EndTimeCount"));
+        _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("EndTimeCount"));
     }
     #endregion
 
@@ -466,8 +459,8 @@ public class GameUIManager : MonoBehaviour
         GameEventsManager.OnConfirmActionHidden.AddListener(() => ConfirmActionButton.gameObject.SetActive(false));
         GameEventsManager.OnConfirmActionSelected.AddListener(() =>
         {
-            if (GameContextManager.Instance != null)
-                GameContextManager.Instance.GameManagerEventSystem.SetSelectedGameObject(ConfirmActionButton.gameObject);
+            if (_gameContextManager != null)
+                _gameContextManager.GameManagerEventSystem.SetSelectedGameObject(ConfirmActionButton.gameObject);
         });
     }
     public void ResetScoreUI()
@@ -489,8 +482,8 @@ public class GameUIManager : MonoBehaviour
     }
     public void SetTrophyUIPosition()
     {
-        _silver.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * GameScoreManager.Instance.SilverScorePercentage, _silver.rectTransform.anchoredPosition.y);
-        _brass.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * GameScoreManager.Instance.BrassScorePercentage, _brass.rectTransform.anchoredPosition.y);
+        _silver.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * _gameContextManager.ScoreManager.SilverScorePercentage, _silver.rectTransform.anchoredPosition.y);
+        _brass.rectTransform.anchoredPosition = new Vector2(_fill.rectTransform.rect.width * _gameContextManager.ScoreManager.BrassScorePercentage, _brass.rectTransform.anchoredPosition.y);
     }
     public void SetGemScoreText(string text)
     {

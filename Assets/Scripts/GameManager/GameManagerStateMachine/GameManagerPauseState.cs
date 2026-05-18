@@ -12,22 +12,22 @@ public class GameManagerPauseState : GameManagerAbstractState
 
     public override void UpdateState()
     {
-        if (GameUIManager.Instance.Navigating && GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
+        if (GameContextManager.UIManager.Navigating && GameContextManager.GameManagerEventSystem.currentSelectedGameObject == null)
         {
-            if (GameUIManager.Instance.PauseMenu.activeInHierarchy)
+            if (GameContextManager.UIManager.PauseMenu.activeInHierarchy)
             {
-                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.ContinueButton.gameObject);
+                GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.UIManager.ContinueButton.gameObject);
             }
             else
             {
-                if (GameUIManager.Instance.ConfirmMainMenuButton.gameObject.activeInHierarchy)
+                if (GameContextManager.UIManager.ConfirmMainMenuButton.gameObject.activeInHierarchy)
                 {
-                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.ConfirmMainMenuButton.gameObject);
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.UIManager.ConfirmMainMenuButton.gameObject);
                 }
 
-                if (GameUIManager.Instance.ConfirmHubButton.gameObject.activeInHierarchy)
+                if (GameContextManager.UIManager.ConfirmHubButton.gameObject.activeInHierarchy)
                 {
-                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameUIManager.Instance.ConfirmHubButton.gameObject);
+                    GameContextManager.GameManagerEventSystem.SetSelectedGameObject(GameContextManager.UIManager.ConfirmHubButton.gameObject);
                 }
             }
         }

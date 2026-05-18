@@ -2,27 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class GameContextManager : MonoBehaviour
 {
-    public enum Environment
-    {
-        Development,
-        GameContext
-    }
-
     #region STATIC FIELDS
     public static GameContextManager Instance { get; private set; }
-
-    public static UnityEvent OnLoadSceneEnd = new UnityEvent();
     #endregion
 
     #region INSPECTOR FIELDS
     [Header("Enviroment Settings")]
-    [SerializeField] private Environment _environment = Environment.GameContext;
+    [SerializeField] private GameEnvironmentManager _environment;
 
     [Header("Playeable Character Set")]
     [SerializeField] private PlayeableCharacterSet _playeableCharacterSet;
@@ -40,14 +31,15 @@ public class GameContextManager : MonoBehaviour
     [Header("Game Audio Manager")]
     [SerializeField] private GameAudioManager _gameAudioManager;
 
+    [Header("Game Scene Loader")]
+    [SerializeField] private GameSceneLoader _gameSceneLoader;
+
     [Header("Debug Settings")]
     [SerializeField] private bool _debugOnGui = false;
     #endregion
 
     #region PRIVATE FIELDS
     private AudioListener _gameContextAudiolistener;
-
-    private GameScoreManager _gameScoreManager;
 
     private GameManagerAbstractState _exitState;
     private GameManagerAbstractState _currentState;
@@ -59,20 +51,18 @@ public class GameContextManager : MonoBehaviour
     #endregion
 
     #region PROPERTIES
+    public GameSaveSystem SaveSystem => _gameSaveSystem;
+    public GameUIManager UIManager => _gameUIManager;
+    public GameAudioManager AudioManager => _gameAudioManager;
+    public GameScoreManager ScoreManager { get; private set; }
+    public List<GameLevelRuntimeData> GameLevelsRuntimeData { get; private set; } = new List<GameLevelRuntimeData>();
     public PlayeableCharacterSet PlayeableCharacterSet { get => _playeableCharacterSet; }
     public GameManagerAbstractState ExitState { get { return _exitState; } set { _exitState = value; } }
     public GameManagerAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
     public CharacterContextManager CharacterContextManager { get => _characterContextManager; }
-    public Vector2 CharacterHubStartPosition { get; set; }
-
-    public PlayerInputManager PlayerInputManager { get => _playerInputManager; }
-
-    public List<GameLevelRuntimeData> GameLevelsRuntimeData { get; private set; } = new List<GameLevelRuntimeData>();
-    public SceneIdentifier TargetScene { get; set; }
-
     public EventSystem GameManagerEventSystem {  get => EventSystem.current; }
-
-    public bool InstantiateCharacter { get => _characterContextManager == null && TargetScene != SceneIdentifier.MainMenu; }
+    public Vector2 CharacterHubStartPosition { get; set; }
+    public bool InstantiateCharacter { get => _characterContextManager == null && _gameSceneLoader.TargetScene != SceneIdentifier.MainMenu; }
     public bool SetTimer { get; set; } = false;
     public bool LoadLevel { get; set; } = false;
     #endregion
@@ -100,21 +90,23 @@ public class GameContextManager : MonoBehaviour
 
         InstantiateLevelManagers();
 
-        switch (_environment)
+        _environment.ApplyGameEnvironmentSettings();
+
+        switch (_environment.CurrentEnvironment)
         {
-            case Environment.Development:
+            case GameEnvironmentManager.Environment.Development:
                 StartDevelopmentEnvironment();
                 break;
-            case Environment.GameContext:
+            case GameEnvironmentManager.Environment.GameContext:
                 StartGameContextEnvironment();
                 break;
         }
 
-        GameEventsManager.OnSceneLoadRequested.AddListener(OnSceneLoadRequested);
+        _gameSceneLoader.InitializeGameSceneLoader();
     }
     private void Start()
     {
-        if (_environment == Environment.Development) return;
+        if (_environment.CurrentEnvironment == GameEnvironmentManager.Environment.Development) return;
 
         _currentState.EnterState();
     }
@@ -123,19 +115,19 @@ public class GameContextManager : MonoBehaviour
         _cameraBehaviourController?.CameraVerticalOffset();
         _playerInputManager?.UpdatePlayerInputManager();
 
-        if (_environment == Environment.GameContext)
+        if (_environment.CurrentEnvironment == GameEnvironmentManager.Environment.GameContext)
         {
             _currentState.UpdateStates();
         }
 
         if (SetTimer)
         {
-            _gameScoreManager.SetCurrentTimer();
+            ScoreManager.SetCurrentTimer();
         }
     }
     private void OnDestroy()
     {
-        GameEventsManager.OnSceneLoadRequested.RemoveListener(OnSceneLoadRequested);
+
     }
     void OnGUI()
     {
@@ -157,11 +149,7 @@ public class GameContextManager : MonoBehaviour
     #endregion
 
     #region SCENE MANAGEMENT
-    private void OnSceneLoadRequested(SceneIdentifier sceneId)
-    {
-        TargetScene = sceneId;
-    }
-    public void AfterLoadSceneEnd(Scene scene, LoadSceneMode loadSceneMode)
+    public void SceneHandler(Scene scene, LoadSceneMode loadSceneMode)
     {
         StartCoroutine(BeforeLoadEnd(scene));
     }
@@ -176,7 +164,7 @@ public class GameContextManager : MonoBehaviour
 
         _gameSaveSystem.LoadProfileDataToContext(this);
 
-        OnLoadSceneEnd?.Invoke();
+        GameEventsManager.OnSceneLoaded?.Invoke();
     }
     IEnumerator StartInstantiateCharacter()
     {
@@ -307,10 +295,10 @@ public class GameContextManager : MonoBehaviour
         _gameUIManager.CharacterUIManager.gameObject.SetActive(false);
         _gameUIManager.LoadingScreen.SetActive(true);
 
-        SceneManager.LoadSceneAsync(TargetScene.ToString());
+        _gameSceneLoader.LoadTargetScene();
 
-        OnLoadSceneEnd.RemoveAllListeners();
-        OnLoadSceneEnd.AddListener(() =>
+        GameEventsManager.OnSceneLoaded.RemoveAllListeners();
+        GameEventsManager.OnSceneLoaded.AddListener(() =>
         {
             WaitFrameEnd(() =>
             {
@@ -318,13 +306,13 @@ public class GameContextManager : MonoBehaviour
             });
         });
 
-        SceneManager.sceneLoaded += AfterLoadSceneEnd;
+        SceneManager.sceneLoaded += SceneHandler;
 
         GameManagerEventSystem.SetSelectedGameObject(null);
     }
     public void OnExitLoadingState()
     {
-        SceneManager.sceneLoaded -= AfterLoadSceneEnd;
+        SceneManager.sceneLoaded -= SceneHandler;
         _gameUIManager.LoadingScreen.SetActive(false);
         GameStateTransitionManager.FadeIn();
     }
@@ -335,7 +323,7 @@ public class GameContextManager : MonoBehaviour
     {
         _gameUIManager.SetHubUIObjects();
 
-        _gameUIManager.SetScoreDisplay(_gameScoreManager.MasterScore);
+        _gameUIManager.SetScoreDisplay(ScoreManager.MasterScore);
 
         _gameUIManager.CharacterUIManager.SetActive(true);
 
@@ -356,7 +344,7 @@ public class GameContextManager : MonoBehaviour
 
         _gameUIManager.CharacterUIManager.gameObject.SetActive(true);
 
-        _gameUIManager.SetScoreDisplay(_gameScoreManager.CurrentScore);
+        _gameUIManager.SetScoreDisplay(ScoreManager.CurrentScore);
 
         GameManagerEventSystem.SetSelectedGameObject(null);
     }
@@ -423,9 +411,9 @@ public class GameContextManager : MonoBehaviour
     {
         _gameUIManager.ScorePanel.SetActive(true);
 
-        _gameScoreManager.SetScoreManager();
+        ScoreManager.SetScoreManager();
 
-        TargetScene = SceneIdentifier.Level_Hub;
+        _gameSceneLoader.TargetScene = SceneIdentifier.Level_Hub;
     }
     public void OnExitScoreState()
     {
@@ -435,7 +423,7 @@ public class GameContextManager : MonoBehaviour
         _gameUIManager.ConfirmActionButton.gameObject.SetActive(false);
         _gameUIManager.SetConfirmAction();
         _gameSaveSystem.SaveGame();
-        _gameScoreManager.ResetPlayerScorePoints();
+        ScoreManager.ResetPlayerScorePoints();
     }
     #endregion
 
@@ -464,13 +452,11 @@ public class GameContextManager : MonoBehaviour
 
         _gameContextAudiolistener.enabled = false;
 
-        _gameScoreManager = new GameScoreManager();
-
-        _gameAudioManager.Initialize();
+        ScoreManager = new GameScoreManager();
 
         _gameUIManager.Initialize(this);
 
-        _gameScoreManager.Initialize(this, false);
+        ScoreManager.Initialize(this, false);
 
         _characterContextManager = FindAnyObjectByType<CharacterContextManager>();
 
@@ -488,11 +474,9 @@ public class GameContextManager : MonoBehaviour
     {
         _transitionScreen.Initialize();
 
-        _gameScoreManager = new GameScoreManager();
+        ScoreManager = new GameScoreManager();
 
-        _gameScoreManager.Initialize(this);
-
-        _gameAudioManager.Initialize();
+        ScoreManager.Initialize(this);
 
         _gameUIManager.Initialize(this);
 
@@ -502,7 +486,7 @@ public class GameContextManager : MonoBehaviour
 
         GameEventsManager.OnPauseStateChanged.AddListener((value) =>
         {
-            if (TargetScene != SceneIdentifier.Level_Hub)
+            if (_gameSceneLoader.TargetScene != SceneIdentifier.Level_Hub)
             {
                 SetTimer = value;
             }
