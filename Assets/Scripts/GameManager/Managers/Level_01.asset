@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _levelSceneName: 2
   _levelUnlockScore: 0
-  _tier3TargetScore: 1950
-  _tier2TargetScore: 1700
+  _tier3TargetScore: 1800
+  _tier2TargetScore: 1600
   _tier1TargetScore: 1200
   _maxGemScore: 600
   _maxHourglassScore: 300

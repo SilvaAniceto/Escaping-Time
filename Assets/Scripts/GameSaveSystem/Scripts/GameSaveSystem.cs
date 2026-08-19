@@ -177,7 +177,7 @@ public class GameSaveSystem : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (!_gameContextManager.UIManager)
+        if (!_gameContextManager || !_gameContextManager.UIManager)
         {
             return;
         }

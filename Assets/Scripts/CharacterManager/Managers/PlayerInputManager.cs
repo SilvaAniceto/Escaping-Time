@@ -84,6 +84,16 @@ public class PlayerInputManager
         _playerInputActions.Disable();
     }
 
+    #region INPUT CALLBACK METHODS
+    private void OnJumpStarted(UnityEngine.InputSystem.InputAction.CallbackContext ctx) => HandleJumpCommand();
+    private void OnJumpCanceled(UnityEngine.InputSystem.InputAction.CallbackContext ctx) => HandleCancelJumpCommand();
+    private void OnWallMoveStarted(UnityEngine.InputSystem.InputAction.CallbackContext ctx) => HandleWallMoveCommand();
+    private void OnWallMoveCanceled(UnityEngine.InputSystem.InputAction.CallbackContext ctx) => HandleCancelWallMoveCommand();
+    private void OnDashStarted(UnityEngine.InputSystem.InputAction.CallbackContext ctx) => HandleDashCommand();
+    private void OnInteractStarted(UnityEngine.InputSystem.InputAction.CallbackContext ctx) => HandleInteractCommand();
+    private void OnCancelStarted(UnityEngine.InputSystem.InputAction.CallbackContext ctx) => HandlePauseCommand();
+    #endregion
+
     #region CLASS METHODS
     public void Initialize()
     {
@@ -96,19 +106,35 @@ public class PlayerInputManager
             new ComboAirJump(_characterContextManager)
         };
 
-        _playerInputActions.PlayerActionMap.Jump.started += ctx => HandleJumpCommand();
-        _playerInputActions.PlayerActionMap.Jump.canceled += ctx => HandleCancelJumpCommand();
+        _playerInputActions.PlayerActionMap.Jump.started += OnJumpStarted;
+        _playerInputActions.PlayerActionMap.Jump.canceled += OnJumpCanceled;
 
-        _playerInputActions.PlayerActionMap.WallMove.started += ctx => HandleWallMoveCommand();
-        _playerInputActions.PlayerActionMap.WallMove.canceled += ctx => HandleCancelWallMoveCommand();
+        _playerInputActions.PlayerActionMap.WallMove.started += OnWallMoveStarted;
+        _playerInputActions.PlayerActionMap.WallMove.canceled += OnWallMoveCanceled;
 
-        _playerInputActions.PlayerActionMap.Dash.started += ctx => HandleDashCommand();
+        _playerInputActions.PlayerActionMap.Dash.started += OnDashStarted;
 
-        _playerInputActions.PlayerActionMap.Interact.started += ctx => HandleInteractCommand();
+        _playerInputActions.PlayerActionMap.Interact.started += OnInteractStarted;
 
-        _playerInputActions.PlayerActionMap.Cancel.started += ctx => HandlePauseCommand();
+        _playerInputActions.PlayerActionMap.Cancel.started += OnCancelStarted;
 
         _initialized = true;
+    }
+    public void ClearPlayerActionsCallback()
+    {
+        _playerInputActions.PlayerActionMap.Jump.started -= OnJumpStarted;
+        _playerInputActions.PlayerActionMap.Jump.canceled -= OnJumpCanceled;
+
+        _playerInputActions.PlayerActionMap.WallMove.started -= OnWallMoveStarted;
+        _playerInputActions.PlayerActionMap.WallMove.canceled -= OnWallMoveCanceled;
+
+        _playerInputActions.PlayerActionMap.Dash.started -= OnDashStarted;
+
+        _playerInputActions.PlayerActionMap.Interact.started -= OnInteractStarted;
+
+        _playerInputActions.PlayerActionMap.Cancel.started -= OnCancelStarted;
+
+        _playerInputActions.PlayerActionMap.Disable();
     }
     private void ProcessCommandBuffer(float deltaTime)
     {
@@ -201,7 +227,7 @@ public class PlayerInputManager
     {
         var cancelJumpCommand = new CharacterCancelJumpCommand(_characterContextManager);
 
-        _characterActionCommandInvoker.ExecuteActionCommand(cancelJumpCommand);            
+        _characterActionCommandInvoker.ExecuteActionCommand(cancelJumpCommand);
     }
     private void ProcessJumpCommandBuffer(float deltaTime)
     {

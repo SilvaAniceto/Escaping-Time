@@ -445,7 +445,7 @@ public class GameUIManager : MonoBehaviour
         GameEventsManager.OnScoreUpdated.AddListener(SetScoreDisplay);
         GameEventsManager.OnTimerUpdated.AddListener(SetTimerDisplay);
         GameEventsManager.OnHourglassUpdated.AddListener(SetHourglassDisplay);
-        GameEventsManager.OnMasterScoreUpdated.AddListener(SetMasterScoreText); // ajuste se o método espera string
+        GameEventsManager.OnMasterScoreUpdated.AddListener(SetMasterScoreText);
         GameEventsManager.OnScorePanelShown.AddListener(ShowScorePanel);
         GameEventsManager.OnScorePanelHidden.AddListener(HideScorePanel);
         GameEventsManager.OnGemScoreTextUpdated.AddListener(SetGemScoreText);

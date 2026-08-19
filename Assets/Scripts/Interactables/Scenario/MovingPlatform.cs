@@ -245,8 +245,6 @@ public class MovingPlatform : InteractableItem
                 break;
             case EInteractionType.Exit:
                 break;
-            default:
-                break;
         }
     }
     public override void ConfirmInteraction()

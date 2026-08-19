@@ -229,6 +229,7 @@ public class GameContextManager : MonoBehaviour
     }
     public void OnQuitToMainMenu()
     {
+        _playerInputManager.ClearPlayerActionsCallback();
         _playerInputManager = null;
         GameEventsManager.OnPauseStateChanged.RemoveAllListeners();
         Destroy(_cameraBehaviourController.gameObject);
