@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterAnimationManager))]
 [RequireComponent(typeof(CharacterPowerUpManager))]
 [RequireComponent(typeof(CharacterDamageManager))]
-public class CharacterContextManager : MonoBehaviour
+public class CharacterContextManager : MonoBehaviour, IStateController, IMovementDirection, IJumpCapability, IDashCapability, IWallMoveCapability, IDamageCapability
 {
     [Header("Camera Target")]
     [SerializeField] private Transform _cameraTarget;
@@ -28,14 +29,67 @@ public class CharacterContextManager : MonoBehaviour
     public CharacterPhysicsManager PhysicsManager => _physicsManager;
 
     private CharacterAbstractState _currentState;
+    private CharacterPhysicsHandler _physicsHandler;
+    private CharacterCollisionDetector _collisionDetector;
+
     public CharacterAbstractState CurrentState { get { return _currentState; } set { _currentState = value; } }
+    public CharacterCollisionDetector CollisionDetector { get { return _collisionDetector; } }
 
     public Transform CameraTarget { get => _cameraTarget; }
     public PlayerInputManager PlayerInputManager { get; private set; }
     public CharacterPowerUpManager PowerUpManager => _powerUpManager;
     public CharacterDamageManager DamageManager => _damageManager;
     public CameraBehaviourController CameraBehaviourController { get; private set; }
-    public IInteractable Interactable { get; set; }
+    public GameObject InteractableGameObject { get; set; }
+
+    #region INTERFACE IMPLEMENTATIONS
+    public int MoveDirection
+    {
+        get { return _physicsManager.MoveDirection; }
+        set { _physicsManager.MoveDirection = value; }
+    }
+
+    public bool CoyoteTime
+    {
+        get { return _physicsManager.CoyoteTime; }
+        set { _physicsManager.CoyoteTime = value; }
+    }
+
+    public bool HasAirJump
+    {
+        get { return _powerUpManager.HasAirJump; }
+    }
+
+    public bool AirJumpIsAllowed
+    {
+        get { return _powerUpManager.AirJumpIsAllowed; }
+    }
+
+    public void EnableAirJump()
+    {
+        _powerUpManager.EnableAirJump();
+    }
+
+    public void DisableAirJump()
+    {
+        _powerUpManager.DisableAirJump();
+    }
+
+    public bool DashIsAllowed
+    {
+        get { return _powerUpManager.DashIsAllowed; }
+    }
+
+    public bool HasWallMove
+    {
+        get { return _powerUpManager.HasWallMove; }
+    }
+
+    public bool IsInvincible
+    {
+        get { return _damageManager.IsInvincible; }
+    }
+    #endregion
 
     #region COLLISION PROPERTIES
     public Rigidbody2D Rigidbody { get; private set; }
@@ -61,6 +115,9 @@ public class CharacterContextManager : MonoBehaviour
 
         Rigidbody = GetComponent<Rigidbody2D>();
         FixedJoint2D = GetComponent<FixedJoint2D>();
+
+        _collisionDetector = new CharacterCollisionDetector(transform, _wallCheckerPoint, _groundLayerTarget, _wallLayerTarget);
+        _physicsHandler = new CharacterPhysicsHandler(this, FixedJoint2D);
 
         DisableFixedJoint2D();
 
@@ -112,19 +169,11 @@ public class CharacterContextManager : MonoBehaviour
     }
     public void EnableFixedJoint2D()
     {
-        if (FixedJoint2D.enabled || !FixedJointConnectedBody || CurrentState.CurrentSubState != CurrentState.CharacterStateFactory.IdleState() || CurrentState != CurrentState.CharacterStateFactory.GroundedState())
-        {
-            return;
-        }
-
-        FixedJoint2D.connectedBody = FixedJointConnectedBody;
-        FixedJoint2D.enableCollision = true;
-        FixedJoint2D.enabled = true;
+        _physicsHandler.EnableFixedJoint2D();
     }
     public void DisableFixedJoint2D()
     {
-        FixedJoint2D.enabled = false;
-        FixedJoint2D.connectedBody = null;
+        _physicsHandler.DisableFixedJoint2D();
     }
     public void DisableCharacterContext()
     {
@@ -157,6 +206,7 @@ public class CharacterContextManager : MonoBehaviour
     #region PHYSICS FRAME
     void FixedUpdate()
     {
+        _collisionDetector.UpdateCollisions();
         _currentState.FixedUpdateStates();
     }
     #endregion
@@ -181,11 +231,12 @@ public class CharacterContextManager : MonoBehaviour
     {
         _currentState.OnTriggerEnter2D(collision);
 
-        if (collision.TryGetComponent(out IInteractable interactable) && collision.CompareTag("Interactable"))
+        if (collision.TryGetComponent(out IInteractableBehavior newInteractable))
         {
-            if (interactable.Interactions.Contains(EInteractionType.Enter))
+            if (newInteractable.InteractionType.Contains(EInteractionType.Enter))
             {
-                interactable.SetInteraction(this, EInteractionType.Enter);
+                InteractableGameObject = collision.gameObject;
+                newInteractable.Execute(this, EInteractionType.Enter);
             }
         }
     }
@@ -194,11 +245,12 @@ public class CharacterContextManager : MonoBehaviour
     {
         _currentState.OnTriggerStay2D(collision);
 
-        if (collision.TryGetComponent(out IInteractable interactable))
+        if (collision.TryGetComponent(out IInteractableBehavior newInteractable))
         {
-            if (interactable.Interactions.Contains(EInteractionType.Stay))
+            if (newInteractable.InteractionType.Contains(EInteractionType.Stay))
             {
-                interactable.SetInteraction(this, EInteractionType.Stay);
+                InteractableGameObject = collision.gameObject;
+                newInteractable.Execute(this, EInteractionType.Stay);
             }
         }
     }
@@ -207,11 +259,12 @@ public class CharacterContextManager : MonoBehaviour
     {
         _currentState.OnTriggerExit2D(collision);
 
-        if (collision.TryGetComponent(out IInteractable interactable))
+        if (collision.TryGetComponent(out IInteractableBehavior newInteractable))
         {
-            if (interactable.Interactions.Contains(EInteractionType.Exit))
+            if (newInteractable.InteractionType.Contains(EInteractionType.Exit))
             {
-                interactable.SetInteraction(this, EInteractionType.Exit);
+                InteractableGameObject = null;
+                newInteractable.Execute(this, EInteractionType.Exit);
             }
         }
     }

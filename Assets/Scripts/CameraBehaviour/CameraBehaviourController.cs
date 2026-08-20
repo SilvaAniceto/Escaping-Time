@@ -1,7 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-public class CameraBehaviourController : MonoBehaviour
+public class CameraBehaviourController : MonoBehaviour, ICameraTiltController
 {
     [SerializeField] private CinemachineCamera _cinemachineCamera;
     [SerializeField] private CinemachinePositionComposer _cameraPositionComposer;

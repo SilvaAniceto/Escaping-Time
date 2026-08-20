@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3895594235521561718}
-  - component: {fileID: 9056642464723869415}
+  - component: {fileID: 795200829630272287}
   - component: {fileID: 5206773468877881432}
   - component: {fileID: 1865936673303201468}
   - component: {fileID: 8097624211686761413}
@@ -35,7 +35,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9056642464723869415
+--- !u!114 &795200829630272287
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,10 +44,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 132550053332595839}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8774a9c9cdd3b154b94a2cc0fc477c5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 28500084d689e4e4182a76ff3828b02f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _scoreValue: 10
+  _soundName: Gem_Collect
 --- !u!212 &5206773468877881432
 SpriteRenderer:
   m_ObjectHideFlags: 0

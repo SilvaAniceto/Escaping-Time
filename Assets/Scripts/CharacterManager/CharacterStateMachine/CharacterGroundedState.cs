@@ -112,35 +112,4 @@ public class CharacterGroundedState : CharacterAbstractState
     {
         return new Quaternion();
     }
-    public override void OnCollisionEnter2D(Collision2D collision) {  }
-
-    public override void OnCollisionStay(Collision2D collision) { }
-
-    public override void OnCollisionExit2D(Collision2D collision) { }
-
-    public override void OnTriggerEnter2D(Collider2D collision) 
-    {
-        
-    }
-
-    public override void OnTriggerStay2D(Collider2D collision) 
-    {
-        if (!collision.CompareTag("Interactable"))
-        {
-            if (collision.TryGetComponent(out IInteractable interactable))
-            {
-                if (interactable.Interactions.Contains(EInteractionType.Stay))
-                {
-                    CharacterContextManager.Interactable = interactable;
-
-                    SwitchState(CharacterStateFactory.InteractionState());
-                }
-            }
-        }
-    }
-
-    public override void OnTriggerExit2D(Collider2D collision) 
-    {
-
-    }
 }

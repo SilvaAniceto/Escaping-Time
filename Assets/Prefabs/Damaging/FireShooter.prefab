@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3507828263336232033}
-  - component: {fileID: 3769417677251791287}
+  - component: {fileID: 6218045846098647202}
   - component: {fileID: 3635978416045672068}
   - component: {fileID: 7476481460010515161}
   - component: {fileID: 6638784242410673622}
@@ -37,7 +37,7 @@ Transform:
   - {fileID: 6534735726264421145}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3769417677251791287
+--- !u!114 &6218045846098647202
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,13 +46,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4471425847354050776}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ee6cfc1b8570e948958cffc155fbee1, type: 3}
+  m_Script: {fileID: 11500000, guid: 011ccfbb54fc33f4eb81f265d81013bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _isManager: 0
   _shooters: []
-  _damagingObject: {fileID: 1246289023381484705}
-  _damagingObjectsCount: 10
+  _projectilePrefab: {fileID: 5794190224175174483}
+  _projectilesCount: 10
   _projectileCurve:
     serializedVersion: 2
     m_Curve:
@@ -77,7 +77,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _projectileMaxSpeed: 3
+  _projectileMaxSpeed: 0
   _shotInterval: 1.5
   _separatedShots: 0
 --- !u!212 &3635978416045672068
@@ -429,17 +429,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
---- !u!114 &1246289023381484705 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5100150682423007642, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
+--- !u!1 &5794190224175174483 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 569085272224284264, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}
   m_PrefabInstance: {fileID: 6308651671993265467}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cde406dfb7ae93546a88b42490438c6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &5794190224175174494 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 569085272224284261, guid: 1b91362e3f549994bbaa45df3a029cd0, type: 3}

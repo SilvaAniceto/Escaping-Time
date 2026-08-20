@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public enum ECharacterDirection
@@ -25,6 +23,14 @@ public class PlayerInputManager
         _characterContextManager = characterContextManager;
         _cameraBehaviourController = cameraBehaviourController;
         _playerInputActions = playerInputActions;
+
+        _commandBufferManager = new CharacterCommandBufferManager();
+
+        var comboRules = new List<ICharacterComboCommand>
+        {
+            new ComboAirJump(_characterContextManager)
+        };
+        _comboMatcher = new CharacterComboMatcher(comboRules);
     }
 
     private bool _initialized = false;
@@ -34,26 +40,11 @@ public class PlayerInputManager
     private CameraBehaviourController _cameraBehaviourController;
     private PlayerInputActions _playerInputActions;
 
-    private const float _maxTimeForClearBuffer = 0.1f;
-    private const int _maxBufferLength = 5;
-
     private ECharacterDirection _characterDirection = ECharacterDirection.None;
     private ECameraTiltDirection _cameraTiltDirection = ECameraTiltDirection.None;
 
-    private float _jumpCommandBufferTimer;
-    private float _dashCommandBufferTimer;
-    private float _wallMoveCommandBufferTimer;
-    private float _interactCommandBufferTimer;
-    private float _pauseCommandBufferTimer;
-
-    private Queue<ICharacterActionCommand> _jumpCommandBuffer = new Queue<ICharacterActionCommand>();
-    private Queue<ICharacterActionCommand> _airJumpCommandCombo = new Queue<ICharacterActionCommand>();
-    private Queue<ICharacterActionCommand> _dashCommandBuffer = new Queue<ICharacterActionCommand>();
-    private Queue<ICharacterActionCommand> _wallMoveCommandBuffer = new Queue<ICharacterActionCommand>();
-    private Queue<ICharacterActionCommand> _interactCommandBuffer = new Queue<ICharacterActionCommand>();
-    private Queue<ICharacterActionCommand> _pauseCommandBuffer = new Queue<ICharacterActionCommand>();
-
-    private List<ICharacterComboCommand> _characterComboRules;
+    private CharacterCommandBufferManager _commandBufferManager;
+    private CharacterComboMatcher _comboMatcher;
 
     private CharacterActionCommandInvoker _characterActionCommandInvoker;
 
@@ -101,11 +92,6 @@ public class PlayerInputManager
 
         _characterActionCommandInvoker = new CharacterActionCommandInvoker();
 
-        _characterComboRules = new List<ICharacterComboCommand>
-        {
-            new ComboAirJump(_characterContextManager)
-        };
-
         _playerInputActions.PlayerActionMap.Jump.started += OnJumpStarted;
         _playerInputActions.PlayerActionMap.Jump.canceled += OnJumpCanceled;
 
@@ -145,7 +131,7 @@ public class PlayerInputManager
     }
     private void ClearCommandBuffer(Queue<ICharacterActionCommand> commandBuffer)
     {
-        commandBuffer.Clear();
+        _commandBufferManager.ClearCommandBuffer(commandBuffer);
     }
     #endregion
 
@@ -189,18 +175,15 @@ public class PlayerInputManager
         switch (_characterDirection)
         {
             case ECharacterDirection.Left:
-                var leftCommand = new CharacterLeftDirectionCommand(_characterContextManager);
-
+                var leftCommand = new CharacterLeftDirectionCommand(_characterContextManager, _characterContextManager);
                 _characterActionCommandInvoker.ExecuteActionCommand(leftCommand);
                 break;
             case ECharacterDirection.None:
-                var noneCommand = new CharacterNoneDirectionCommand(_characterContextManager);
-
+                var noneCommand = new CharacterNoneDirectionCommand(_characterContextManager, _characterContextManager);
                 _characterActionCommandInvoker.ExecuteActionCommand(noneCommand);
                 break;
             case ECharacterDirection.Right:
-                var rightCommand = new CharacterRightDirectionCommand(_characterContextManager);
-
+                var rightCommand = new CharacterRightDirectionCommand(_characterContextManager, _characterContextManager);
                 _characterActionCommandInvoker.ExecuteActionCommand(rightCommand);
                 break;
         }
@@ -210,16 +193,9 @@ public class PlayerInputManager
     #region JUMP COMMAND
     private void HandleJumpCommand()
     {
-        var jumpCommand = new CharacterJumpCommand(_characterContextManager);
+        var jumpCommand = new CharacterJumpCommand(_characterContextManager, _characterContextManager);
 
-        if (_jumpCommandBuffer.Count > _maxBufferLength)
-        {
-            ClearCommandBuffer(_jumpCommandBuffer);
-            ClearCommandBuffer(_airJumpCommandCombo);
-        }
-
-        _jumpCommandBuffer.Enqueue(jumpCommand);
-        _airJumpCommandCombo.Enqueue(jumpCommand);
+        _commandBufferManager.EnqueueJumpCommand(jumpCommand);
 
         _characterActionCommandInvoker.ExecuteActionCommand(jumpCommand);
     }
@@ -231,59 +207,54 @@ public class PlayerInputManager
     }
     private void ProcessJumpCommandBuffer(float deltaTime)
     {
-        if (_jumpCommandBuffer.Count == 0)
+        if (_commandBufferManager.JumpCommandBuffer.Count == 0)
         {
             return;
         }
 
-        _jumpCommandBufferTimer += deltaTime;
+        _commandBufferManager.JumpCommandBufferTimer += deltaTime;
 
-        if (_jumpCommandBufferTimer > _maxTimeForClearBuffer)
+        if (_commandBufferManager.JumpCommandBufferTimer > 0.1f)
         {
-            _jumpCommandBufferTimer = 0;
+            _commandBufferManager.JumpCommandBufferTimer = 0;
 
-            _characterActionCommandInvoker.ExecuteActionCommand(_jumpCommandBuffer.Peek());
-            ClearCommandBuffer(_jumpCommandBuffer);
+            _commandBufferManager.ClearCommandBuffer(_commandBufferManager.JumpCommandBuffer);
 
             return;
         }
 
-        CheckAndExecuteCharacterCombo(_airJumpCommandCombo);
+        CheckAndExecuteCharacterCombo(_commandBufferManager.AirJumpCommandCombo);
     }
     public void ClearAirJumpCommandCombo()
     {
-        _airJumpCommandCombo.Clear();
+        _commandBufferManager.ClearAirJumpCommandCombo();
     }
     #endregion
 
     #region DASH COMMAND
     private void HandleDashCommand()
     {
-        var dashCommand = new CharacterDashCommand(_characterContextManager);
+        var dashCommand = new CharacterDashCommand(_characterContextManager, _characterContextManager);
 
-        if (_dashCommandBuffer.Count >= _maxBufferLength)
-        {
-            _dashCommandBuffer.Dequeue();
-        }
+        _commandBufferManager.EnqueueDashCommand(dashCommand);
 
-        _dashCommandBuffer.Enqueue(dashCommand);
         _characterActionCommandInvoker.ExecuteActionCommand(dashCommand);
     }
     private void ProcessDashCommandBuffer(float deltaTime)
     {
-        if (_dashCommandBuffer.Count == 0)
+        if (_commandBufferManager.DashCommandBuffer.Count == 0)
         {
             return;
         }
 
-        _dashCommandBufferTimer += deltaTime;
+        _commandBufferManager.DashCommandBufferTimer += deltaTime;
 
-        if (_dashCommandBufferTimer > _maxTimeForClearBuffer)
+        if (_commandBufferManager.DashCommandBufferTimer > 0.1f)
         {
-            _dashCommandBufferTimer = 0;
+            _commandBufferManager.DashCommandBufferTimer = 0;
 
-            _characterActionCommandInvoker.ExecuteActionCommand(_dashCommandBuffer.Peek());
-            ClearCommandBuffer(_dashCommandBuffer);
+            _characterActionCommandInvoker.ExecuteActionCommand(_commandBufferManager.DashCommandBuffer.Peek());
+            _commandBufferManager.ClearCommandBuffer(_commandBufferManager.DashCommandBuffer);
         }
     }
     #endregion
@@ -291,14 +262,9 @@ public class PlayerInputManager
     #region WALL MOVE COMMAND
     private void HandleWallMoveCommand()
     {
-        var wallMoveCommand = new CharacterWallMoveCommand(_characterContextManager);
+        var wallMoveCommand = new CharacterWallMoveCommand(_characterContextManager, _characterContextManager, _characterContextManager);
 
-        if (_wallMoveCommandBuffer.Count > _maxBufferLength)
-        {
-            ClearCommandBuffer(_wallMoveCommandBuffer);
-        }
-
-        _wallMoveCommandBuffer.Enqueue(wallMoveCommand);
+        _commandBufferManager.EnqueueWallMoveCommand(wallMoveCommand);
 
         _characterActionCommandInvoker.ExecuteActionCommand(wallMoveCommand);
     }
@@ -307,22 +273,22 @@ public class PlayerInputManager
         var cancelWallMoveCommand = new CharacterCancelWallMoveCommand(_characterContextManager);
 
         _characterActionCommandInvoker.ExecuteActionCommand(cancelWallMoveCommand);
-        ClearCommandBuffer(_wallMoveCommandBuffer);
+        _commandBufferManager.ClearCommandBuffer(_commandBufferManager.WallMoveCommandBuffer);
     }
     private void ProcessWallMoveCommandBuffer(float deltaTime)
     {
-        if (_wallMoveCommandBuffer.Count == 0)
+        if (_commandBufferManager.WallMoveCommandBuffer.Count == 0)
         {
             return;
         }
 
-        _wallMoveCommandBufferTimer += deltaTime;
+        _commandBufferManager.WallMoveCommandBufferTimer += deltaTime;
 
-        if (_wallMoveCommandBufferTimer > _maxTimeForClearBuffer)
+        if (_commandBufferManager.WallMoveCommandBufferTimer > 0.1f)
         {
-            _wallMoveCommandBufferTimer = 0;
+            _commandBufferManager.WallMoveCommandBufferTimer = 0;
 
-            _characterActionCommandInvoker.ExecuteActionCommand(_wallMoveCommandBuffer.Peek());
+            _characterActionCommandInvoker.ExecuteActionCommand(_commandBufferManager.WallMoveCommandBuffer.Peek());
         }
     }
     #endregion
@@ -332,30 +298,24 @@ public class PlayerInputManager
     {
         var interactCommand = new CharacterInteractCommand(_characterContextManager);
 
-        if (_interactCommandBuffer.Count > _maxBufferLength)
-        {
-            ClearCommandBuffer(_interactCommandBuffer);
-        }
-
-        _interactCommandBuffer.Enqueue(interactCommand);
+        _commandBufferManager.EnqueueInteractCommand(interactCommand);
 
         _characterActionCommandInvoker.ExecuteActionCommand(interactCommand);
     }
     private void ProcessInteractCommandBuffer(float deltaTime)
     {
-        if (_interactCommandBuffer.Count == 0)
+        if (_commandBufferManager.InteractCommandBuffer.Count == 0)
         {
             return;
         }
 
-        _interactCommandBufferTimer += deltaTime;
+        _commandBufferManager.InteractCommandBufferTimer += deltaTime;
 
-        if (_interactCommandBufferTimer > _maxTimeForClearBuffer)
+        if (_commandBufferManager.InteractCommandBufferTimer > 0.1f)
         {
-            _interactCommandBufferTimer = 0;
+            _commandBufferManager.InteractCommandBufferTimer = 0;
 
-            _characterActionCommandInvoker.ExecuteActionCommand(_interactCommandBuffer.Peek());
-            ClearCommandBuffer(_interactCommandBuffer);
+            _commandBufferManager.ClearCommandBuffer(_commandBufferManager.InteractCommandBuffer);
         }
     }
     #endregion
@@ -410,38 +370,13 @@ public class PlayerInputManager
     #region MATCH COMBO COMMANDS
     private void CheckAndExecuteCharacterCombo(Queue<ICharacterActionCommand> comboSequence)
     {
-        if (comboSequence.Count < 2) 
-        {
-            return;
-        }
-
-        ICharacterActionCommand comboCommand = CheckSequenceForCombo(comboSequence);
+        ICharacterActionCommand comboCommand = _comboMatcher.CheckSequenceForCombo(comboSequence);
 
         if (comboCommand != null)
         {
             _characterActionCommandInvoker.ExecuteActionCommand(comboCommand);
-            ClearCommandBuffer(comboSequence);
+            _commandBufferManager.ClearCommandBuffer(comboSequence);
         }
-    }
-    private ICharacterActionCommand CheckSequenceForCombo(Queue<ICharacterActionCommand> comboSequence)
-    {
-        for (int startIndex = 0; startIndex <= comboSequence.Count; startIndex++)
-        {
-            var subsequence = GetSubsequence(comboSequence, startIndex);
-
-            foreach (ICharacterComboCommand rule in _characterComboRules)
-            {
-                if (rule.IsMatch(subsequence))
-                {
-                    return rule.GetResultingComboCommand();
-                }
-            }
-        }
-        return null;
-    }
-    private IEnumerable<ICharacterActionCommand> GetSubsequence(Queue<ICharacterActionCommand> comboSequence, int startIndex)
-    {
-        return comboSequence.Skip(startIndex);
     }
     #endregion
 }

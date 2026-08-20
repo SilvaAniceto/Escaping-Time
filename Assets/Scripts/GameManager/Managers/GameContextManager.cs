@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class GameContextManager : MonoBehaviour
+public class GameContextManager : MonoBehaviour, IGameStateManager
 {
     #region STATIC FIELDS
     public static GameContextManager Instance { get; private set; }

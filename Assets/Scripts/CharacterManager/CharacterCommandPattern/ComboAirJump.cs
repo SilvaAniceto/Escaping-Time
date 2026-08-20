@@ -32,6 +32,6 @@ public class ComboAirJump : ICharacterComboCommand
     }
     public ICharacterActionCommand GetResultingComboCommand()
     {
-        return new CharacterAirJumpCommand(_characterContextManager);
+        return new CharacterAirJumpCommand(_characterContextManager, _characterContextManager);
     }
 }

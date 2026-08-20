@@ -1,7 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
-
 public enum ETierScore
 {
     Tier1 = 10, // 60  seconds - 300

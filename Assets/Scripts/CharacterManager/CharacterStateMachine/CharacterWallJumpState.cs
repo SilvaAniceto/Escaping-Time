@@ -75,15 +75,6 @@ public class CharacterWallJumpState : CharacterAbstractState
         return Quaternion.AngleAxis(angle, Vector3.up);
     }
 
-    public override void OnCollisionEnter2D(Collision2D collision)
-    {
-
-    }
-
-    public override void OnCollisionStay(Collision2D collision) { }
-
-    public override void OnCollisionExit2D(Collision2D collision) { }
-
     public override void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Ceiling"))
@@ -91,8 +82,4 @@ public class CharacterWallJumpState : CharacterAbstractState
             SwitchState(CharacterStateFactory.FallState());
         }
     }
-
-    public override void OnTriggerStay2D(Collider2D collision) { }
-
-    public override void OnTriggerExit2D(Collider2D collision) { }
 }
