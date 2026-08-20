@@ -138,7 +138,7 @@ public class PlayerInputManager
     #region PAUSE COMMAND
     private void HandlePauseCommand()
     {
-        var pauseCommand = new GamePauseCommand(_gameContextManager);
+        var pauseCommand = new GamePauseCommand(ServiceLocator.GameFlowManager as IGameStateManager);
 
         _characterActionCommandInvoker.ExecuteActionCommand(pauseCommand);
     }

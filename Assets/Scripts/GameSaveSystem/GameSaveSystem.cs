@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(SaveStorage))]
-public class GameSaveSystem : MonoBehaviour
+public class GameSaveSystem : MonoBehaviour, ISaveSystem
 {
     #region STATIC FIELDS
     private static PlayerProfileData _profileData;

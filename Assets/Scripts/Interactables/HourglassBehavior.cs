@@ -17,10 +17,10 @@ public class HourglassBehavior : MonoBehaviour, IInteractableBehavior
 
         gameObject.SetActive(false);
 
-        GameContextManager.Instance.ScoreManager.AddCollectedHourglass();
+        ServiceLocator.ScoreManager.AddCollectedHourglass();
 
-        GameContextManager.Instance.AudioManager.StopSFX();
-        GameContextManager.Instance.AudioManager.PlaySFX(_soundName);
+        ServiceLocator.AudioManager.StopSFX();
+        ServiceLocator.AudioManager.PlaySFX(_soundName);
     }
 
 }

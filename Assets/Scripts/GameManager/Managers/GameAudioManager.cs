@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class GameAudioManager : MonoBehaviour
+public class GameAudioManager : MonoBehaviour, IAudioManager
 {
     #region INTERNAL CLASSES
     [System.Serializable]

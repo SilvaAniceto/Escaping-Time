@@ -52,7 +52,7 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
             case PointType.None:
                 break;
             case PointType.Start:
-                if (_interactionType.Contains(interactionType) && GameContextManager.Instance != null)
+                if (_interactionType.Contains(interactionType))
                 {
                     GameStateTransitionManager.OnFadeInEnd += (() =>
                     {
@@ -61,7 +61,7 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
                 }
                 break;
             case PointType.Finish:
-                if (_interactionType.Contains(interactionType) && GameContextManager.Instance != null)
+                if (_interactionType.Contains(interactionType))
                 {
                     StartClosing(context);
                 }
@@ -81,7 +81,7 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
             return;
         }
 
-        GameContextManager.Instance.SetTimer = false;
+        ServiceLocator.GameFlowManager.SetTimer = false;
         context.DisableCharacterContext();
         SetClosingAnimation();
 
@@ -92,7 +92,7 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
 
         GameStateTransitionManager.OnFadeInStart += (() =>
         {
-            context.transform.position = GameContextManager.Instance.CharacterHubStartPosition;
+            context.transform.position = ServiceLocator.GameFlowManager.CharacterHubStartPosition;
         });
     }
 
@@ -116,8 +116,8 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
     {
         if (_audioSource != null)
         {
-            GameContextManager.Instance.AudioManager.StopSFX(_audioSource);
-            GameContextManager.Instance.AudioManager.PlaySFX("Door", _audioSource);
+            ServiceLocator.AudioManager.StopSFX(_audioSource);
+            ServiceLocator.AudioManager.PlaySFX("Door", _audioSource);
         }
     }
 
@@ -125,8 +125,8 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
     {
         if (_audioSource != null)
         {
-            GameContextManager.Instance.AudioManager.StopSFX(_audioSource);
-            GameContextManager.Instance.AudioManager.PlaySFX("Door_Close", _audioSource);
+            ServiceLocator.AudioManager.StopSFX(_audioSource);
+            ServiceLocator.AudioManager.PlaySFX("Door_Close", _audioSource);
         }
 
         switch (_type)
@@ -134,19 +134,13 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
             case PointType.None:
                 break;
             case PointType.Start:
-                if (GameContextManager.Instance != null)
-                {
-                    GameContextManager.Instance.SetTimer = true;
-                    GameContextManager.Instance.CharacterContextManager.EnableCharacterContext();
-                    GameContextManager.Instance.AudioManager.PlayFadedBGM("Level_Loop", 1.6f);
-                }
+                ServiceLocator.GameFlowManager.SetTimer = true;
+                ServiceLocator.GameFlowManager.CharacterContextManager.EnableCharacterContext();
+                ServiceLocator.AudioManager.PlayFadedBGM("Level_Loop", 1.6f);
                 break;
             case PointType.Finish:
-                if (GameContextManager.Instance != null)
-                {
-                    GameContextManager.Instance.AudioManager.StopFadedBGM(0.0f, 1.5f);
-                    GameContextManager.Instance.StartCoroutine(DelaySetFinalScore());
-                }
+                ServiceLocator.AudioManager.StopFadedBGM(0.0f, 1.5f);
+                StartCoroutine(DelaySetFinalScore());
                 break;
         }
     }
@@ -154,6 +148,6 @@ public class LevelDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirma
     private IEnumerator DelaySetFinalScore()
     {
         yield return new WaitForSeconds(1.5f);
-        GameContextManager.Instance.StartScoreState();
+        ServiceLocator.GameFlowManager.StartScoreState();
     }
 }

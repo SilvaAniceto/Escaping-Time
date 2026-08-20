@@ -45,8 +45,8 @@ public class TimedPlatformBehavior : MonoBehaviour, IInteractableBehavior
     {
         _activated = true;
 
-        GameContextManager.Instance.AudioManager.StopSFX(_audioSource);
-        GameContextManager.Instance.AudioManager.PlaySFX("Enter_Platform", _audioSource);
+        ServiceLocator.AudioManager.StopSFX(_audioSource);
+        ServiceLocator.AudioManager.PlaySFX("Enter_Platform", _audioSource);
 
         if (_animator != null)
         {
@@ -62,8 +62,8 @@ public class TimedPlatformBehavior : MonoBehaviour, IInteractableBehavior
 
         _collider.enabled = false;
 
-        GameContextManager.Instance.AudioManager.StopSFX(_audioSource);
-        GameContextManager.Instance.AudioManager.PlaySFX("End_Platform", _audioSource);
+        ServiceLocator.AudioManager.StopSFX(_audioSource);
+        ServiceLocator.AudioManager.PlaySFX("End_Platform", _audioSource);
 
         yield return new WaitForSeconds(2.0f);
 

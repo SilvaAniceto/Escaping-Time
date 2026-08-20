@@ -52,9 +52,9 @@ public class MovingPlatformBehavior : MonoBehaviour, IInteractableBehavior
 
     private void Start()
     {
-        if (GameContextManager.Instance != null && GameContextManager.Instance.CharacterContextManager != null)
+        if (ServiceLocator.GameFlowManager.CharacterContextManager != null)
         {
-            GameContextManager.Instance.CharacterContextManager.DamageManager.OnResetState.AddListener(ResetMovingPlatform);
+            ServiceLocator.GameFlowManager.CharacterContextManager.DamageManager.OnResetState.AddListener(ResetMovingPlatform);
         }
     }
 
@@ -194,10 +194,10 @@ public class MovingPlatformBehavior : MonoBehaviour, IInteractableBehavior
 
     private IEnumerator ScheduledStart()
     {
-        if (GameContextManager.Instance != null)
+        if (ServiceLocator.AudioManager != null)
         {
-            GameContextManager.Instance.AudioManager.StopSFX();
-            GameContextManager.Instance.AudioManager.PlaySFX("Enter_Platform");
+            ServiceLocator.AudioManager.StopSFX();
+            ServiceLocator.AudioManager.PlaySFX("Enter_Platform");
         }
 
         yield return WaitForActivate;

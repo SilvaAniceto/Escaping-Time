@@ -15,8 +15,8 @@ public class CharacterAirJumpState : CharacterAbstractState
 
         CharacterContextManager.PowerUpManager.DisableAirJump();
 
-        GameContextManager.Instance.AudioManager.StopCharacterSFX();
-        GameContextManager.Instance.AudioManager.PlayCharacterSFX("Air_Jump");
+        ServiceLocator.AudioManager.StopCharacterSFX();
+        ServiceLocator.AudioManager.PlayCharacterSFX("Air_Jump");
     }
     public override void UpdateState()
     {

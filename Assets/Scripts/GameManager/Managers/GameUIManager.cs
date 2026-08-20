@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class GameUIManager : MonoBehaviour
+public class GameUIManager : MonoBehaviour, IUIManager
 {
     #region INTERNAL CLASSES
     [System.Serializable]
@@ -470,13 +470,13 @@ public class GameUIManager : MonoBehaviour
         _gold.color = Color.black;
         _fill.fillAmount = 0;
     }
-    private void ShowScorePanel()
+    public void ShowScorePanel()
     {
         ScorePanel.SetActive(true);
         ResetScoreUI();
     }
 
-    private void HideScorePanel()
+    public void HideScorePanel()
     {
         ScorePanel.SetActive(false);
     }

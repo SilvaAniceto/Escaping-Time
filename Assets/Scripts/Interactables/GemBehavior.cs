@@ -16,12 +16,12 @@ public class GemBehavior : MonoBehaviour, IInteractableBehavior
             return;
         }
 
-        GameContextManager.Instance.AudioManager.StopSFX();
-        GameContextManager.Instance.AudioManager.PlaySFX(_soundName);
+        ServiceLocator.AudioManager.StopSFX();
+        ServiceLocator.AudioManager.PlaySFX(_soundName);
 
         if (_scoreValue > 0)
         {
-            GameContextManager.Instance.ScoreManager.AddGemScore(_scoreValue);
+            ServiceLocator.ScoreManager.AddGemScore(_scoreValue);
         }
 
         gameObject.SetActive(false);

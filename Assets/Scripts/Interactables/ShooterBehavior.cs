@@ -156,10 +156,10 @@ public class ShooterBehavior : MonoBehaviour, IInteractableBehavior
             _projectiles[_projectileIndex].transform.localScale = Vector3.one * 1.6f;
             _projectiles[_projectileIndex].gameObject.SetActive(true);
 
-            GameContextManager.Instance.AudioManager.StopSFX(_audioSource);
-            GameContextManager.Instance.AudioManager.PlaySFX("Fire_Shot", _audioSource);
+            ServiceLocator.AudioManager.StopSFX(_audioSource);
+            ServiceLocator.AudioManager.PlaySFX("Fire_Shot", _audioSource);
 
-            yield return new WaitForSeconds(GameContextManager.Instance.AudioManager.AudioClipLength("Fire_Shot") * 0.15f);
+            yield return new WaitForSeconds(ServiceLocator.AudioManager.AudioClipLength("Fire_Shot") * 0.15f);
 
             _projectiles[_projectileIndex].transform.localScale = Vector3.one * 2.0f;
             _projectiles[_projectileIndex].Enable = true;
@@ -179,10 +179,10 @@ public class ShooterBehavior : MonoBehaviour, IInteractableBehavior
             shooter._projectiles[_projectileIndex].transform.localScale = Vector3.one * 1.6f;
             shooter._projectiles[_projectileIndex].gameObject.SetActive(true);
 
-            GameContextManager.Instance.AudioManager.StopSFX(shooter._audioSource);
-            GameContextManager.Instance.AudioManager.PlaySFX("Fire_Shot", shooter._audioSource);
+            ServiceLocator.AudioManager.StopSFX(shooter._audioSource);
+            ServiceLocator.AudioManager.PlaySFX("Fire_Shot", shooter._audioSource);
 
-            yield return new WaitForSeconds(GameContextManager.Instance.AudioManager.AudioClipLength("Fire_Shot") * 0.15f);
+            yield return new WaitForSeconds(ServiceLocator.AudioManager.AudioClipLength("Fire_Shot") * 0.15f);
 
             shooter._projectiles[_projectileIndex].transform.localScale = Vector3.one * 2.0f;
             shooter._projectiles[_projectileIndex].Enable = true;

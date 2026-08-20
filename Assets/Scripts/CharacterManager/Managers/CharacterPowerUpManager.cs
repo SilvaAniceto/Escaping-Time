@@ -163,7 +163,7 @@ public class CharacterPowerUpManager : MonoBehaviour
     }
     public void RegisterDashCallback()
     {
-        OnDashPowerStateChange.AddListener(GameContextManager.Instance.UIManager.SetDashPowerUpUI);
+        OnDashPowerStateChange.AddListener(ServiceLocator.UIManager.SetDashPowerUpUI);
     }
 
     public void EnableAirJump()
@@ -189,7 +189,7 @@ public class CharacterPowerUpManager : MonoBehaviour
     }
     public void RegisterAirJumpCallback()
     {
-        OnAirJumpPowerStateChange.AddListener(GameContextManager.Instance.UIManager.SetAirJumpPowerUpUI);
+        OnAirJumpPowerStateChange.AddListener(ServiceLocator.UIManager.SetAirJumpPowerUpUI);
     }
 
     public void SetTemporaryWallMove(float coolDown = 0)
@@ -207,7 +207,7 @@ public class CharacterPowerUpManager : MonoBehaviour
     }
     public void RegisterWallMoveCallback()
     {
-        OnWallMovePowerStateChange.AddListener(GameContextManager.Instance.UIManager.SetWallMovePowerUpUI);
+        OnWallMovePowerStateChange.AddListener(ServiceLocator.UIManager.SetWallMovePowerUpUI);
     }
 
     void OnDestroy()

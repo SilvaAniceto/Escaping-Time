@@ -36,8 +36,8 @@ public class DamageBehavior : MonoBehaviour, IInteractableBehavior
             return;
         }
 
-        GameContextManager.Instance.AudioManager.StopCharacterSFX();
-        GameContextManager.Instance.AudioManager.PlayCharacterSFX("Damage");
+        ServiceLocator.AudioManager.StopCharacterSFX();
+        ServiceLocator.AudioManager.PlayCharacterSFX("Damage");
 
         float currentDirection = 0;
 

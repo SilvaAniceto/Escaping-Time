@@ -17,12 +17,12 @@ public enum EClassficationTier
     Tier3 = 3
 }
 
-public class GameScoreManager
+public class GameScoreManager : IScoreManager
 {
     #region PUBLIC PROPERTIES
     public GameLevelRuntimeData CurrentLevelRuntimeData { get; set; }
     public int MasterScore { get; set; }
-    public int CurrentScore { get; private set; }
+    public int CurrentScore { get; set; }
     #endregion
 
     #region PRIVATE PROPERTIES

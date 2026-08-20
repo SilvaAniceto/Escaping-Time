@@ -86,8 +86,8 @@ public class PowerUpBehavior : MonoBehaviour, IInteractableBehavior
             _animator.Play("PowerUp_Unlit");
         }
 
-        GameContextManager.Instance.AudioManager.StopSFX();
-        GameContextManager.Instance.AudioManager.PlaySFX("PwrUp_Collect");
+        ServiceLocator.AudioManager.StopSFX();
+        ServiceLocator.AudioManager.PlaySFX("PwrUp_Collect");
     }
 
     public void RechargePowerUpInteractable()

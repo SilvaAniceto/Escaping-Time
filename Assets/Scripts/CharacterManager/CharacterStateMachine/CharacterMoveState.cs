@@ -15,7 +15,7 @@ public class CharacterMoveState : CharacterAbstractState
     {
         if (CharacterContextManager.CurrentState == CharacterStateFactory.GroundedState() || CharacterContextManager.CurrentState == CharacterStateFactory.InteractionState())
         {
-            GameContextManager.Instance.AudioManager.PlayCharacterSFX("Walk", 0.192f);
+            ServiceLocator.AudioManager.PlayCharacterSFX("Walk", 0.192f);
         }
 
         if (CharacterContextManager.CurrentState != CharacterStateFactory.OnWallState())

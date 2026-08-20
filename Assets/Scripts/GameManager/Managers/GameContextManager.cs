@@ -5,11 +5,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class GameContextManager : MonoBehaviour, IGameStateManager
+public class GameContextManager : MonoBehaviour, IGameStateManager, IGameFlowManager
 {
-    #region STATIC FIELDS
-    public static GameContextManager Instance { get; private set; }
-    #endregion
+    private static GameContextManager Instance;
 
     #region INSPECTOR FIELDS
     [Header("Enviroment Settings")]
@@ -227,6 +225,10 @@ public class GameContextManager : MonoBehaviour, IGameStateManager
             action();
         }
     }
+    public void QuitToMainMenu()
+    {
+        OnQuitToMainMenu();
+    }
     public void OnQuitToMainMenu()
     {
         _playerInputManager.ClearPlayerActionsCallback();
@@ -428,6 +430,17 @@ public class GameContextManager : MonoBehaviour, IGameStateManager
     }
     #endregion
 
+    private void RegisterServices()
+    {
+        ServiceLocator.AudioManager = _gameAudioManager;
+
+        ScoreManager = new GameScoreManager();
+        ServiceLocator.ScoreManager = ScoreManager;
+
+        ServiceLocator.UIManager = _gameUIManager;
+        ServiceLocator.GameFlowManager = this;
+        ServiceLocator.SaveSystem = _gameSaveSystem;
+    }
     private void InstantiateLevelManagers()
     {
         foreach (GameLevelConfig config in _gameLevelConfigs)
@@ -449,11 +462,11 @@ public class GameContextManager : MonoBehaviour, IGameStateManager
     }
     private void StartDevelopmentEnvironment()
     {
+        RegisterServices();
+
         _transitionScreen.Initialize();
 
         _gameContextAudiolistener.enabled = false;
-
-        ScoreManager = new GameScoreManager();
 
         _gameUIManager.Initialize(this);
 
@@ -473,9 +486,9 @@ public class GameContextManager : MonoBehaviour, IGameStateManager
     }
     private void StartGameContextEnvironment()
     {
-        _transitionScreen.Initialize();
+        RegisterServices();
 
-        ScoreManager = new GameScoreManager();
+        _transitionScreen.Initialize();
 
         ScoreManager.Initialize(this);
 

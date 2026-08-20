@@ -36,7 +36,7 @@ public class HubDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirmabl
 
     private void SetHubDoor()
     {
-        _gameLevelsRuntimeData = GameContextManager.Instance.GameLevelsRuntimeData.Find(x => x.LevelSceneName == _levelSceneName);
+        _gameLevelsRuntimeData = ServiceLocator.GameFlowManager.GameLevelsRuntimeData.Find(x => x.LevelSceneName == _levelSceneName);
 
         _trophy.transform.parent.gameObject.SetActive(false);
         _gemScoreText.transform.parent.gameObject.SetActive(false);
@@ -116,9 +116,9 @@ public class HubDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirmabl
         {
             GameEventsManager.OnTargetSceneUpdated?.Invoke(_gameLevelsRuntimeData.LevelSceneName);
             context.DisableCharacterContext();
-            GameContextManager.Instance.CharacterHubStartPosition = transform.position;
-            GameContextManager.Instance.ScoreManager.CurrentLevelRuntimeData = _gameLevelsRuntimeData;
-            GameContextManager.Instance.ScoreManager.ResetPlayerScorePoints();
+            ServiceLocator.GameFlowManager.CharacterHubStartPosition = transform.position;
+            ServiceLocator.ScoreManager.CurrentLevelRuntimeData = _gameLevelsRuntimeData;
+            ServiceLocator.ScoreManager.ResetPlayerScorePoints();
 
             GameStateTransitionManager.OnFadeInEnd += (() =>
             {
@@ -127,16 +127,16 @@ public class HubDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirmabl
 
             GameStateTransitionManager.OnFadeOutEnd += (() =>
             {
-                GameContextManager.Instance.LoadLevel = true;
+                ServiceLocator.GameFlowManager.LoadLevel = true;
                 context.transform.position = Vector2.zero;
             });
 
             GameStateTransitionManager.FadeOut();
-            GameContextManager.Instance.AudioManager.StopFadedBGM(0.0f, 1.5f);
+            ServiceLocator.AudioManager.StopFadedBGM(0.0f, 1.5f);
         }
         else
         {
-            if (GameContextManager.Instance.ScoreManager.MasterScore >= _gameLevelsRuntimeData.Config.LevelUnlockScore)
+            if (ServiceLocator.ScoreManager.MasterScore >= _gameLevelsRuntimeData.Config.LevelUnlockScore)
             {
                 _animator.Play("Opening");
             }
@@ -150,6 +150,6 @@ public class HubDoorBehavior : MonoBehaviour, IInteractableBehavior, IConfirmabl
 
     public void SetDoorSFX()
     {
-        GameContextManager.Instance.AudioManager.PlaySFX("Door");
+        ServiceLocator.AudioManager.PlaySFX("Door");
     }
 }
