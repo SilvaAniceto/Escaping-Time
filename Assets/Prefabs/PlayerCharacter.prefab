@@ -515,9 +515,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 484f0a7e8c4f1e74b9f99a033e6251f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hasInfinityDash: 1
-  _hasInfinityAirJump: 1
-  _hasInfinityWallMove: 1
+  _hasInfinityDash: 0
+  _hasInfinityAirJump: 0
+  _hasInfinityWallMove: 0
   OnPowerUpInteractableRecharge:
     m_PersistentCalls:
       m_Calls: []

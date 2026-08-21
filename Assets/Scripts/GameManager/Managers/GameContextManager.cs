@@ -86,8 +86,6 @@ public class GameContextManager : MonoBehaviour, IGameStateManager, IGameFlowMan
 
         _gameContextAudiolistener = GetComponentInChildren<AudioListener>();
 
-        InstantiateLevelManagers();
-
         _environment.ApplyGameEnvironmentSettings();
 
         switch (_environment.CurrentEnvironment)
@@ -246,6 +244,8 @@ public class GameContextManager : MonoBehaviour, IGameStateManager, IGameFlowMan
     #region MAIN MENU STATE
     public void OnEnterMainMenuState()
     {
+        InstantiateLevelManagers();
+
         _gameContextAudiolistener.enabled = true;
 
         GameEventsManager.OnPauseStateChanged.RemoveAllListeners();
@@ -295,7 +295,7 @@ public class GameContextManager : MonoBehaviour, IGameStateManager, IGameFlowMan
     {
         GameStateTransitionManager.FadeOff();
 
-        _gameUIManager.CharacterUIManager.gameObject.SetActive(false);
+        _gameUIManager.CharacterUIManager.SetActive(false);
         _gameUIManager.LoadingScreen.SetActive(true);
 
         _gameSceneLoader.LoadTargetScene();
@@ -345,7 +345,7 @@ public class GameContextManager : MonoBehaviour, IGameStateManager, IGameFlowMan
 
         _gameUIManager.SetLevelUIObjects();
 
-        _gameUIManager.CharacterUIManager.gameObject.SetActive(true);
+        _gameUIManager.CharacterUIManager.SetActive(true);
 
         _gameUIManager.SetScoreDisplay(ScoreManager.CurrentScore);
 
@@ -353,7 +353,7 @@ public class GameContextManager : MonoBehaviour, IGameStateManager, IGameFlowMan
     }
     public void OnExitRunState()
     {
-        _gameUIManager.CharacterUIManager.gameObject.SetActive(false);
+        _gameUIManager.CharacterUIManager.SetActive(false);
     }
     #endregion
 
@@ -443,6 +443,8 @@ public class GameContextManager : MonoBehaviour, IGameStateManager, IGameFlowMan
     }
     private void InstantiateLevelManagers()
     {
+        GameLevelsRuntimeData.Clear();
+
         foreach (GameLevelConfig config in _gameLevelConfigs)
         {
             GameLevelRuntimeData runtimeData = new GameLevelRuntimeData

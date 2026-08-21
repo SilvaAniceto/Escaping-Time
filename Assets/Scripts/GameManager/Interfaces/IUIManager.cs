@@ -12,9 +12,9 @@ public interface IUIManager
     void SetDashPowerUpUI(string clip);
     void SetWallMovePowerUpUI(string clip);
     void SetHourglassDisplay(int count);
-    void SetOvertimeAirJumpPowerUpUI(float value, CharacterContextManager characterContextManager);
-    void SetOvertimeDashPowerUpUI(float value, CharacterContextManager characterContextManager);
-    void SetOvertimeWallMovePowerUpUI(float value, CharacterContextManager characterContextManager);
+    void SetOvertimeAirJumpPowerUpUI(float value, CharacterPowerUpManager characterPowerUpManager);
+    void SetOvertimeDashPowerUpUI(float value, CharacterPowerUpManager characterPowerUpManager);
+    void SetOvertimeWallMovePowerUpUI(float value, CharacterPowerUpManager characterPowerUpManager);
     void SetHubUIObjects();
     void SetLevelUIObjects();
     void SetTrophyUIPosition();

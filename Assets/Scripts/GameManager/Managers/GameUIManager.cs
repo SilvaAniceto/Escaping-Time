@@ -379,43 +379,55 @@ public class GameUIManager : MonoBehaviour, IUIManager
     }
     public void SetAirJumpPowerUpUI(string clip)
     {
-        _airJumpAnimatorPowerUp.gameObject.SetActive(true);
+        if (!_characterUIManager.activeInHierarchy)
+        {
+            StartCoroutine(WaitCharacterUI(clip, _airJumpAnimatorPowerUp));
+            return;
+        }
 
+        _airJumpAnimatorPowerUp.gameObject.SetActive(true);
         _airJumpAnimatorPowerUp.Play(clip);
-        _airJumpUIpowerUp.fillAmount = 1;
     }
-    public void SetOvertimeAirJumpPowerUpUI(float value, CharacterContextManager characterContextManager)
+    public void SetOvertimeAirJumpPowerUpUI(float value, CharacterPowerUpManager characterPowerUpManager)
     {
-        StartCoroutine(UpdatePowerUpUIElement(value, _airJumpUIpowerUp, _airJumpAnimatorPowerUp, characterContextManager));
+        StartCoroutine(UpdatePowerUpUIElement(value, _airJumpUIpowerUp, _airJumpAnimatorPowerUp, characterPowerUpManager));
     }
     public void SetDashPowerUpUI(string clip)
     {
-        _dashAnimatorPowerUp.gameObject.SetActive(true);
+        if (!_characterUIManager.activeInHierarchy)
+        {
+            StartCoroutine(WaitCharacterUI(clip, _dashAnimatorPowerUp));
+            return;
+        }
 
         _dashAnimatorPowerUp.Play(clip);
-        _dashUIpowerUp.fillAmount = 1;
     }
-    public void SetOvertimeDashPowerUpUI(float value, CharacterContextManager characterContextManager)
+    public void SetOvertimeDashPowerUpUI(float value, CharacterPowerUpManager characterPowerUpManager)
     {
-        StartCoroutine(UpdatePowerUpUIElement(value, _dashUIpowerUp, _dashAnimatorPowerUp, characterContextManager));
+        StartCoroutine(UpdatePowerUpUIElement(value, _dashUIpowerUp, _dashAnimatorPowerUp, characterPowerUpManager));
     }
     public void SetWallMovePowerUpUI(string clip)
     {
-        _wallMoveAnimatorPowerUp.gameObject.SetActive(true);
+        if (!_characterUIManager.activeInHierarchy)
+        {
+            StartCoroutine(WaitCharacterUI(clip, _wallMoveAnimatorPowerUp));
+            return;
+        }
 
         _wallMoveAnimatorPowerUp.Play(clip);
-        _wallMoveUIpowerUp.fillAmount = 1;
     }
-    public void SetOvertimeWallMovePowerUpUI(float value, CharacterContextManager characterContextManager)
+    public void SetOvertimeWallMovePowerUpUI(float value, CharacterPowerUpManager characterPowerUpManager)
     {
-        StartCoroutine(UpdatePowerUpUIElement(value, _wallMoveUIpowerUp, _wallMoveAnimatorPowerUp, characterContextManager));
+        StartCoroutine(UpdatePowerUpUIElement(value, _wallMoveUIpowerUp, _wallMoveAnimatorPowerUp, characterPowerUpManager));
     }
 
-    IEnumerator UpdatePowerUpUIElement(float value, Image sourceImage, Animator animator, CharacterContextManager characterContextManager)
+    IEnumerator UpdatePowerUpUIElement(float value, Image sourceImage, Animator animator, CharacterPowerUpManager characterPowerUpManager)
     {
+        sourceImage.fillAmount = 1;
+
         float currentTime = value;
 
-        _gameContextManager.AudioManager.CreateEnqueuedPowerUpSFX("TimeCount", value, sourceImage, true);
+        ServiceLocator.AudioManager.CreateEnqueuedPowerUpSFX("TimeCount", value, sourceImage, true);
 
         while (currentTime >= 0.00f)
         {
@@ -426,16 +438,23 @@ public class GameUIManager : MonoBehaviour, IUIManager
             yield return null;
         }
 
-        _gameContextManager.AudioManager.StopEnqueuedPowerUpSFX();
-        _gameContextManager.AudioManager.PlaySFX("EndTimeCount");
+        ServiceLocator.AudioManager.StopEnqueuedPowerUpSFX();
+        ServiceLocator.AudioManager.PlaySFX("EndTimeCount");
 
         System.Action action = () =>
         {
             animator.gameObject.SetActive(false);
-            characterContextManager.PowerUpManager.DispatchPowerUpInteractableRecharge();
+            characterPowerUpManager.DispatchPowerUpInteractableRecharge();
         };
 
-        _gameContextManager.WaitSeconds(action, _gameContextManager.AudioManager.AudioClipLength("EndTimeCount"));
+        _gameContextManager.WaitSeconds(action, ServiceLocator.AudioManager.AudioClipLength("EndTimeCount"));
+    }
+    IEnumerator WaitCharacterUI(string clip, Animator animator)
+    {
+        yield return new WaitUntil(() => _characterUIManager.activeInHierarchy);
+
+        animator.gameObject.SetActive(true);
+        animator.Play(clip);
     }
     #endregion
 

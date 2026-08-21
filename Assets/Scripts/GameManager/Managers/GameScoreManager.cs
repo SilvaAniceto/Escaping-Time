@@ -17,6 +17,7 @@ public enum EClassficationTier
     Tier3 = 3
 }
 
+[System.Serializable]
 public class GameScoreManager : IScoreManager
 {
     #region PUBLIC PROPERTIES

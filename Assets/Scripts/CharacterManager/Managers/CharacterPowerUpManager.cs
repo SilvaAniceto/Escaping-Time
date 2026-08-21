@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections;
 
 public class CharacterPowerUpManager : MonoBehaviour
 {
@@ -153,13 +152,12 @@ public class CharacterPowerUpManager : MonoBehaviour
         HasTemporaryDash = true;
         if (coolDown > 0)
         {
-            StartCoroutine(ResetTemporaryDashAfter(coolDown));
+            OnPowerUpInteractableRecharge.AddListener(() =>
+            {
+                HasTemporaryDash = false;
+            });
+            ServiceLocator.UIManager.SetOvertimeDashPowerUpUI(coolDown, this);
         }
-    }
-    private IEnumerator ResetTemporaryDashAfter(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        HasTemporaryDash = false;
     }
     public void RegisterDashCallback()
     {
@@ -179,13 +177,12 @@ public class CharacterPowerUpManager : MonoBehaviour
         HasTemporaryAirJump = true;
         if (coolDown > 0)
         {
-            StartCoroutine(ResetTemporaryAirJumpAfter(coolDown));
+            OnPowerUpInteractableRecharge.AddListener(() =>
+            {
+                HasTemporaryAirJump = false;
+            });
+            ServiceLocator.UIManager.SetOvertimeAirJumpPowerUpUI(coolDown, this);
         }
-    }
-    private IEnumerator ResetTemporaryAirJumpAfter(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        HasTemporaryAirJump = false;
     }
     public void RegisterAirJumpCallback()
     {
@@ -197,13 +194,12 @@ public class CharacterPowerUpManager : MonoBehaviour
         HasTemporaryWallMove = true;
         if (coolDown > 0)
         {
-            StartCoroutine(ResetTemporaryWallMoveAfter(coolDown));
+            OnPowerUpInteractableRecharge.AddListener(() =>
+            {
+                HasTemporaryWallMove = false;
+            });
+            ServiceLocator.UIManager.SetOvertimeWallMovePowerUpUI(coolDown, this);
         }
-    }
-    private IEnumerator ResetTemporaryWallMoveAfter(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        HasTemporaryWallMove = false;
     }
     public void RegisterWallMoveCallback()
     {
